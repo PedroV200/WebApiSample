@@ -38,7 +38,7 @@ public class EstimateDetailController : ControllerBase
         {
             return BadRequest();
         }
-        var result = await _unitOfWork.Bancos.UpdateAsync(entity);
+        var result = await _unitOfWork.EstimateDetails.UpdateAsync(entity);
         // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
         if (result == 0)
         {
@@ -51,7 +51,7 @@ public class EstimateDetailController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _unitOfWork.Bancos.DeleteAsync(id);
+        var result = await _unitOfWork.EstimateDetails.DeleteAsync(id);
         // Ninguna fila afectada .... El id no existe
         if (result == 0)
         {
