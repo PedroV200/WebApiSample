@@ -20,7 +20,7 @@ public class UnitOfWork : IUnitOfWork
                       IImpuestoRepository ImpuestoRepository,
                       ICanalRepository CanalRepository,
                       IProveedorRepository ProveedorRepository,
-                      IEstimateHeaderRepository EstimateHeaderRepository,
+                      //IEstimateHeaderRepository EstimateHeaderRepository,
                       IEstimateDetailRepository EstimateDetailRepository
                       )
     {
@@ -40,7 +40,7 @@ public class UnitOfWork : IUnitOfWork
         Impuestos = ImpuestoRepository;
         Canales = CanalRepository;
         Proveedores = ProveedorRepository;
-        EstimateHeaders = EstimateHeaderRepository;
+        //EstimateHeaders = EstimateHeaderRepository;
         EstimateDetails = EstimateDetailRepository;
     
 
@@ -60,7 +60,7 @@ public class UnitOfWork : IUnitOfWork
     public IDepositoRepository Depositos { get; }
     public IPolizaRepository Polizas { get; }
     public IImpuestoRepository Impuestos { get; }
-    public IEstimateHeaderRepository EstimateHeaders { get;}
+    //public IEstimateHeaderRepository EstimateHeaders { get;}
     public IEstimateDetailRepository EstimateDetails { get;}
     public ICanalRepository Canales {get;}
     public IProveedorRepository Proveedores {get;}
