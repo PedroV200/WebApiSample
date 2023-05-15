@@ -1,0 +1,7 @@
+﻿using WebApiSample.Models;
+namespace WebApiSample.Infrastructure;
+
+public interface IEmpresaRepository : IGenericRepository<Empresa>
+{
+
+}
