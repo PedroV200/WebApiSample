@@ -15,6 +15,9 @@ public class calc
     List<double> ajusteIncluir;
     List<double> ajusteDeducir;
     List<double> valorAduanaDivisa;
+    List<double> diePorct;
+    List<double> derechos;
+    List<double> tePorct;
     double FOB_TOTAL;
     double FLETE_TOTAL;             // Esto debe tomarse de otra base segun tipo de contenedor
     double SEGURO_TOTAL;
@@ -30,6 +33,9 @@ public class calc
         ajusteIncluir=new List<double>();
         ajusteDeducir=new List<double>();
         valorAduanaDivisa=new List<double>();
+        diePorct=new List<double>(); 
+        derechos=new List<double>();
+        tePorct=new List<double>();
     }
     // Trae todos los item del detalle cuyo header tiene el codigo "code"
     public async Task<List<EstimateDetail>> getItems(int code)
@@ -60,6 +66,10 @@ public class calc
         valorAduanaDivisa=ajustIncCIF(CIF,ajusteIncluir);
         // Uso a valorAduanaDivisa como un temporal.
         valorAduanaDivisa=ajustDedCIF(valorAduanaDivisa,ajusteDeducir);
+        diePorct=await lookUpDie(estDetails);
+        derechos=calculateDerechos(valorAduanaDivisa,diePorct);
+        // Busca el te en el NCM. Si no existe, le asigna 3.0%.
+        tePorct=await resolveTe(estDetails);
         // Para cumplir con el POST que espera una lista de doubles.
         // Paso los CBMs totales.
         return cbmTot;
@@ -84,7 +94,7 @@ public class calc
         return tmpL;
     }
 
-        public List<double> calculatePesoTotal(List<EstimateDetail> estDetails)
+    public List<double> calculatePesoTotal(List<EstimateDetail> estDetails)
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
@@ -182,6 +192,52 @@ public class calc
         }  
         return tmpL;
     } 
+
+    public async Task<List<double>> lookUpDie(List<EstimateDetail> estDetails)
+    {
+        List<double> tmpL=new List<double>();
+        foreach(EstimateDetail ed in estDetails)
+        {
+            NCM myNCM=await _unitOfWork.NCMs.GetByIdStrAsync(ed.ncm); 
+            // Lo agrega a la lista
+            tmpL.Add(myNCM.die);   
+        }       
+        return tmpL;
+    }
+    
+    // Busca el TE correspondiente en la tabla dado el NCM para cada articulo
+    // En el EXCEL, si no es posible encontrar un TE para un NCM dado, el mismo
+    // sera del 3%.
+    public async Task<List<double>> resolveTe(List<EstimateDetail> estDetails)
+    {
+        List<double> tmpL=new List<double>();
+        foreach(EstimateDetail ed in estDetails)
+        {
+            NCM myNCM=await _unitOfWork.NCMs.GetByIdStrAsync(ed.ncm); 
+            // VER COLUMNA U (U15 en adelante).
+            // Existe el te ?. No puedo tener un te "EN BLANCO" como el XLS. Lo ideal que x defecto tengan un valor negativo
+            // como para indicar que esta "en blanco".
+            if(myNCM!=null && myNCM.te!>=0)
+            { // Si.
+                tmpL.Add(myNCM.te);   
+            }
+            else
+            { // No, entonces vale 3%.
+                tmpL.Add(3.00000);
+            }
+        }       
+        return tmpL;
+    }
+    public List<double> calculateDerechos(List<double> tmpValAduanaDivisa, List<double> tmpDiePorct)
+    {
+        List<double> tmpL=new List<double>();
+        for(int i=0;i<tmpValAduanaDivisa.Count && i<tmpDiePorct.Count; i++)
+        {
+            tmpL.Add(tmpDiePorct[i]*tmpValAduanaDivisa[i]);       
+        }
+        return tmpL;
+    }
+
 // Suma una lista de valores double. Devielve el resultado
     public double sumar_double(List<double> misValores)
     {
