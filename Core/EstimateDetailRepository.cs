@@ -46,6 +46,17 @@ public class EstimateDetailRepository : IEstimateDetailRepository
             return await connection.QueryAsync<EstimateDetail>(sql);
         }
     }
+        public async Task<IEnumerable<EstimateDetail>>GetAllByCodeAsync(int code)
+    {
+        var sql = $"SELECT * FROM p_estimatedetails WHERE code={code}";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+
+            return await connection.QueryAsync<EstimateDetail>(sql);
+        }
+    }
+
     public async Task<EstimateDetail> GetByIdAsync(int id)
     {
         var sql = $"SELECT * FROM p_estimatedetails WHERE id = {id}";
