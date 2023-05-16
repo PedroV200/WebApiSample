@@ -26,7 +26,7 @@ public class EstimateDetailRepository : IEstimateDetailRepository
     }
     public async Task<int> DeleteAsync(int id)
     {
-        var sql = $"DELETE FROM p_estimadetails WHERE code = {id}";
+        var sql = $"DELETE FROM p_estimatedetails WHERE id = {id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -46,9 +46,9 @@ public class EstimateDetailRepository : IEstimateDetailRepository
             return await connection.QueryAsync<EstimateDetail>(sql);
         }
     }
-    public async Task<EstimateDetail> GetByIdAsync(int code)
+    public async Task<EstimateDetail> GetByIdAsync(int id)
     {
-        var sql = $"SELECT * FROM p_estimatedetails WHERE code = {code}";
+        var sql = $"SELECT * FROM p_estimatedetails WHERE id = {id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -68,7 +68,7 @@ public class EstimateDetailRepository : IEstimateDetailRepository
                     fobunit = @fobunit,
                     cantpcs = @cantpcs,
                     code = @code
-                             WHERE code = @code";
+                             WHERE id = @id";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();

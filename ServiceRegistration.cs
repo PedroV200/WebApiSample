@@ -23,6 +23,7 @@ public static class ServiceRegistration
         services.AddTransient<IImpuestoRepository, ImpuestoRepository>();
         //services.AddTransient<IProductRepository, ProductRepositoryMemory>();
         services.AddTransient<IEstimateDetailRepository, EstimateDetailRepository>(); 
+        services.AddTransient<IEstimateHeaderRepository, EstimateHeaderRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
     }
 }
