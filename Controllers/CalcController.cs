@@ -30,7 +30,7 @@ public class CalcController : ControllerBase
         {
             result=await _unitOfWork.EstimateDetails.AddAsync(ed);
         }
-        return await myCalc.calculateCBM();
+        return await myCalc.calcBatch(entity.estHeader.code);
     }
 
     
