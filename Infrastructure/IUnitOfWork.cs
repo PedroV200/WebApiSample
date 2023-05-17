@@ -21,10 +21,14 @@ public interface IUnitOfWork
     IImpuestoRepository Impuestos {get; }
     IEstimateHeaderRepository EstimateHeaders {get; }
     IEstimateDetailRepository EstimateDetails {get; }
+//<<<<<<< pedro
     ITarifasDepositoRepository TarifasDepositos {get;}
     //ITarifasFwdContRepository TarifasFwdContenedores {get;}
     //ITarifasSeguroRepository TarifasSeguros {get;}
     //ITarifasTerminalRepository TarifasTerminales {get;}
     //ITarifasTteRepository TarifasTransportes {get;}
 
+//=======
+    ITipoDeCambioRepository TiposDeCambio { get; }
+//>>>>>>> main
 }
