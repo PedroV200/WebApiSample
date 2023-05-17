@@ -21,7 +21,12 @@ public class UnitOfWork : IUnitOfWork
                       ICanalRepository CanalRepository,
                       IProveedorRepository ProveedorRepository,
                       IEstimateHeaderRepository EstimateHeaderRepository,
-                      IEstimateDetailRepository EstimateDetailRepository
+                      IEstimateDetailRepository EstimateDetailRepository,
+                      ITarifasDepositoRepository tarifasDepositoRepository
+                      //ITarifasSeguroRepository tarifasSeguroRepository,
+                      //ITarifasTerminalRepository tarifasTerminalRepository,
+                      //ITarifasTteRepository tarifasTteRepository,
+                      //ITarifasFwdContRepository tarifasFwdContRepository
                       )
     {
         Products = productRepository;
@@ -41,9 +46,13 @@ public class UnitOfWork : IUnitOfWork
         Canales = CanalRepository;
         Proveedores = ProveedorRepository;
         EstimateHeaders = EstimateHeaderRepository;
-        EstimateDetails = EstimateDetailRepository;
+        EstimateDetails = EstimateDetailRepository;        
+        TarifasDepositos = tarifasDepositoRepository;
+        //TarifasFwdContenedores = tarifasFwdContRepository;
+        //TarifasSeguros = tarifasSeguroRepository;
+        //TarifasTerminales = tarifasTerminalRepository;
+        //TarifasTransportes = tarifasTteRepository;
     
-
     }
 
     public IProductRepository Products { get; } 
@@ -64,5 +73,10 @@ public class UnitOfWork : IUnitOfWork
     public IEstimateDetailRepository EstimateDetails { get;}
     public ICanalRepository Canales {get;}
     public IProveedorRepository Proveedores {get;}
+    public ITarifasDepositoRepository TarifasDepositos {get;}
+    public ITarifasFwdContRepository TarifasFwdContenedores {get;}
+    public ITarifasSeguroRepository TarifasSeguros {get;}
+    public ITarifasTerminalRepository TarifasTerminales{get;}
+    public ITarifasTteRepository TarifasTransportes {get;}
 
 }
