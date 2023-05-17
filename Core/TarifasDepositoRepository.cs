@@ -16,7 +16,7 @@ public class TarifasDepositoRepository : ITarifasDepositoRepository
     }
     public async Task<int> AddAsync(TarifasDeposito entity)
     {
-        var sql = $"INSERT INTO tarifasdepositos (depo, contype, descarga, ingreso, totalingreso, carga, armado, egreso, totalegreso) VALUES ('{entity.depo}','{entity.contype}','{entity.descarga.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.ingreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.totingreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.carga.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.armado.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.egreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.totegreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}')";
+        var sql = $"INSERT INTO tarifasdepositos (depo, contype, descarga, ingreso, totingreso, carga, armado, egreso, totegreso) VALUES ('{entity.depo}','{entity.contype}','{entity.descarga.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.ingreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.totingreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.carga.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.armado.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.egreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.totegreso.ToString(CultureInfo.CreateSpecificCulture("en-US"))}')";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -50,7 +50,7 @@ public class TarifasDepositoRepository : ITarifasDepositoRepository
     }
     public async Task<IEnumerable<TarifasDeposito>> GetAllAsync()
     {
-        var sql = "SELECT * FROM tarifasdeposito";
+        var sql = "SELECT * FROM tarifasdepositos";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -70,7 +70,7 @@ public class TarifasDepositoRepository : ITarifasDepositoRepository
     }
     public async Task<TarifasDeposito> GetByDepoContTypeAsync(string depo, string cont)
     {
-        var sql = $"SELECT * FROM tarifasdepositos WHERE depo = '{depo} AND contype='{cont}'";
+        var sql = $"SELECT * FROM tarifasdepositos WHERE depo = '{depo}' AND contype='{cont}'";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();

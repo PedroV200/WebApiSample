@@ -26,6 +26,7 @@ public static class ServiceRegistration
         services.AddTransient<IEstimateHeaderRepository, EstimateHeaderRepository>();
 //<<<<<<< pedro
         services.AddTransient<ITarifasDepositoRepository, TarifasDepositoRepository>();
+        services.AddTransient<ITarifasFwdContRepository, TarifasFwdContRepository>();
 //=======
         services.AddTransient<ITipoDeCambioRepository, TipoDeCambioRepository>();
 //>>>>>>> main

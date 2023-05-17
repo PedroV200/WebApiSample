@@ -23,7 +23,7 @@ public interface IUnitOfWork
     IEstimateDetailRepository EstimateDetails {get; }
 //<<<<<<< pedro
     ITarifasDepositoRepository TarifasDepositos {get;}
-    //ITarifasFwdContRepository TarifasFwdContenedores {get;}
+    ITarifasFwdContRepository TarifasFwdContenedores {get;}
     //ITarifasSeguroRepository TarifasSeguros {get;}
     //ITarifasTerminalRepository TarifasTerminales {get;}
     //ITarifasTteRepository TarifasTransportes {get;}
