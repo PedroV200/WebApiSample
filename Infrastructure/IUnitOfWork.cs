@@ -21,4 +21,5 @@ public interface IUnitOfWork
     IImpuestoRepository Impuestos {get; }
     IEstimateHeaderRepository EstimateHeaders {get; }
     IEstimateDetailRepository EstimateDetails {get; }
+    ITipoDeCambioRepository TiposDeCambio { get; }
 }
