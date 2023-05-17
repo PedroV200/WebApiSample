@@ -34,6 +34,15 @@ public class CalcController : ControllerBase
     }
 
     
+   [HttpGet("{id}")]
+    public async Task<Estimate>Post(int id)
+    {
+        Estimate myEst=new Estimate(); 
 
+        myEst.estHeader=await _unitOfWork.EstimateHeaders.GetByIdAsync(id);
+        var result=await _unitOfWork.EstimateDetails.GetAllByCodeAsync(id);
+        myEst.estDetails=result.ToList();
+        return myEst;
+    }
    
 }

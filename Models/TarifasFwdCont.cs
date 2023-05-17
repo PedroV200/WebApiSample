@@ -6,6 +6,8 @@ public class TarifasFwdCont
     public string fwdfrom {get; set;}
     public double costoflete {get; set;}
     public double costoflete040 {get;set;}
-    public double costoflete60 {get;set;}
+    public double costoflete060 {get;set;}
+    public double gastos1   {get;set;}
+    public double gastos2 {get;set;}
  
 }

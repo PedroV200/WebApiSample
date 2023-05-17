@@ -24,11 +24,11 @@ public class UnitOfWork : IUnitOfWork
                       IEstimateHeaderRepository EstimateHeaderRepository,
                       IEstimateDetailRepository EstimateDetailRepository,
 //<<<<<<< pedro
-                      ITarifasDepositoRepository tarifasDepositoRepository
+                      ITarifasDepositoRepository tarifasDepositoRepository,
+                      ITarifasFwdContRepository tarifasFwdContRepository,
                       //ITarifasSeguroRepository tarifasSeguroRepository,
                       //ITarifasTerminalRepository tarifasTerminalRepository,
                       //ITarifasTteRepository tarifasTteRepository,
-                      //ITarifasFwdContRepository tarifasFwdContRepository
 //=======
                       ITipoDeCambioRepository tipoDeCambioRepository
 //>>>>>>> main
@@ -54,7 +54,7 @@ public class UnitOfWork : IUnitOfWork
 //<<<<<<< pedro
         EstimateDetails = EstimateDetailRepository;        
         TarifasDepositos = tarifasDepositoRepository;
-        //TarifasFwdContenedores = tarifasFwdContRepository;
+        TarifasFwdContenedores = tarifasFwdContRepository;
         //TarifasSeguros = tarifasSeguroRepository;
         //TarifasTerminales = tarifasTerminalRepository;
         //TarifasTransportes = tarifasTteRepository;
@@ -87,9 +87,9 @@ public class UnitOfWork : IUnitOfWork
 //<<<<<<< pedro
     public ITarifasDepositoRepository TarifasDepositos {get;}
     public ITarifasFwdContRepository TarifasFwdContenedores {get;}
-    public ITarifasSeguroRepository TarifasSeguros {get;}
-    public ITarifasTerminalRepository TarifasTerminales{get;}
-    public ITarifasTteRepository TarifasTransportes {get;}
+    //public ITarifasSeguroRepository TarifasSeguros {get;}
+    //public ITarifasTerminalRepository TarifasTerminales{get;}
+    //public ITarifasTteRepository TarifasTransportes {get;}
 //=======
     public ITipoDeCambioRepository TiposDeCambio { get; }
 //>>>>>>> main
