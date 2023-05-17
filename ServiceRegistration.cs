@@ -24,6 +24,7 @@ public static class ServiceRegistration
         //services.AddTransient<IProductRepository, ProductRepositoryMemory>();
         services.AddTransient<IEstimateDetailRepository, EstimateDetailRepository>(); 
         services.AddTransient<IEstimateHeaderRepository, EstimateHeaderRepository>();
+        services.AddTransient<ITipoDeCambioRepository, TipoDeCambioRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
     }
 }

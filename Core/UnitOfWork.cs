@@ -1,6 +1,7 @@
 namespace WebApiSample.Core;
 
 using WebApiSample.Infrastructure;
+using WebApiSample.Models;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -21,7 +22,8 @@ public class UnitOfWork : IUnitOfWork
                       ICanalRepository CanalRepository,
                       IProveedorRepository ProveedorRepository,
                       IEstimateHeaderRepository EstimateHeaderRepository,
-                      IEstimateDetailRepository EstimateDetailRepository
+                      IEstimateDetailRepository EstimateDetailRepository,
+                      ITipoDeCambioRepository tipoDeCambioRepository
                       )
     {
         Products = productRepository;
@@ -42,7 +44,7 @@ public class UnitOfWork : IUnitOfWork
         Proveedores = ProveedorRepository;
         EstimateHeaders = EstimateHeaderRepository;
         EstimateDetails = EstimateDetailRepository;
-    
+        TiposDeCambio = tipoDeCambioRepository;
 
     }
 
@@ -64,5 +66,6 @@ public class UnitOfWork : IUnitOfWork
     public IEstimateDetailRepository EstimateDetails { get;}
     public ICanalRepository Canales {get;}
     public IProveedorRepository Proveedores {get;}
+    public ITipoDeCambioRepository TiposDeCambio { get; }
 
 }
