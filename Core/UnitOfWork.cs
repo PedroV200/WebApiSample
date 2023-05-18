@@ -25,6 +25,7 @@ public class UnitOfWork : IUnitOfWork
                       IEstimateDetailRepository EstimateDetailRepository,
                       ITarifasDepositoRepository tarifasDepositoRepository,
                       ITarifasFwdContRepository tarifasFwdContRepository,
+                      IContenedorRepository ContenedorRepository,
                       //ITarifasSeguroRepository tarifasSeguroRepository,
                       //ITarifasTerminalRepository tarifasTerminalRepository,
                       //ITarifasTteRepository tarifasTteRepository,
@@ -54,6 +55,7 @@ public class UnitOfWork : IUnitOfWork
         EstimateDetails = EstimateDetailRepository;        
         TarifasDepositos = tarifasDepositoRepository;
         TarifasFwdContenedores = tarifasFwdContRepository;
+        Contenedores = ContenedorRepository;
         //TarifasSeguros = tarifasSeguroRepository;
         //TarifasTerminales = tarifasTerminalRepository;
         //TarifasTransportes = tarifasTteRepository;
@@ -86,6 +88,7 @@ public class UnitOfWork : IUnitOfWork
 
     public ITarifasDepositoRepository TarifasDepositos {get;}
     public ITarifasFwdContRepository TarifasFwdContenedores {get;}
+    public IContenedorRepository Contenedores {get;}
     //public ITarifasSeguroRepository TarifasSeguros {get;}
     //public ITarifasTerminalRepository TarifasTerminales{get;}
     //public ITarifasTteRepository TarifasTransportes {get;}
