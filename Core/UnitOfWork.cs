@@ -23,16 +23,16 @@ public class UnitOfWork : IUnitOfWork
                       IProveedorRepository ProveedorRepository,
                       IEstimateHeaderRepository EstimateHeaderRepository,
                       IEstimateDetailRepository EstimateDetailRepository,
-//<<<<<<< pedro
                       ITarifasDepositoRepository tarifasDepositoRepository,
                       ITarifasFwdContRepository tarifasFwdContRepository,
                       IContenedorRepository ContenedorRepository,
                       //ITarifasSeguroRepository tarifasSeguroRepository,
                       //ITarifasTerminalRepository tarifasTerminalRepository,
                       //ITarifasTteRepository tarifasTteRepository,
-//=======
-                      ITipoDeCambioRepository tipoDeCambioRepository
-//>>>>>>> main
+                      ITipoDeCambioRepository tipoDeCambioRepository,
+                      ISeguroRepository seguroRepository,
+                      ITarifasTerminalRepository TarifasTerminalRepository
+                        
                       )
     {
         Products = productRepository;
@@ -52,7 +52,6 @@ public class UnitOfWork : IUnitOfWork
         Canales = CanalRepository;
         Proveedores = ProveedorRepository;
         EstimateHeaders = EstimateHeaderRepository;
-//<<<<<<< pedro
         EstimateDetails = EstimateDetailRepository;        
         TarifasDepositos = tarifasDepositoRepository;
         TarifasFwdContenedores = tarifasFwdContRepository;
@@ -60,12 +59,12 @@ public class UnitOfWork : IUnitOfWork
         //TarifasSeguros = tarifasSeguroRepository;
         //TarifasTerminales = tarifasTerminalRepository;
         //TarifasTransportes = tarifasTteRepository;
-    
-//=======
+
         EstimateDetails = EstimateDetailRepository;
         TiposDeCambio = tipoDeCambioRepository;
+        Seguros = seguroRepository;
+        TarifasTerminals = TarifasTerminalRepository;
 
-//>>>>>>> main
     }
 
     public IProductRepository Products { get; } 
@@ -86,15 +85,15 @@ public class UnitOfWork : IUnitOfWork
     public IEstimateDetailRepository EstimateDetails { get;}
     public ICanalRepository Canales {get;}
     public IProveedorRepository Proveedores {get;}
-//<<<<<<< pedro
+
     public ITarifasDepositoRepository TarifasDepositos {get;}
     public ITarifasFwdContRepository TarifasFwdContenedores {get;}
     public IContenedorRepository Contenedores {get;}
     //public ITarifasSeguroRepository TarifasSeguros {get;}
     //public ITarifasTerminalRepository TarifasTerminales{get;}
     //public ITarifasTteRepository TarifasTransportes {get;}
-//=======
     public ITipoDeCambioRepository TiposDeCambio { get; }
-//>>>>>>> main
+    public ISeguroRepository Seguros { get; }
+    public ITarifasTerminalRepository TarifasTerminals { get;}
 
 }
