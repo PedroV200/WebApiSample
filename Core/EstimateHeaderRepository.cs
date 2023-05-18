@@ -16,7 +16,7 @@ public class EstimateHeaderRepository : IEstimateHeaderRepository
     }
     public async Task<int> AddAsync(EstimateHeader entity)
     {
-        var sql = $"INSERT INTO p_estimateheaders (code, own, description, articlefamily, oemsupplier, ivaexcento, dolarbillete, freighttype, freightweight, freightvolume, htimestamp) VALUES ({entity.code},'{entity.own}','{entity.description}','{entity.articlefamily}','{entity.oemsupplier}',{entity.ivaexcento},'{entity.dollarBillete.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.freighttype}','{entity.freightweight.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.freightweight.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.htimestamp}')";
+        var sql = $"INSERT INTO p_estimateheaders (code, own, description, articlefamily, oemsupplier, ivaexcento, dolarbillete, freighttype, freightfwd, seguro, htimestamp) VALUES ({entity.code},'{entity.own}','{entity.description}','{entity.articlefamily}','{entity.oemsupplier}',{entity.ivaexcento},'{entity.dollarBillete.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.freighttype}','{entity.freightfwd}','{entity.seguro.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.htimestamp}')";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -67,8 +67,8 @@ public class EstimateHeaderRepository : IEstimateHeaderRepository
                     ivaexcento = @ivaexcento,
                     dolarbillete = @dolarbillete,
                     freighttype = @freighttype,
-                    freightweight = @freightweight,
-                    freightvolume = @freightvolume,
+                    freightfwd = @freightfwd,
+                    seguro = @seguro,
                     htimestamp = @htimestamp
                              WHERE code = @code";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))

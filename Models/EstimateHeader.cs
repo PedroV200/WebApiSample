@@ -9,7 +9,7 @@ public class EstimateHeader
     public bool ivaexcento {get; set;}
     public double dollarBillete{get;set;}
     public string freighttype {get; set; }
-    public double freightweight {get; set;}
-    public double freightvolume {get; set;}
+    public string freightfwd {get;set;}
+    public double seguro {get;set;}
     public string htimestamp {get; set;}
 }
