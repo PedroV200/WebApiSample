@@ -16,7 +16,11 @@ public class SeguroRepository : ISeguroRepository
     }
     public async Task<int> AddAsync(Seguro entity)
     {
-        var sql = $"INSERT INTO seguros (description) VALUES ('{entity.description}')";
+        var sql = $"INSERT INTO seguros (description, prima, demora, impInterno, sellos ) VALUES ('{entity.description}'," +
+            $"'{entity.prima.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," + // metodo tostring.(CultureInfo()), permite cargar a sql num con .float
+            $"'{entity.demora.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," +
+            $"'{entity.impInterno.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," +
+            $"'{entity.sellos.ToString(CultureInfo.CreateSpecificCulture("en-US"))}')";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
