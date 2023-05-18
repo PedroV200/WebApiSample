@@ -61,28 +61,42 @@ public class calc
     {
         // Cargo la lista del detalle a RAM.
         // Los calculos recorreran esta lista.
+
+        // Trae el Estimate Detail, todo los art que vinculados al header con el codigo "code"
         List<EstimateDetail> estDetails=await getItems(code);
+        // Trae el estimate header identificado con el codigo "code"
         EstimateHeader estHeader=await getHeader(code);
+        // Segun sea el tipo de contenedor indicado en el Estimate Header
+        // busco todos los datos de ese tipo de contenedor en la tala contenedores
         Contenedor estContType= await lookUpCont(estHeader.freighttype);
+        // Segun sea el tipo de contenedor y fowarder origen, busco la tarifa
         TarifasFwdCont tarCont= await lookUpTarifaFleteCont(estHeader);
         // Inicio de la propagacion de calculos.
         pesoTotal=calculatePesoTotal(estDetails);
         cbmTot=calculateCBM(estDetails);
-        CBM_GRAND_TOTAL = sumar_double(cbmTot);     // CELDA K44
-        CANTIDAD_CONTENEDORES = CBM_GRAND_TOTAL / estContType.volume;   //CELDA K45 - > CELDA C10
+        // Total de la lista anterior. Tipicamente K43
+        CBM_GRAND_TOTAL = sumar_double(cbmTot);     // CELDA K43
+        // Calculo la celda K45 que se referencia en C10
+        // Cantidad de contenedores que necesito para cubrir el CBM total.
+        CANTIDAD_CONTENEDORES = CBM_GRAND_TOTAL / estContType.volume;   
         FOB=calculateFOB(estDetails);
         FOB_TOTAL=sumar_double(FOB);    // Celda C3
+        // Segun la cantidad de contenedores para cubirr el CBM TOT y la tarifa para 
+        // para el tipo de contenedor especificado
         TARIFA_FLETE_CONTENEDOR=tarCont.costoflete060*CANTIDAD_CONTENEDORES;  // Usado en formula de CELDA C4
         flete=calculateFlete(FOB);
         SEGURO_TOTAL=FOB_TOTAL*estHeader.seguro;
         seguro=calculateSeguro(FOB);
         CIF=calculateCIF(FOB,flete,seguro);
+        // Este ajustes no hacen nada hoy por que aun no se les dio uso en el Presupuestador.
         valorAduanaDivisa=ajustIncCIF(CIF,ajusteIncluir);
+        // Este Ajuste no tiene efecto. No se encuentra en uso en el presupuestador
         // Uso a valorAduanaDivisa como un temporal.
         valorAduanaDivisa=ajustDedCIF(valorAduanaDivisa,ajusteDeducir);
+        // Traigo el derecho de importacion dado el NCM
         diePorct=await lookUpDie(estDetails);
         derechos=calculateDerechos(valorAduanaDivisa,diePorct);
-        // Busca el te en el NCM. Si no existe, le asigna 3.0%.
+        // Busca la tasa estadistica segun el NCM. Si no existe, le asigna 3.0%.
         tePorct=await resolveTe(estDetails);
         // Para cumplir con el POST que espera una lista de doubles.
         // Paso los CBMs totales.
@@ -185,7 +199,7 @@ public class calc
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
-        for(int i=0; i<cifTmp.Count && i<adjIncTmp.Count; i++)    
+        for(int i=0; i<cifTmp.Count /*&& i<adjIncTmp.Count*/; i++)    
         {
             // ADEVERTENCIA: POPULAR CUANDO APAREZCA FORMULA EN COLUMNA P "Ajuste a Incluir"
             // Por ahora no se hace nada en esa columan. El resultado es el CIF.
@@ -198,7 +212,7 @@ public class calc
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
-        for(int i=0; i<cifTmp.Count && i<adjDedTmp.Count; i++)    
+        for(int i=0; i<cifTmp.Count /*&& i<adjDedTmp.Count*/; i++)    
         {
             // ADEVERTENCIA: POPULAR CUANDO APAREZCA FORMULA EN COLUMNA Q "Ajuste a Deducir"
             // Por ahora no se hace nada en esa columan. El resultado es el CIF.
