@@ -54,7 +54,7 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
     }
     public async Task<IEnumerable<TarifasTerminal>> GetAllAsync()
     {
-        var sql = "SELECT * FROM tarifasterminales";
+        var sql = "SELECT * FROM tarifasterminals";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
