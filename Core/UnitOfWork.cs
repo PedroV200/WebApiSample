@@ -23,15 +23,14 @@ public class UnitOfWork : IUnitOfWork
                       IProveedorRepository ProveedorRepository,
                       IEstimateHeaderRepository EstimateHeaderRepository,
                       IEstimateDetailRepository EstimateDetailRepository,
-//<<<<<<< pedro
                       ITarifasDepositoRepository tarifasDepositoRepository,
                       ITarifasFwdContRepository tarifasFwdContRepository,
                       //ITarifasSeguroRepository tarifasSeguroRepository,
                       //ITarifasTerminalRepository tarifasTerminalRepository,
                       //ITarifasTteRepository tarifasTteRepository,
-//=======
-                      ITipoDeCambioRepository tipoDeCambioRepository
-//>>>>>>> main
+                      ITipoDeCambioRepository tipoDeCambioRepository,
+                      ISeguroRepository seguroRepository
+                        
                       )
     {
         Products = productRepository;
@@ -51,7 +50,6 @@ public class UnitOfWork : IUnitOfWork
         Canales = CanalRepository;
         Proveedores = ProveedorRepository;
         EstimateHeaders = EstimateHeaderRepository;
-//<<<<<<< pedro
         EstimateDetails = EstimateDetailRepository;        
         TarifasDepositos = tarifasDepositoRepository;
         TarifasFwdContenedores = tarifasFwdContRepository;
@@ -59,11 +57,10 @@ public class UnitOfWork : IUnitOfWork
         //TarifasTerminales = tarifasTerminalRepository;
         //TarifasTransportes = tarifasTteRepository;
     
-//=======
         EstimateDetails = EstimateDetailRepository;
         TiposDeCambio = tipoDeCambioRepository;
+        Seguros = seguroRepository;
 
-//>>>>>>> main
     }
 
     public IProductRepository Products { get; } 
@@ -84,14 +81,13 @@ public class UnitOfWork : IUnitOfWork
     public IEstimateDetailRepository EstimateDetails { get;}
     public ICanalRepository Canales {get;}
     public IProveedorRepository Proveedores {get;}
-//<<<<<<< pedro
+
     public ITarifasDepositoRepository TarifasDepositos {get;}
     public ITarifasFwdContRepository TarifasFwdContenedores {get;}
     //public ITarifasSeguroRepository TarifasSeguros {get;}
     //public ITarifasTerminalRepository TarifasTerminales{get;}
     //public ITarifasTteRepository TarifasTransportes {get;}
-//=======
     public ITipoDeCambioRepository TiposDeCambio { get; }
-//>>>>>>> main
+    public ISeguroRepository Seguros { get; }
 
 }
