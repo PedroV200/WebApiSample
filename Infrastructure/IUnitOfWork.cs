@@ -29,4 +29,5 @@ public interface IUnitOfWork
 
     ITipoDeCambioRepository TiposDeCambio { get; }
     ISeguroRepository Seguros { get; }
+    ITarifasTerminalRepository TarifasTerminals { get; }
 }

@@ -1,5 +1,6 @@
 using WebApiSample.Infrastructure;
 using WebApiSample.Core;
+using WebApiSample.Models;
 
 public static class ServiceRegistration
 {
@@ -28,6 +29,7 @@ public static class ServiceRegistration
         services.AddTransient<ITarifasFwdContRepository, TarifasFwdContRepository>();
         services.AddTransient<ITipoDeCambioRepository, TipoDeCambioRepository>();
         services.AddTransient<ISeguroRepository, SeguroRepository>();
+        services.AddTransient<ITarifasTerminalRepository, TarifasTerminalRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
     }
 }
