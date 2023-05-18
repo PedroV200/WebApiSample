@@ -24,6 +24,8 @@ public interface IUnitOfWork
 //<<<<<<< pedro
     ITarifasDepositoRepository TarifasDepositos {get;}
     ITarifasFwdContRepository TarifasFwdContenedores {get;}
+
+    IContenedorRepository Contenedores {get;}
     //ITarifasSeguroRepository TarifasSeguros {get;}
     //ITarifasTerminalRepository TarifasTerminales {get;}
     //ITarifasTteRepository TarifasTransportes {get;}

@@ -19,8 +19,10 @@ public class calc
     List<double> derechos;
     List<double> tePorct;
     double FOB_TOTAL;
-    double FLETE_TOTAL;             // Esto debe tomarse de otra base segun tipo de contenedor
     double SEGURO_TOTAL;
+    double CBM_GRAND_TOTAL;
+    double CANTIDAD_CONTENEDORES;
+    double TARIFA_FLETE_CONTENEDOR;
     public calc(IUnitOfWork unitOfWork)
     {
         _unitOfWork=unitOfWork;
@@ -45,6 +47,13 @@ public class calc
 
     }
 
+        public async Task<EstimateHeader> getHeader(int code)
+    {
+        var result= await _unitOfWork.EstimateHeaders.GetByIdAsync(code);
+        return result;
+
+    }
+
 // Ejecuta el batch de calculos, de izq a derecha conforme el libro de XLS
 // Segun "Presupuestador Argentina, libro N - Duchas Escocesas"
 
@@ -52,23 +61,42 @@ public class calc
     {
         // Cargo la lista del detalle a RAM.
         // Los calculos recorreran esta lista.
+
+        // Trae el Estimate Detail, todo los art que vinculados al header con el codigo "code"
         List<EstimateDetail> estDetails=await getItems(code);
+        // Trae el estimate header identificado con el codigo "code"
+        EstimateHeader estHeader=await getHeader(code);
+        // Segun sea el tipo de contenedor indicado en el Estimate Header
+        // busco todos los datos de ese tipo de contenedor en la tala contenedores
+        Contenedor estContType= await lookUpCont(estHeader.freighttype);
+        // Segun sea el tipo de contenedor y fowarder origen, busco la tarifa
+        TarifasFwdCont tarCont= await lookUpTarifaFleteCont(estHeader);
         // Inicio de la propagacion de calculos.
         pesoTotal=calculatePesoTotal(estDetails);
         cbmTot=calculateCBM(estDetails);
+        // Total de la lista anterior. Tipicamente K43
+        CBM_GRAND_TOTAL = sumar_double(cbmTot);     // CELDA K43
+        // Calculo la celda K45 que se referencia en C10
+        // Cantidad de contenedores que necesito para cubrir el CBM total.
+        CANTIDAD_CONTENEDORES = CBM_GRAND_TOTAL / estContType.volume;   
         FOB=calculateFOB(estDetails);
         FOB_TOTAL=sumar_double(FOB);    // Celda C3
-        // ADVERTENCIA: FALTA LINKEAR "FLETE_TOTAL" CELDA C4 !!!!!
+        // Segun la cantidad de contenedores para cubirr el CBM TOT y la tarifa para 
+        // para el tipo de contenedor especificado
+        TARIFA_FLETE_CONTENEDOR=tarCont.costoflete060*CANTIDAD_CONTENEDORES;  // Usado en formula de CELDA C4
         flete=calculateFlete(FOB);
-        // ADVERTENCIA: FALTA LINKEAR "SEGURO_TOTAL" CELDA C5 !!!!
+        SEGURO_TOTAL=FOB_TOTAL*estHeader.seguro;
         seguro=calculateSeguro(FOB);
         CIF=calculateCIF(FOB,flete,seguro);
+        // Este ajustes no hacen nada hoy por que aun no se les dio uso en el Presupuestador.
         valorAduanaDivisa=ajustIncCIF(CIF,ajusteIncluir);
+        // Este Ajuste no tiene efecto. No se encuentra en uso en el presupuestador
         // Uso a valorAduanaDivisa como un temporal.
         valorAduanaDivisa=ajustDedCIF(valorAduanaDivisa,ajusteDeducir);
+        // Traigo el derecho de importacion dado el NCM
         diePorct=await lookUpDie(estDetails);
         derechos=calculateDerechos(valorAduanaDivisa,diePorct);
-        // Busca el te en el NCM. Si no existe, le asigna 3.0%.
+        // Busca la tasa estadistica segun el NCM. Si no existe, le asigna 3.0%.
         tePorct=await resolveTe(estDetails);
         // Para cumplir con el POST que espera una lista de doubles.
         // Paso los CBMs totales.
@@ -134,7 +162,7 @@ public class calc
         {
             i++;
             // Formula
-            tmp=(d_FOB/FOB_TOTAL)*FLETE_TOTAL; 
+            tmp=(d_FOB/FOB_TOTAL)*TARIFA_FLETE_CONTENEDOR; 
             // Lo agrega a la lista
             tmpL.Add(tmp);   
         }       
@@ -171,7 +199,7 @@ public class calc
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
-        for(int i=0; i<cifTmp.Count && i<adjIncTmp.Count; i++)    
+        for(int i=0; i<cifTmp.Count /*&& i<adjIncTmp.Count*/; i++)    
         {
             // ADEVERTENCIA: POPULAR CUANDO APAREZCA FORMULA EN COLUMNA P "Ajuste a Incluir"
             // Por ahora no se hace nada en esa columan. El resultado es el CIF.
@@ -184,7 +212,7 @@ public class calc
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
-        for(int i=0; i<cifTmp.Count && i<adjDedTmp.Count; i++)    
+        for(int i=0; i<cifTmp.Count /*&& i<adjDedTmp.Count*/; i++)    
         {
             // ADEVERTENCIA: POPULAR CUANDO APAREZCA FORMULA EN COLUMNA Q "Ajuste a Deducir"
             // Por ahora no se hace nada en esa columan. El resultado es el CIF.
@@ -203,6 +231,20 @@ public class calc
             tmpL.Add(myNCM.die);   
         }       
         return tmpL;
+    }
+
+    public async Task<Contenedor> lookUpCont(string type)
+    {
+        Contenedor myCont=await _unitOfWork.Contenedores.GetByTipoContAsync(type);  
+    
+        return myCont;
+    }
+
+    public async Task<TarifasFwdCont> lookUpTarifaFleteCont(EstimateHeader estHeader)
+    {
+        TarifasFwdCont myTarCont=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(estHeader.freightfwd,estHeader.freighttype);  
+    
+        return myTarCont;
     }
     
     // Busca el TE correspondiente en la tabla dado el NCM para cada articulo
