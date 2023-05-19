@@ -64,7 +64,7 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
     }
     public async Task<TarifasTerminal> GetByIdAsync(int id)
     {
-        var sql = $"SELECT * FROM tarifasterminales WHERE id = {id}";
+        var sql = $"SELECT * FROM tarifasterminals WHERE id = {id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -74,7 +74,7 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
     }
     public async Task<TarifasTerminal> GetByDepoContTypeAsync(string depo, string cont)
     {
-        var sql = $"SELECT * FROM tarifasterminales WHERE depo = '{depo}' AND contype='{cont}'";
+        var sql = $"SELECT * FROM tarifasterminals WHERE depo = '{depo}' AND contype='{cont}'";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -87,16 +87,11 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
         //entity.ModifiedOn=DateTime.Now;
         //entity.ModifiedOn=DateTime.Now;
         //var sql = $"UPDATE Products SET Name = '{entity.Name}', Description = '{entity.Description}', Barcode = '{entity.Barcode}', Rate = {entity.Rate}, ModifiedOn = {entity.ModifiedOn}, AddedOn = {entity.AddedOn}  WHERE Id = {entity.Id}";
-        var sql = @"UPDATE tarifasterminales SET 
-                    depo = @depo, 
+        var sql = @"UPDATE tarifasterminals SET 
+                    description = @description, 
                     contype = @contype, 
-                    descarga = @descarga, 
-                    ingreso = @ingreso, 
-                    totingreso = @totingreso,
-                    carga = @carga,
-                    armado = @armado,
-                    egreso = @egreso,
-                    totegreso = @totegreso
+                    gastofijo = @gastofijo, 
+                    gastovariable = @gastovariable
                              WHERE id = @id";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
@@ -111,16 +106,11 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
         //entity.ModifiedOn=DateTime.Now;
         //entity.ModifiedOn=DateTime.Now;
         //var sql = $"UPDATE Products SET Name = '{entity.Name}', Description = '{entity.Description}', Barcode = '{entity.Barcode}', Rate = {entity.Rate}, ModifiedOn = {entity.ModifiedOn}, AddedOn = {entity.AddedOn}  WHERE Id = {entity.Id}";
-        var sql = @"UPDATE tarifasdepositos SET 
-                    depo = @depo, 
+        var sql = @"UPDATE tarifasterminals SET 
+                    description = @description, 
                     contype = @contype, 
-                    descarga = @descarga, 
-                    ingreso = @ingreso, 
-                    totingreso = @totingreso,
-                    carga = @carga,
-                    armado = @armado,
-                    egreso = @egreso,
-                    totegreso = @totegreso
+                    gastofijo = @gastofijo, 
+                    gastovariable = @gastovariable
                              WHERE depo = @depo AND contype=@contype";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {

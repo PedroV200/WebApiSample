@@ -38,7 +38,7 @@ public class TarifasTerminalController : ControllerBase
         {
             return BadRequest();
         }*/
-        var result = await _unitOfWork.TarifasTerminals.UpdateByDepoContTypeAsync(entity);
+        var result = await _unitOfWork.TarifasTerminals.UpdateAsync(entity);
         // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
         if (result == 0)
         {
