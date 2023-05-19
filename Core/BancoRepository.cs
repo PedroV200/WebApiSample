@@ -16,12 +16,20 @@ public class BancoRepository : IBancoRepository
     }
     public async Task<int> AddAsync(Banco entity)
     {
-        var sql = $"INSERT INTO banco (description) VALUES ('{entity.description}')";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
-            var result = await connection.ExecuteAsync(sql, entity);
-            return result;
+            var sql = $"INSERT INTO banco (description) VALUES ('{entity.description}')";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex.Message}");
+            throw;
         }
     }
     public async Task<int> DeleteAsync(int id)
@@ -48,16 +56,25 @@ public class BancoRepository : IBancoRepository
     }
     public async Task<Banco> GetByIdAsync(int id)
     {
-        var sql = $"SELECT * FROM banco WHERE id = {id}";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
-            var result = await connection.QuerySingleOrDefaultAsync<Banco>(sql);
-            return result;
+            var sql = $"SELECT * FROM banco WHERE id = {id}";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QuerySingleOrDefaultAsync<Banco>(sql);
+                return result;
+            }
+        }
+        catch (Exception ex) { 
+            Console.WriteLine($"{ex.Message}");
+            throw;
         }
     }
     public async Task<int> UpdateAsync(Banco entity)
     {
+        try
+        {
         //entity.ModifiedOn=DateTime.Now;
         //entity.ModifiedOn=DateTime.Now;
         //var sql = $"UPDATE Products SET Name = '{entity.Name}', Description = '{entity.Description}', Barcode = '{entity.Barcode}', Rate = {entity.Rate}, ModifiedOn = {entity.ModifiedOn}, AddedOn = {entity.AddedOn}  WHERE Id = {entity.Id}";
@@ -67,6 +84,11 @@ public class BancoRepository : IBancoRepository
             connection.Open();
             var result = await connection.ExecuteAsync(sql, entity);
             return result;
+        }
+        }catch(Exception ex)
+        {
+            Console.Write($"{ex.Message}");
+            throw;
         }
     }
 }
