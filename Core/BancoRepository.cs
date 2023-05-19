@@ -26,14 +26,15 @@ public class BancoRepository : IBancoRepository
                 return result;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine($"{ex.Message}");
-            throw;
+            return -1;
         }
     }
     public async Task<int> DeleteAsync(int id)
     {
+        try
+        {
         var sql = $"DELETE FROM banco WHERE id = {id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
@@ -43,15 +44,25 @@ public class BancoRepository : IBancoRepository
 
             return result;
         }
+        }catch (Exception)
+        {
+            return -1;
+        }
     }
     public async Task<IEnumerable<Banco>> GetAllAsync()
     {
-        var sql = "SELECT * FROM banco";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
+            var sql = "SELECT * FROM banco";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
 
-            return await connection.QueryAsync<Banco>(sql);
+                return await connection.QueryAsync<Banco>(sql);
+            }
+        }catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
         }
     }
     public async Task<Banco> GetByIdAsync(int id)
@@ -66,9 +77,8 @@ public class BancoRepository : IBancoRepository
                 return result;
             }
         }
-        catch (Exception ex) { 
-            Console.WriteLine($"{ex.Message}");
-            throw;
+        catch (Exception ex) {
+            throw new Exception(ex.Message);
         }
     }
     public async Task<int> UpdateAsync(Banco entity)
@@ -85,10 +95,9 @@ public class BancoRepository : IBancoRepository
             var result = await connection.ExecuteAsync(sql, entity);
             return result;
         }
-        }catch(Exception ex)
+        }catch(Exception)
         {
-            Console.Write($"{ex.Message}");
-            throw;
+            return -1;
         }
     }
 }
