@@ -7,7 +7,7 @@ using Dapper;
 using System.Data;
 using System.Globalization; 
 
-public class EstimateDetailRepository : IEstimateDetailRepository
+public class EstimateDetailRepository : IEstimateDetailDBRepository
 {
     private readonly IConfiguration configuration;
     public EstimateDetailRepository(IConfiguration configuration)

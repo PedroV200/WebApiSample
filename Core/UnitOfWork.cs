@@ -21,8 +21,8 @@ public class UnitOfWork : IUnitOfWork
                       IImpuestoRepository ImpuestoRepository,
                       ICanalRepository CanalRepository,
                       IProveedorRepository ProveedorRepository,
-                      IEstimateHeaderRepository EstimateHeaderRepository,
-                      IEstimateDetailRepository EstimateDetailRepository,
+                      IEstimateHeaderDBRepository EstimateHeaderDBRepository,
+                      IEstimateDetailDBRepository EstimateDetailDBRepository,
                       ITarifasDepositoRepository tarifasDepositoRepository,
                       ITarifasFwdContRepository tarifasFwdContRepository,
                       IContenedorRepository ContenedorRepository,
@@ -51,8 +51,8 @@ public class UnitOfWork : IUnitOfWork
         Impuestos = ImpuestoRepository;
         Canales = CanalRepository;
         Proveedores = ProveedorRepository;
-        EstimateHeaders = EstimateHeaderRepository;
-        EstimateDetails = EstimateDetailRepository;        
+        EstimateHeadersDB = EstimateHeaderDBRepository;
+        EstimateDetailsDB = EstimateDetailDBRepository;        
         TarifasDepositos = tarifasDepositoRepository;
         TarifasFwdContenedores = tarifasFwdContRepository;
         Contenedores = ContenedorRepository;
@@ -60,7 +60,7 @@ public class UnitOfWork : IUnitOfWork
         //TarifasTerminales = tarifasTerminalRepository;
         //TarifasTransportes = tarifasTteRepository;
 
-        EstimateDetails = EstimateDetailRepository;
+        //EstimateDetails = EstimateDetailRepository;
         TiposDeCambio = tipoDeCambioRepository;
         Seguros = seguroRepository;
         TarifasTerminals = TarifasTerminalRepository;
@@ -81,8 +81,8 @@ public class UnitOfWork : IUnitOfWork
     public IDepositoRepository Depositos { get; }
     public IPolizaRepository Polizas { get; }
     public IImpuestoRepository Impuestos { get; }
-    public IEstimateHeaderRepository EstimateHeaders { get;}
-    public IEstimateDetailRepository EstimateDetails { get;}
+    public IEstimateHeaderDBRepository EstimateHeadersDB { get;}
+    public IEstimateDetailDBRepository EstimateDetailsDB { get;}
     public ICanalRepository Canales {get;}
     public IProveedorRepository Proveedores {get;}
 
