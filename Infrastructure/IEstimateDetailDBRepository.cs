@@ -4,5 +4,5 @@ namespace WebApiSample.Infrastructure;
 
 public interface IEstimateDetailDBRepository : IGenericRepository<EstimateDetailDB>
 {
-     Task<IEnumerable<EstimateDetailDB>>GetAllByCodeAsync(int code);
+     Task<IEnumerable<EstimateDetailDB>>GetAllByIdEstHeadersync(int code);
 }

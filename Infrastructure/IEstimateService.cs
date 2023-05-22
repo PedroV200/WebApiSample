@@ -4,6 +4,9 @@ namespace WebApiSample.Infrastructure;
 
 public interface IEstimateService : IGenericService<EstimateV2>
 {
+
+    IEstimateDetailService estDetServices {get;}
+
     // CELDA I43
     //public EstimateV2 CalcCantPcsTotal(EstimateV2 est);
     // CELDA J43

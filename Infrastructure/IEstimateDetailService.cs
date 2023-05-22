@@ -4,6 +4,9 @@ namespace WebApiSample.Infrastructure;
 
 public interface IEstimateDetailService : IGenericService<EstimateDetail>
 {
+
+    //IEstimateDetailService estDetServ{get;}
+
     // COL J
     public double CalcPesoTotal(EstimateDetail estD);
     // COL K

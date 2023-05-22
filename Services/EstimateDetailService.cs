@@ -9,6 +9,13 @@ using System.Globalization;
 
 public class EstimateDetailService: IEstimateDetailService
 {
+    //public IEstimateDetailService estDetServ {get;}
+
+    //public EstimateDetailService(IEstimateDetailService estDetService)
+    //{
+    //    estDetServ=estDetService;
+    //}
+
     public double CalcPesoTotal(EstimateDetail estD)
     {
         if(estD.cantpcs!=0)

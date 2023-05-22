@@ -3,7 +3,7 @@ using WebApiSample.Core;
 using WebApiSample.Infrastructure;
 public class EstimateDB
 {
-    public EstimateHeaderDB estHeader {get; set;}
-    public List<EstimateDetailDB> estDetails {get; set;}
+    public EstimateHeaderDB estHeaderDB {get; set;}
+    public List<EstimateDetailDB> estDetailsDB {get; set;}
     
 }

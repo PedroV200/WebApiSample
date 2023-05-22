@@ -28,7 +28,7 @@ public class EstimateHeaderDB
     // USADO EN CALCULO CELDA C5
     
     // Momento de la emision
-    public string hTimeStamp {get; set;}
+    public DateTime hTimeStamp {get; set;}
     // Celda C3
     public double FobGrandTotal {get;set;}
     // Celda C4

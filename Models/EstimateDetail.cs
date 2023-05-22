@@ -11,7 +11,7 @@ public class EstimateDetail
     public int pcsxcaja {get; set;}
     public double fobunit {get; set;}
     public int cantpcs {get; set;}
-    public int code { get; set; }
+    public int idestheader { get; set; }
     // VALORES CALCULADOS
     public double PesoTot {get;set;}
     public double CbmTot {get;set;}

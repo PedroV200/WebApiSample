@@ -9,19 +9,20 @@ using System.Globalization;
 
 public class EstimateService: IEstimateService
 {
-    IEstimateDetailService _estDetServices;
     //IUnitOfWork _unitOfWork;
-    EstimateService(IEstimateDetailService estDetServices/*,IUnitOfWork unitOfWork*/)
+    public EstimateService(IEstimateDetailService estDetailServices/*,IUnitOfWork unitOfWork*/)
     {
-        _estDetServices=estDetServices;
+        estDetServices=estDetailServices;
        // _unitOfWork=unitOfWork;
 
     }
+    public IEstimateDetailService estDetServices {get;}
+
     public EstimateV2 CalcPesoTotal(EstimateV2 est)
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.PesoTot=_estDetServices.CalcPesoTotal(ed);       
+            ed.PesoTot=estDetServices.CalcPesoTotal(ed);       
         }
         return est;
     }
@@ -30,7 +31,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.PesoTot=_estDetServices.CalcFactorProducto(ed, sumFobTotal(est));       
+            ed.PesoTot=estDetServices.CalcFactorProducto(ed, sumFobTotal(est));       
         }
         return est;
     }
@@ -39,7 +40,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.PesoTot=_estDetServices.CalcFob(ed);       
+            ed.PesoTot=estDetServices.CalcFob(ed);       
         }
         return est;
     }

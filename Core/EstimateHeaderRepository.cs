@@ -16,7 +16,10 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
     }
     public async Task<int> AddAsync(EstimateHeaderDB entity)
     {
-        var sql = $"INSERT INTO p_estimateheaders (Description, EstNumber, EstVers, Own, ArticleFamily, OemSupplier, IvaExcento, DolarBillete, FreightType, FreightFwd, FobGrandTotal, FleteTotal, SeguroPorct, Segurop, CantidadContenedores, Pagado, htimestamp) VALUES ('{entity.Description}','{entity.EstNumber},{entity.EstVers},'{entity.Own}','{entity.ArticleFamily}','{entity.OemSupplier}',{entity.IvaExcento},'{entity.DollarBillete.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.FreightType}','{entity.FreightFwd}','{entity.FobGrandTotal.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.FleteTotal.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.Seguro.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.SeguroPorct.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.CantidadContenedores.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.Pagado.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.hTimeStamp}')";
+        // Convierto la fecha al formato que postgre acepta. Le molesta AAAA/MM//dd. Tiene que ser AAAA-MM-dd
+        string tmpString=entity.hTimeStamp.ToString("yyyy-MM-dd hh:mm:ss");
+        //entity.hTimeStamp=DateOnly.FromDateTime(DateTime.Now);
+        var sql = $"INSERT INTO estimateheader (Description, EstNumber, EstVers, Own, ArticleFamily, OemSupplier, IvaExcento, DolarBillete, FreightType, FreightFwd, FobGrandTotal, FleteTotal, SeguroPorct, Seguro, CantidadContenedores, Pagado, htimestamp) VALUES ('{entity.Description}',{entity.EstNumber},{entity.EstVers},'{entity.Own}','{entity.ArticleFamily}','{entity.OemSupplier}',{entity.IvaExcento},'{entity.DollarBillete.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.FreightType}','{entity.FreightFwd}','{entity.FobGrandTotal.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.FleteTotal.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.Seguro.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.SeguroPorct.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.CantidadContenedores.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.Pagado.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{tmpString}')";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -26,7 +29,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
     }
     public async Task<int> DeleteAsync(int Id)
     {
-        var sql = $"DELETE FROM p_estimateheaders WHERE Id = {Id}";
+        var sql = $"DELETE FROM estimateheader WHERE Id = {Id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -56,6 +59,16 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
             return result;
         }
     }
+    public async Task<IEnumerable<EstimateHeaderDB>> GetByEstNumberLastVersAsync(int estNumber)
+    {
+        var sql = $"SELECT * FROM estimateheader WHERE EstNumber=estNumber ORDER BY EstVers DESC";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            return await connection.QueryAsync<EstimateHeaderDB>(sql);
+        }
+    }
+
     public async Task<int> UpdateAsync(EstimateHeaderDB entity)
     {
         

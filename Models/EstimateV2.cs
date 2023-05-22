@@ -30,7 +30,7 @@ public class EstimateV2
     // USADO EN CALCULO CELDA C5
     
     // Momento de la emision
-    public string TimeStamp {get; set;}
+    public DateTime TimeStamp {get; set;}
     // Celda C3
     public double FobGrandTotal {get;set;}
     // Celda C4
@@ -44,5 +44,5 @@ public class EstimateV2
     // CELDA I3 (sumatoria de los AF en AF43)
     public double Pagado{get;set;}
     // Lista de los diferentes items con sus valores dados del Estimate.
-    public IEnumerable<EstimateDetail> EstDetails {get; set;}
+    public List<EstimateDetail> EstDetails {get; set;}
 }

@@ -5,106 +5,150 @@ public class calc
 {
     // Con UnitOfWork accedo a todos los repositorios.
     private IUnitOfWork _unitOfWork;
+    private IEstimateService _estService;
 
-    List<double> cbmTot;
-    List<double> pesoTotal;
-    List<double> FOB;
-    List<double> flete;
-    List<double> seguro;
-    List<double> CIF;
-    List<double> ajusteIncluir;
-    List<double> ajusteDeducir;
-    List<double> valorAduanaDivisa;
-    List<double> diePorct;
-    List<double> derechos;
-    List<double> tePorct;
-    double FOB_TOTAL;
-    double SEGURO_TOTAL;
-    double CBM_GRAND_TOTAL;
-    double CANTIDAD_CONTENEDORES;
-    double TARIFA_FLETE_CONTENEDOR;
-    public calc(IUnitOfWork unitOfWork)
+    public calc(IUnitOfWork unitOfWork, IEstimateService estService)
     {
         _unitOfWork=unitOfWork;
-        cbmTot=new List<double>();
-        pesoTotal=new List<double>();
-        FOB=new List<double>();
-        flete=new List<double>();
-        seguro=new List<double>();
-        CIF=new List<double>();
-        ajusteIncluir=new List<double>();
-        ajusteDeducir=new List<double>();
-        valorAduanaDivisa=new List<double>();
-        diePorct=new List<double>(); 
-        derechos=new List<double>();
-        tePorct=new List<double>();
-    }
-    // Trae todos los item del detalle cuyo header tiene el codigo "code"
-    public async Task<List<EstimateDetail>> getItems(int code)
-    {
-        var result= await _unitOfWork.EstimateDetails.GetAllByCodeAsync(code);
-        return result.Cast<EstimateDetail>().ToList();
-
+        _estService=estService;
     }
 
-        public async Task<EstimateHeader> getHeader(int code)
-    {
-        var result= await _unitOfWork.EstimateHeaders.GetByIdAsync(code);
-        return result;
-
-    }
 
 // Ejecuta el batch de calculos, de izq a derecha conforme el libro de XLS
 // Segun "Presupuestador Argentina, libro N - Duchas Escocesas"
 
-    public async Task<List<double>> calcBatch(int code)
+// Me dan como parametro el numero de presupuesto.
+    public async Task<List<double>> calcBatch(int estNumber)
     {
-        // Cargo la lista del detalle a RAM.
-        // Los calculos recorreran esta lista.
+        List<EstimateHeaderDB> misDetalles=new List<EstimateHeaderDB>();
+        EstimateDB myEstDB=new EstimateDB(); 
+        // Me traigo la ultima version del estNumber pasado como parametro.
+        var result=await _unitOfWork.EstimateHeadersDB.GetByEstNumberLastVersAsync(estNumber);
+        misDetalles=result.ToList();
+        myEstDB.estHeaderDB=misDetalles[0];
+        // Del header obtenido en la consulta anterior, me interesa la PK (Id) por que es FK en 
+        // la tabla estimate details. Busco todos los productos que tengan con FK coincidente con el ID (PK en estHeader)
+        var result1=await _unitOfWork.EstimateDetailsDB.GetAllByIdEstHeadersync(myEstDB.estHeaderDB.Id);
+        // Lo paso a una lista.
+        myEstDB.estDetailsDB=result1.ToList();
 
-        // Trae el Estimate Detail, todo los art que vinculados al header con el codigo "code"
-        List<EstimateDetail> estDetails=await getItems(code);
-        // Trae el estimate header identificado con el codigo "code"
-        EstimateHeader estHeader=await getHeader(code);
-        // Segun sea el tipo de contenedor indicado en el Estimate Header
-        // busco todos los datos de ese tipo de contenedor en la tala contenedores
-        Contenedor estContType= await lookUpCont(estHeader.freighttype);
-        // Segun sea el tipo de contenedor y fowarder origen, busco la tarifa
-        TarifasFwdCont tarCont= await lookUpTarifaFleteCont(estHeader);
-        // Inicio de la propagacion de calculos.
-        pesoTotal=calculatePesoTotal(estDetails);
-        cbmTot=calculateCBM(estDetails);
-        // Total de la lista anterior. Tipicamente K43
-        CBM_GRAND_TOTAL = sumar_double(cbmTot);     // CELDA K43
-        // Calculo la celda K45 que se referencia en C10
-        // Cantidad de contenedores que necesito para cubrir el CBM total.
-        CANTIDAD_CONTENEDORES = CBM_GRAND_TOTAL / estContType.volume;   
-        FOB=calculateFOB(estDetails);
-        FOB_TOTAL=sumar_double(FOB);    // Celda C3
-        // Segun la cantidad de contenedores para cubirr el CBM TOT y la tarifa para 
-        // para el tipo de contenedor especificado
-        TARIFA_FLETE_CONTENEDOR=tarCont.costoflete060*CANTIDAD_CONTENEDORES;  // Usado en formula de CELDA C4
-        flete=calculateFlete(FOB);
-        SEGURO_TOTAL=FOB_TOTAL*estHeader.seguro;
-        seguro=calculateSeguro(FOB);
-        CIF=calculateCIF(FOB,flete,seguro);
-        // Este ajustes no hacen nada hoy por que aun no se les dio uso en el Presupuestador.
-        valorAduanaDivisa=ajustIncCIF(CIF,ajusteIncluir);
-        // Este Ajuste no tiene efecto. No se encuentra en uso en el presupuestador
-        // Uso a valorAduanaDivisa como un temporal.
-        valorAduanaDivisa=ajustDedCIF(valorAduanaDivisa,ajusteDeducir);
-        // Traigo el derecho de importacion dado el NCM
-        diePorct=await lookUpDie(estDetails);
-        derechos=calculateDerechos(valorAduanaDivisa,diePorct);
-        // Busca la tasa estadistica segun el NCM. Si no existe, le asigna 3.0%.
-        tePorct=await resolveTe(estDetails);
-        // Para cumplir con el POST que espera una lista de doubles.
-        // Paso los CBMs totales.
-        return cbmTot;
+
+        // El objeto Estimate que se definio. 
+        EstimateV2 myEstV2=new EstimateV2();
+
+        // Expando el EstimateDB a un EstimateV2
+        myEstV2=transferDataFromDBType(myEstDB);
+
+        // Hago algunas cuentas.
+        myEstV2=_estService.CalcPesoTotal(myEstV2);
+        myEstV2=_estService.CalcFobTotal(myEstV2);
+        myEstV2=_estService.CalcFactorProdTotal(myEstV2);
+        // Fin de las cuentas.
+
+// Tengo que devolver los pesos totales en el POST calculado como parte del ejemplo
+        List<double> pesoTot=new List<double>();
+// Para cada porducto del detalel estraigo el peso Total:
+        foreach(EstimateDetail ed in myEstV2.EstDetails)
+        {
+            pesoTot.Add(ed.PesoTot);
+        }
+// Devuelvo la lista de lo que saque.
+        return pesoTot;
     }
 
+    // Existen 2 clases de Etimate. EstimateDB que es %100 compatible con las tablas
+    // estimateDetail y EstimateHeader en la BD. Y luego esta EstimateV2 que se definio
+    // segun lo charlado.
+    // Esta funcion pasa un EstimateDB a un EstimateV2.
+    public EstimateV2 transferDataFromDBType(EstimateDB estimateDB)
+    {
+        EstimateV2 myEstV2=new EstimateV2();
 
-    public List<double> calculateCBM(List<EstimateDetail> estDetails)
+        // EstimateV2 no cuenta con un header. Los datos del header se encuentran directamente
+        // como propiedades  .....
+        myEstV2.Id=estimateDB.estHeaderDB.Id;
+        myEstV2.Description=estimateDB.estHeaderDB.Description;
+        myEstV2.EstNumber=estimateDB.estHeaderDB.EstNumber;
+        myEstV2.EstVers=estimateDB.estHeaderDB.EstNumber;
+        myEstV2.Owner=estimateDB.estHeaderDB.Own;
+        myEstV2.ArticleFamily=estimateDB.estHeaderDB.ArticleFamily;
+        myEstV2.OemSupplier=estimateDB.estHeaderDB.OemSupplier;
+        myEstV2.IvaExcento=estimateDB.estHeaderDB.IvaExcento;
+        myEstV2.DollarBillete=estimateDB.estHeaderDB.DollarBillete;
+        myEstV2.FreightType=estimateDB.estHeaderDB.FreightType;
+        myEstV2.FreightFwd=estimateDB.estHeaderDB.FreightFwd;
+        myEstV2.TimeStamp=estimateDB.estHeaderDB.hTimeStamp;
+        myEstV2.FobGrandTotal=estimateDB.estHeaderDB.FobGrandTotal;
+        myEstV2.FleteTotal=estimateDB.estHeaderDB.FleteTotal;
+        myEstV2.Seguro=estimateDB.estHeaderDB.Seguro;
+        myEstV2.Seguroporct=estimateDB.estHeaderDB.SeguroPorct;
+        myEstV2.CantidadContenedores=estimateDB.estHeaderDB.CantidadContenedores;
+        myEstV2.Pagado=estimateDB.estHeaderDB.Pagado;
+
+        // En el caso de los Estimate detail, la DB tiene solo lo datos que se cuardaran
+        // Este tipo se llama EstimateDetailDB. Mientras que el EstimateV2 definido usa el tipo EstimateDetail
+        // que contiene no solo los datos que contiene "EstimateDetailDB" sino ademas provicion para los datos
+        // calculados. Estos no se guardan en la base. De ahi la existencia de 2 clases "EstimateDetail"
+        foreach(EstimateDetailDB edb in estimateDB.estDetailsDB)
+        {
+            EstimateDetail tmp=new EstimateDetail();
+            tmp.id=edb.Id;
+            tmp.modelo=edb.Modelo;
+            tmp.ncm=edb.Ncm;
+            tmp.pesounitxcaja=edb.PesoUnitxCaja;
+            tmp.cbmxcaja=edb.CbmxCaja;
+            tmp.pcsxcaja=edb.PcsxCaja;
+            tmp.fobunit=edb.FobUnit;
+            tmp.cantpcs=edb.CantPcs;
+            tmp.idestheader=edb.IdEstHeader;
+            myEstV2.EstDetails.Add(tmp);
+        }
+        return myEstV2;
+    }
+// La inversa de la anterior. Pasa un EstimateV2 a un EstimateDB.
+    public EstimateDB transferDataToDBType(EstimateV2 myEstV2)
+    {
+         EstimateDB estimateDB=new EstimateDB();
+
+
+        estimateDB.estHeaderDB.Id=myEstV2.Id;
+        estimateDB.estHeaderDB.Description=myEstV2.Description;
+        estimateDB.estHeaderDB.EstNumber=myEstV2.EstNumber;
+        estimateDB.estHeaderDB.EstNumber=myEstV2.EstVers;
+        estimateDB.estHeaderDB.Own=myEstV2.Owner;
+        estimateDB.estHeaderDB.ArticleFamily=myEstV2.ArticleFamily;
+        estimateDB.estHeaderDB.OemSupplier=myEstV2.OemSupplier;
+        estimateDB.estHeaderDB.IvaExcento=myEstV2.IvaExcento;
+        estimateDB.estHeaderDB.DollarBillete=myEstV2.DollarBillete;
+        estimateDB.estHeaderDB.FreightType=myEstV2.FreightType;
+        estimateDB.estHeaderDB.FreightFwd=myEstV2.FreightFwd;
+        estimateDB.estHeaderDB.hTimeStamp=myEstV2.TimeStamp;
+        estimateDB.estHeaderDB.FobGrandTotal=myEstV2.FobGrandTotal;
+        estimateDB.estHeaderDB.FleteTotal=myEstV2.FleteTotal;
+        estimateDB.estHeaderDB.Seguro=myEstV2.Seguro;
+        estimateDB.estHeaderDB.SeguroPorct=myEstV2.Seguroporct;
+        estimateDB.estHeaderDB.CantidadContenedores=myEstV2.CantidadContenedores;
+        estimateDB.estHeaderDB.Pagado=myEstV2.Pagado;
+
+// Aqui se descartan los calculos. Solo se transfieren los valores necesarios para los mismos
+        foreach(EstimateDetail edb in myEstV2.EstDetails)
+        {
+            EstimateDetailDB tmp=new EstimateDetailDB();
+            tmp.Id=edb.id;
+            tmp.Modelo=edb.modelo;
+            tmp.Ncm=edb.ncm;
+            tmp.PesoUnitxCaja=edb.pesounitxcaja;
+            tmp.CbmxCaja=edb.cbmxcaja;
+            tmp.PcsxCaja=edb.pcsxcaja;
+            tmp.FobUnit=edb.fobunit;
+            tmp.CantPcs=edb.cantpcs;
+            tmp.IdEstHeader=edb.idestheader;
+            estimateDB.estDetailsDB.Add(tmp);
+        }
+        return estimateDB;       
+    }
+
+ /*   public List<double> calculateCBM(List<EstimateDetail> estDetails)
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
@@ -199,7 +243,7 @@ public class calc
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
-        for(int i=0; i<cifTmp.Count /*&& i<adjIncTmp.Count*/; i++)    
+        for(int i=0; i<cifTmp.Count /*&& i<adjIncTmp.Count; i++)    
         {
             // ADEVERTENCIA: POPULAR CUANDO APAREZCA FORMULA EN COLUMNA P "Ajuste a Incluir"
             // Por ahora no se hace nada en esa columan. El resultado es el CIF.
@@ -212,7 +256,7 @@ public class calc
     {
         double tmp=0;
         List<double> tmpL=new List<double>();
-        for(int i=0; i<cifTmp.Count /*&& i<adjDedTmp.Count*/; i++)    
+        for(int i=0; i<cifTmp.Count /*&& i<adjDedTmp.Count; i++)    
         {
             // ADEVERTENCIA: POPULAR CUANDO APAREZCA FORMULA EN COLUMNA Q "Ajuste a Deducir"
             // Por ahora no se hace nada en esa columan. El resultado es el CIF.
@@ -240,7 +284,7 @@ public class calc
         return myCont;
     }
 
-    public async Task<TarifasFwdCont> lookUpTarifaFleteCont(EstimateHeader estHeader)
+    public async Task<TarifasFwdCont> lookUpTarifaFleteCont(EstimateHeaderDB estHeader)
     {
         TarifasFwdCont myTarCont=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(estHeader.freightfwd,estHeader.freighttype);  
     
@@ -289,5 +333,5 @@ public class calc
             tmp+=d;
         }
         return tmp;
-    }
+    }*/
 }
