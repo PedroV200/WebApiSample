@@ -18,9 +18,9 @@ public class EstimateHeaderController : ControllerBase
     }
 
     [HttpPost(Name = "Post Estimate Header")]
-    public async Task<IActionResult>Post(EstimateHeader entity)
+    public async Task<IActionResult>Post(EstimateHeaderDB entity)
     {
-        var result=await _unitOfWork.EstimateHeaders.AddAsync(entity);
+        var result=await _unitOfWork.EstimateHeadersDB.AddAsync(entity);
         // Cero filas afectada ... we have problems.
         if(result==0)
         {
@@ -30,15 +30,15 @@ public class EstimateHeaderController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("{code}")]
-    public async Task<IActionResult>Put(int code,EstimateHeader entity)
+    [HttpPut("{Id}")]
+    public async Task<IActionResult>Put(int Id,EstimateHeaderDB entity)
     {
         // Controlo que el id sea consistente.
-        if(code!=entity.code)
+        if(Id!=entity.Id)
         {
             return BadRequest();
         }
-        var result=await _unitOfWork.EstimateHeaders.UpdateAsync(entity);
+        var result=await _unitOfWork.EstimateHeadersDB.UpdateAsync(entity);
         // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
         if(result==0)
         {
@@ -48,10 +48,10 @@ public class EstimateHeaderController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{code}")]
-    public async Task<IActionResult>Delete(int code)
+    [HttpDelete("{Id}")]
+    public async Task<IActionResult>Delete(int Id)
     {
-        var result=await _unitOfWork.EstimateHeaders.DeleteAsync(code);
+        var result=await _unitOfWork.EstimateHeadersDB.DeleteAsync(Id);
         // Ninguna fila afectada .... El id no existe
         if(result==0)
         {
@@ -61,10 +61,10 @@ public class EstimateHeaderController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{code}")]
-    public async Task<ActionResult<EstimateHeader>> Get(int code)
+    [HttpGet("{Id}")]
+    public async Task<ActionResult<EstimateHeaderDB>> Get(int Id)
     {
-        var result=await _unitOfWork.EstimateHeaders.GetByIdAsync(code);
+        var result=await _unitOfWork.EstimateHeadersDB.GetByIdAsync(Id);
         if(result==null)
         {
             return NotFound();
@@ -76,8 +76,8 @@ public class EstimateHeaderController : ControllerBase
     }
 
     [HttpGet(Name = "GetAll Estimate Header")]
-    public async Task<IEnumerable<EstimateHeader>> GetAll()
+    public async Task<IEnumerable<EstimateHeaderDB>> GetAll()
     {
-        return await _unitOfWork.EstimateHeaders.GetAllAsync();
+        return await _unitOfWork.EstimateHeadersDB.GetAllAsync();
     }
 }

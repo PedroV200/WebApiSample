@@ -19,8 +19,8 @@ public interface IUnitOfWork
     IDepositoRepository Depositos { get; }
     IPolizaRepository Polizas {get; }
     IImpuestoRepository Impuestos {get; }
-    IEstimateHeaderRepository EstimateHeaders {get; }
-    IEstimateDetailRepository EstimateDetails {get; }
+    IEstimateHeaderDBRepository EstimateHeadersDB {get; }
+    IEstimateDetailDBRepository EstimateDetailsDB {get; }
     ITarifasDepositoRepository TarifasDepositos {get;}
     ITarifasFwdContRepository TarifasFwdContenedores {get;}
 

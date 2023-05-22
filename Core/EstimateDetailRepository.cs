@@ -7,16 +7,16 @@ using Dapper;
 using System.Data;
 using System.Globalization; 
 
-public class EstimateDetailRepository : IEstimateDetailRepository
+public class EstimateDetailDBRepository : IEstimateDetailDBRepository
 {
     private readonly IConfiguration configuration;
-    public EstimateDetailRepository(IConfiguration configuration)
+    public EstimateDetailDBRepository(IConfiguration configuration)
     {
         this.configuration = configuration;
     }
-    public async Task<int> AddAsync(EstimateDetail entity)
+    public async Task<int> AddAsync(EstimateDetailDB entity)
     {
-        var sql = $"INSERT INTO p_estimatedetails (modelo, ncm, pesounitxcaja, cbmxcaja, pcsxcaja, fobunit, cantpcs, code) VALUES ('{entity.modelo}','{entity.ncm}','{entity.pesounitxcaja.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.cbmxcaja.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',{entity.pcsxcaja},'{entity.fobunit.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',{entity.cantpcs},{entity.code})";
+        var sql = $"INSERT INTO estimatedetails (Modelo, Ncm, PesoUnitxCaja, CbmxCaja, PcsxCaja, FobUnit, CantPcs, IdEstHeader) VALUES ('{entity.Modelo}','{entity.Ncm}','{entity.PesoUnitxCaja.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.CbmxCaja.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',{entity.PcsxCaja},'{entity.FobUnit.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',{entity.CantPcs},{entity.IdEstHeader})";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -24,9 +24,9 @@ public class EstimateDetailRepository : IEstimateDetailRepository
             return result;
         }
     }
-    public async Task<int> DeleteAsync(int id)
+    public async Task<int> DeleteAsync(int Id)
     {
-        var sql = $"DELETE FROM p_estimatedetails WHERE id = {id}";
+        var sql = $"DELETE FROM estimatedetails WHERE Id = {Id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -36,41 +36,41 @@ public class EstimateDetailRepository : IEstimateDetailRepository
             return result;
         }
     }
-    public async Task<IEnumerable<EstimateDetail>>GetAllAsync()
+    public async Task<IEnumerable<EstimateDetailDB>>GetAllAsync()
     {
-        var sql = "SELECT * FROM p_estimatedetails";
+        var sql = "SELECT * FROM estimatedetails";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
 
-            return await connection.QueryAsync<EstimateDetail>(sql);
+            return await connection.QueryAsync<EstimateDetailDB>(sql);
         }
     }
-        public async Task<IEnumerable<EstimateDetail>>GetAllByCodeAsync(int code)
+        public async Task<IEnumerable<EstimateDetailDB>>GetAllByIdEstHeadersync(int Id)
     {
-        var sql = $"SELECT * FROM p_estimatedetails WHERE code={code}";
+        var sql = $"SELECT * FROM estimatedetails WHERE IdEstHeader={Id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
 
-            return await connection.QueryAsync<EstimateDetail>(sql);
+            return await connection.QueryAsync<EstimateDetailDB>(sql);
         }
     }
 
-    public async Task<EstimateDetail> GetByIdAsync(int id)
+    public async Task<EstimateDetailDB> GetByIdAsync(int Id)
     {
-        var sql = $"SELECT * FROM p_estimatedetails WHERE id = {id}";
+        var sql = $"SELECT * FROM estimatedetails WHERE Id = {Id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
-            var result = await connection.QuerySingleOrDefaultAsync<EstimateDetail>(sql);
+            var result = await connection.QuerySingleOrDefaultAsync<EstimateDetailDB>(sql);
             return result;
         }
     }
-    public async Task<int> UpdateAsync(EstimateDetail entity)
+    public async Task<int> UpdateAsync(EstimateDetailDB entity)
     {
         
-        var sql = @"UPDATE p_estimatedetails SET 
+        var sql = @"UPDATE estimatedetails SET 
                     modelo = @modelo, 
                     ncm = @ncm, 
                     pesounitxcaja = @pesounitxcaja, 
@@ -78,7 +78,7 @@ public class EstimateDetailRepository : IEstimateDetailRepository
                     pcsxcaja = @pcsxcaja,
                     fobunit = @fobunit,
                     cantpcs = @cantpcs,
-                    code = @code
+                    IdEstHeader = @IdEstHeader
                              WHERE id = @id";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {

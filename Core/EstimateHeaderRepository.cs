@@ -7,16 +7,19 @@ using Dapper;
 using System.Data;
 using System.Globalization; 
 
-public class EstimateHeaderRepository : IEstimateHeaderRepository
+public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
 {
     private readonly IConfiguration configuration;
-    public EstimateHeaderRepository(IConfiguration configuration)
+    public EstimateHeaderDBRepository(IConfiguration configuration)
     {
         this.configuration = configuration;
     }
-    public async Task<int> AddAsync(EstimateHeader entity)
+    public async Task<int> AddAsync(EstimateHeaderDB entity)
     {
-        var sql = $"INSERT INTO p_estimateheaders (code, own, description, articlefamily, oemsupplier, ivaexcento, dolarbillete, freighttype, freightfwd, seguro, htimestamp) VALUES ({entity.code},'{entity.own}','{entity.description}','{entity.articlefamily}','{entity.oemsupplier}',{entity.ivaexcento},'{entity.dollarBillete.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.freighttype}','{entity.freightfwd}','{entity.seguro.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.htimestamp}')";
+        // Convierto la fecha al formato que postgre acepta. Le molesta AAAA/MM//dd. Tiene que ser AAAA-MM-dd
+        string tmpString=entity.hTimeStamp.ToString("yyyy-MM-dd hh:mm:ss");
+        //entity.hTimeStamp=DateOnly.FromDateTime(DateTime.Now);
+        var sql = $"INSERT INTO estimateheader (Description, EstNumber, EstVers, Own, ArticleFamily, OemSupplier, IvaExcento, DolarBillete, FreightType, FreightFwd, FobGrandTotal, FleteTotal, SeguroPorct, Seguro, CantidadContenedores, Pagado, htimestamp) VALUES ('{entity.Description}',{entity.EstNumber},{entity.EstVers},'{entity.Own}','{entity.ArticleFamily}','{entity.OemSupplier}',{entity.IvaExcento},'{entity.DollarBillete.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.FreightType}','{entity.FreightFwd}','{entity.FobGrandTotal.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.FleteTotal.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.Seguro.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.SeguroPorct.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.CantidadContenedores.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{entity.Pagado.ToString(CultureInfo.CreateSpecificCulture("en-US"))}','{tmpString}')";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -24,9 +27,9 @@ public class EstimateHeaderRepository : IEstimateHeaderRepository
             return result;
         }
     }
-    public async Task<int> DeleteAsync(int code)
+    public async Task<int> DeleteAsync(int Id)
     {
-        var sql = $"DELETE FROM p_estimateheaders WHERE code = {code}";
+        var sql = $"DELETE FROM estimateheader WHERE Id = {Id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -36,41 +39,60 @@ public class EstimateHeaderRepository : IEstimateHeaderRepository
             return result;
         }
     }
-    public async Task<IEnumerable<EstimateHeader>>GetAllAsync()
+    public async Task<IEnumerable<EstimateHeaderDB>>GetAllAsync()
     {
-        var sql = "SELECT * FROM p_estimateheaders";
+        var sql = "SELECT * FROM estimateheader";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
 
-            return await connection.QueryAsync<EstimateHeader>(sql);
+            return await connection.QueryAsync<EstimateHeaderDB>(sql);
         }
     }
-    public async Task<EstimateHeader> GetByIdAsync(int code)
+    public async Task<EstimateHeaderDB> GetByIdAsync(int Id)
     {
-        var sql = $"SELECT * FROM p_estimateheaders WHERE code = {code}";
+        var sql = $"SELECT * FROM estimateheader WHERE Id = {Id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
-            var result = await connection.QuerySingleOrDefaultAsync<EstimateHeader>(sql);
+            var result = await connection.QuerySingleOrDefaultAsync<EstimateHeaderDB>(sql);
             return result;
         }
     }
-    public async Task<int> UpdateAsync(EstimateHeader entity)
+    public async Task<IEnumerable<EstimateHeaderDB>> GetByEstNumberLastVersAsync(int estNumber)
+    {
+        var sql = $"SELECT * FROM estimateheader WHERE EstNumber=estNumber ORDER BY EstVers DESC";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            return await connection.QueryAsync<EstimateHeaderDB>(sql);
+        }
+    }
+
+    public async Task<int> UpdateAsync(EstimateHeaderDB entity)
     {
         
-        var sql = @"UPDATE p_estimateheaders SET 
-                    own = @own, 
+        var sql = @"UPDATE estimateheader SET 
+                   
+
                     description = @description, 
-                    articlefamily = @articlefamily, 
-                    oemsupplier = @oemsupplier, 
-                    ivaexcento = @ivaexcento,
-                    dolarbillete = @dolarbillete,
-                    freighttype = @freighttype,
-                    freightfwd = @freightfwd,
-                    seguro = @seguro,
-                    htimestamp = @htimestamp
-                             WHERE code = @code";
+                    EstNumber = @EstNumber,
+                    EstVers = @EstVers,
+                    own = @own, 
+                    ArticleFamily = @articlefamily, 
+                    OemSupplier = @OemSupplier, 
+                    IvaExcento = @IvaExcento,
+                    DolarBillete = @DolarBillete,
+                    FreightType = @FreightType,
+                    FreightFwd = @FreightFwd,
+                    FobGrandTotal = @FobGrandTotal,
+                    FleteTotal = @FleteTotal,
+                    SeguroPorct = @SeguroPorct,
+                    Seguro = @Seguro,
+                    CantidadContenedores = @CantidadContenedores,
+                    Pagado = @Pagado,
+                    hTimeStamp = @hTimeStamp
+                             WHERE Id = @Id";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();

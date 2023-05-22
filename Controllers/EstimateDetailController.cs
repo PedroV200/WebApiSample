@@ -18,9 +18,9 @@ public class EstimateDetailController : ControllerBase
     }
 
     [HttpPost(Name = "Post EstemateDetails")]
-    public async Task<IActionResult> Post(EstimateDetail entity)
+    public async Task<IActionResult> Post(EstimateDetailDB entity)
     {
-        var result = await _unitOfWork.EstimateDetails.AddAsync(entity);
+        var result = await _unitOfWork.EstimateDetailsDB.AddAsync(entity);
         // Cero filas afectada ... we have problems.
         if (result == 0)
         {
@@ -31,14 +31,14 @@ public class EstimateDetailController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, EstimateDetail entity)
+    public async Task<IActionResult> Put(int id, EstimateDetailDB entity)
     {
         // Controlo que el id sea consistente.
-        if (id != entity.id)
+        if (id != entity.Id)
         {
             return BadRequest();
         }
-        var result = await _unitOfWork.EstimateDetails.UpdateAsync(entity);
+        var result = await _unitOfWork.EstimateDetailsDB.UpdateAsync(entity);
         // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
         if (result == 0)
         {
@@ -51,7 +51,7 @@ public class EstimateDetailController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _unitOfWork.EstimateDetails.DeleteAsync(id);
+        var result = await _unitOfWork.EstimateDetailsDB.DeleteAsync(id);
         // Ninguna fila afectada .... El id no existe
         if (result == 0)
         {
@@ -62,9 +62,9 @@ public class EstimateDetailController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<EstimateDetail>> Get(int id)
+    public async Task<ActionResult<EstimateDetailDB>> Get(int id)
     {
-        var result = await _unitOfWork.EstimateDetails.GetByIdAsync(id);
+        var result = await _unitOfWork.EstimateDetailsDB.GetByIdAsync(id);
         if (result == null)
         {
             return NotFound();
@@ -76,9 +76,9 @@ public class EstimateDetailController : ControllerBase
     }
 
     [HttpGet(Name = "GetAll EstemateDetails")]
-    public async Task<IEnumerable<EstimateDetail>> GetAll()
+    public async Task<IEnumerable<EstimateDetailDB>> GetAll()
     {
-        return await _unitOfWork.EstimateDetails.GetAllAsync();
+        return await _unitOfWork.EstimateDetailsDB.GetAllAsync();
     }
 }
 

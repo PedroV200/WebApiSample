@@ -23,14 +23,16 @@ public static class ServiceRegistration
         services.AddTransient<IPolizaRepository, PolizaRepository>();
         services.AddTransient<IImpuestoRepository, ImpuestoRepository>();
         //services.AddTransient<IProductRepository, ProductRepositoryMemory>();
-        services.AddTransient<IEstimateDetailRepository, EstimateDetailRepository>(); 
-        services.AddTransient<IEstimateHeaderRepository, EstimateHeaderRepository>();
+        services.AddTransient<IEstimateDetailDBRepository, EstimateDetailDBRepository>(); 
+        services.AddTransient<IEstimateHeaderDBRepository, EstimateHeaderDBRepository>();
         services.AddTransient<ITarifasDepositoRepository, TarifasDepositoRepository>();
         services.AddTransient<ITarifasFwdContRepository, TarifasFwdContRepository>();
         services.AddTransient<IContenedorRepository, ContenedorRepository>();
         services.AddTransient<ITipoDeCambioRepository, TipoDeCambioRepository>();
         services.AddTransient<ISeguroRepository, SeguroRepository>();
         services.AddTransient<ITarifasTerminalRepository, TarifasTerminalRepository>();
+        services.AddTransient<IEstimateService,EstimateService>();
+        services.AddTransient<IEstimateDetailService, EstimateDetailService>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
     }
 }
