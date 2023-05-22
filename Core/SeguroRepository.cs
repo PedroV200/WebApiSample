@@ -16,16 +16,23 @@ public class SeguroRepository : ISeguroRepository
     }
     public async Task<int> AddAsync(Seguro entity)
     {
-        var sql = $"INSERT INTO seguros (description, prima, demora, impInterno, sellos ) VALUES ('{entity.description}'," +
-            $"'{entity.prima.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," + // metodo tostring.(CultureInfo()), permite cargar a sql num con .float
-            $"'{entity.demora.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," +
-            $"'{entity.impInterno.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," +
-            $"'{entity.sellos.ToString(CultureInfo.CreateSpecificCulture("en-US"))}')";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
-            var result = await connection.ExecuteAsync(sql, entity);
-            return result;
+            var sql = $"INSERT INTO seguros (description, prima, demora, impInterno, sellos ) VALUES ('{entity.description}'," +
+                $"'{entity.prima.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," + // metodo tostring.(CultureInfo()), permite cargar a sql num con .float
+                $"'{entity.demora.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," +
+                $"'{entity.impInterno.ToString(CultureInfo.CreateSpecificCulture("en-US"))}'," +
+                $"'{entity.sellos.ToString(CultureInfo.CreateSpecificCulture("en-US"))}')";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
         }
     }
     public async Task<int> DeleteAsync(int id)
@@ -33,50 +40,78 @@ public class SeguroRepository : ISeguroRepository
         var sql = $"DELETE FROM seguros WHERE id = {id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
-            connection.Open();
+            try
+            {
+                connection.Open();
 
-            var result = await connection.ExecuteAsync(sql);
+                var result = await connection.ExecuteAsync(sql);
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
     public async Task<IEnumerable<Seguro>> GetAllAsync()
     {
-        var sql = "SELECT * FROM seguros";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
+            var sql = "SELECT * FROM seguros";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
 
-            return await connection.QueryAsync<Seguro>(sql);
+                return await connection.QueryAsync<Seguro>(sql);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
         }
     }
     public async Task<Seguro> GetByIdAsync(int id)
     {
-        var sql = $"SELECT * FROM seguros WHERE id = {id}";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
-            var result = await connection.QuerySingleOrDefaultAsync<Seguro>(sql);
-            return result;
+            var sql = $"SELECT * FROM seguros WHERE id = {id}";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QuerySingleOrDefaultAsync<Seguro>(sql);
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
         }
     }
     public async Task<int> UpdateAsync(Seguro entity)
     {
-        //entity.ModifiedOn=DateTime.Now;
-        //entity.ModifiedOn=DateTime.Now;
-        //var sql = $"UPDATE Products SET Name = '{entity.Name}', Description = '{entity.Description}', Barcode = '{entity.Barcode}', Rate = {entity.Rate}, ModifiedOn = {entity.ModifiedOn}, AddedOn = {entity.AddedOn}  WHERE Id = {entity.Id}";
-        var sql = @"UPDATE seguros SET
-                           description = @description,
-                           prima = @prima,
-                           demora = @demora,
-                           impInterno = @impInterno,
-                           sellos = @sellos
-                    WHERE id = @id";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
-            var result = await connection.ExecuteAsync(sql, entity);
-            return result;
+            //entity.ModifiedOn=DateTime.Now;
+            //entity.ModifiedOn=DateTime.Now;
+            //var sql = $"UPDATE Products SET Name = '{entity.Name}', Description = '{entity.Description}', Barcode = '{entity.Barcode}', Rate = {entity.Rate}, ModifiedOn = {entity.ModifiedOn}, AddedOn = {entity.AddedOn}  WHERE Id = {entity.Id}";
+            var sql = @"UPDATE seguros SET
+                               description = @description,
+                               prima = @prima,
+                               demora = @demora,
+                               impInterno = @impInterno,
+                               sellos = @sellos
+                        WHERE id = @id";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
         }
     }
 }

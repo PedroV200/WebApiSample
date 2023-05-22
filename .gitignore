@@ -3,3 +3,4 @@ obj
 WeatherForecast.cs
 .vscode
 .vs
+node_modules

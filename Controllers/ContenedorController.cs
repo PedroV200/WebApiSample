@@ -20,37 +20,52 @@ public class ContenedorController : ControllerBase
     [HttpPost(Name = "Post Contenedor")]
     public async Task<IActionResult>Post(Contenedor entity)
     {
-        var result=await _unitOfWork.Contenedores.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.Contenedores.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
+        }catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
-        // Ok
-        return Ok();
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult>Put(int id,Contenedor entity)
     {
-        // Controlo que el id sea consistente.
-        //if(id!=entity.id)
-        //{
-            //return BadRequest();
-        //}
-        var result=await _unitOfWork.Contenedores.UpdateAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if(result==0)
+        try
         {
-            return NotFound();
+            // Controlo que el id sea consistente.
+            //if(id!=entity.id)
+            //{
+                //return BadRequest();
+            //}
+            var result=await _unitOfWork.Contenedores.UpdateAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
+        }catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
     }
 
     [HttpDelete("{type}")]
     public async Task<IActionResult>Delete(string type)
     {
+        try
+        {
+
         var result=await _unitOfWork.Contenedores.DeleteByTipoContAsync(type);
         // Ninguna fila afectada .... El id no existe
         if(result==0)
@@ -59,25 +74,42 @@ public class ContenedorController : ControllerBase
         }
         // Si llegue hasta aca, OK
         return Ok(result);
+        }catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{type}")]
     public async Task<ActionResult<Contenedor>> Get(string type)
     {
-        var result=await _unitOfWork.Contenedores.GetByTipoContAsync(type);
-        if(result==null)
+        try
         {
-            return NotFound();
-        }
-        else
+            var result=await _unitOfWork.Contenedores.GetByTipoContAsync(type);
+            if(result==null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return result;
+            }
+        }catch(Exception ex)
         {
-            return result;
+            return BadRequest(ex.Message);
         }
     }
 
     [HttpGet(Name = "GetAll Contenedor")]
     public async Task<IEnumerable<Contenedor>> GetAll()
     {
-        return await _unitOfWork.Contenedores.GetAllAsync();
+        try
+        {
+            return await _unitOfWork.Contenedores.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }

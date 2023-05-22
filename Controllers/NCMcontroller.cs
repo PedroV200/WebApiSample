@@ -20,51 +20,79 @@ public class NCMcontroller : ControllerBase
     [HttpPost(Name = "Post NCM")]
     public async Task<IActionResult>Post(NCM entity)
     {
-        var result=await _unitOfWork.NCMs.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.NCMs.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
         }
-        // Ok
-        return Ok();
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("{code}")]
     public async Task<IActionResult>Put(string code,NCM entity)
     {
-        // Controlo que el id sea consistente.
-        if(code!=entity.code)
+        try
         {
-            return BadRequest();
+            // Controlo que el id sea consistente.
+            if (code!=entity.code)
+            {
+                return BadRequest();
+            }
+            var result=await _unitOfWork.NCMs.UpdateAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
         }
-        var result=await _unitOfWork.NCMs.UpdateAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if(result==0)
+        catch (Exception ex)
         {
-            return NotFound();
+            return BadRequest(ex.Message);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
     }
 
     [HttpDelete("{code}")]
     public async Task<IActionResult>Delete(string code)
     {
-        var result=await _unitOfWork.NCMs.DeleteByStrAsync(code);
-        // Ninguna fila afectada .... El id no existe
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.NCMs.DeleteByStrAsync(code);
+            // Ninguna fila afectada .... El id no existe
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca, OK
+            return Ok(result);
         }
-        // Si llegue hasta aca, OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{code}")]
     public async Task<NCM> Get(string code)
     {
-        return await _unitOfWork.NCMs.GetByIdStrAsync(code);
+        try
+        {
+            return await _unitOfWork.NCMs.GetByIdStrAsync(code);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     [HttpGet(Name = "GetAll_NCM")]

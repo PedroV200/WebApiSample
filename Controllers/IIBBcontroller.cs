@@ -20,56 +20,90 @@ public class IIBBcontroller : ControllerBase
     [HttpPost(Name = "Post IIBB")]
     public async Task<IActionResult>Post(IIBB entity)
     {
-        var result=await _unitOfWork.IIBBs.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.IIBBs.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
+        }catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
-        // Ok
-        return Ok();
     }
 
     [HttpPut("{code}")]
     public async Task<IActionResult>Put(int code,IIBB entity)
     {
-        // Controlo que el id sea consistente.
-        if(code!=entity.code)
+        try
         {
-            return BadRequest();
+            // Controlo que el id sea consistente.
+            if (code!=entity.code)
+            {
+                return BadRequest();
+            }
+            var result=await _unitOfWork.IIBBs.UpdateAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
         }
-        var result=await _unitOfWork.IIBBs.UpdateAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if(result==0)
+        catch (Exception ex)
         {
-            return NotFound();
+            return BadRequest(ex.Message);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
     }
 
     [HttpDelete("{code}")]
     public async Task<IActionResult>Delete(int code)
     {
-        var result=await _unitOfWork.IIBBs.DeleteAsync(code);
-        // Ninguna fila afectada .... El id no existe
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.IIBBs.DeleteAsync(code);
+            // Ninguna fila afectada .... El id no existe
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca, OK
+            return Ok(result);
         }
-        // Si llegue hasta aca, OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    [HttpGet("{id}")]
-    public async Task<IIBB> Get(int id)
+    [HttpGet("{code}")]
+    public async Task<IIBB> Get(int code)
     {
-        return await _unitOfWork.IIBBs.GetByIdAsync(id);
+        try
+        {
+            return await _unitOfWork.IIBBs.GetByIdAsync(code);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     [HttpGet(Name = "GetAll_IIBB")]
     public async Task<IEnumerable<IIBB>> GetAll()
     {
-        return await _unitOfWork.IIBBs.GetAllAsync();
+        try
+        {
+            return await _unitOfWork.IIBBs.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }

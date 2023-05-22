@@ -20,64 +20,98 @@ public class CustodiaController : ControllerBase
     [HttpPost(Name = "Post Custodia")]
     public async Task<IActionResult>Post(Custodia entity)
     {
-        var result=await _unitOfWork.Custodias.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.Custodias.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
+        }catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
-        // Ok
-        return Ok();
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult>Put(int id,Custodia entity)
     {
-        // Controlo que el id sea consistente.
-        if(id!=entity.id)
+        try
         {
-            return BadRequest();
+            // Controlo que el id sea consistente.
+            if (id!=entity.id)
+            {
+                return BadRequest();
+            }
+            var result=await _unitOfWork.Custodias.UpdateAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
         }
-        var result=await _unitOfWork.Custodias.UpdateAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if(result==0)
+        catch (Exception ex)
         {
-            return NotFound();
+            return BadRequest(ex.Message);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult>Delete(int id)
     {
-        var result=await _unitOfWork.Custodias.DeleteAsync(id);
-        // Ninguna fila afectada .... El id no existe
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.Custodias.DeleteAsync(id);
+            // Ninguna fila afectada .... El id no existe
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca, OK
+            return Ok(result);
         }
-        // Si llegue hasta aca, OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Custodia>> Get(int id)
     {
-        var result=await _unitOfWork.Custodias.GetByIdAsync(id);
-        if(result==null)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.Custodias.GetByIdAsync(id);
+            if(result==null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return result;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return result;
+            return BadRequest(ex.Message);
         }
     }
 
     [HttpGet(Name = "GetAll Custodias")]
     public async Task<IEnumerable<Custodia>> GetAll()
     {
-        return await _unitOfWork.Custodias.GetAllAsync();
+        try
+        {
+            return await _unitOfWork.Custodias.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }
