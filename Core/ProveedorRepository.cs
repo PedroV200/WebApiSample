@@ -26,7 +26,7 @@ public class ProveedorRepository : IProveedorRepository
     }
     public async Task<int> DeleteAsync(int id)
     {
-        var sql = $"DELETE FROM proveedor WHERE id = {id}";
+        var sql = $"DELETE FROM proveedores WHERE id = {id}";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();

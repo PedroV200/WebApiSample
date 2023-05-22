@@ -20,64 +20,99 @@ public class SeguroController : ControllerBase
     [HttpPost(Name = "Post Seguro")]
     public async Task<IActionResult> Post(Seguro entity)
     {
-        var result = await _unitOfWork.Seguros.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if (result == 0)
+        try
         {
-            return NotFound();
+            var result = await _unitOfWork.Seguros.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if (result == 0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
         }
-        // Ok
-        return Ok();
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, Seguro entity)
     {
-        // Controlo que el id sea consistente.
-        if (id != entity.id)
+        try
         {
-            return BadRequest();
+            // Controlo que el id sea consistente.
+            if (id != entity.id)
+            {
+                return BadRequest();
+            }
+            var result = await _unitOfWork.Seguros.UpdateAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if (result == 0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
         }
-        var result = await _unitOfWork.Seguros.UpdateAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if (result == 0)
+        catch (Exception ex)
         {
-            return NotFound();
+            return BadRequest(ex.Message);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _unitOfWork.Seguros.DeleteAsync(id);
-        // Ninguna fila afectada .... El id no existe
-        if (result == 0)
+        try
         {
-            return NotFound();
+            var result = await _unitOfWork.Seguros.DeleteAsync(id);
+            // Ninguna fila afectada .... El id no existe
+            if (result == 0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca, OK
+            return Ok(result);
         }
-        // Si llegue hasta aca, OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Seguro>> Get(int id)
     {
-        var result = await _unitOfWork.Seguros.GetByIdAsync(id);
-        if (result == null)
+        try
         {
-            return NotFound();
+            var result = await _unitOfWork.Seguros.GetByIdAsync(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return result;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return result;
+            return BadRequest(ex.Message);
         }
     }
 
     [HttpGet(Name = "GetAll Seguro")]
     public async Task<IEnumerable<Seguro>> GetAll()
     {
-        return await _unitOfWork.Seguros.GetAllAsync();
+        try
+        {
+            return await _unitOfWork.Seguros.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }
