@@ -21,65 +21,96 @@ namespace WebApiSample.Controllers
         [HttpPost(Name = "Post Carga")]
         public async Task<IActionResult> Post(Carga entity)
         {
-            var result = await _unitOfWork.Cargas.AddAsync(entity);
-            // Cero filas afectada ... we have problems.
-            if (result == 0)
+            try
             {
-                return NotFound();
+                var result = await _unitOfWork.Cargas.AddAsync(entity);
+                // Cero filas afectada ... we have problems.
+                if (result == 0)
+                {
+                    return NotFound();
+                }
+                // Ok
+                return Ok();
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
-            // Ok
-            return Ok();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Carga entity)
         {
-            // Controlo que el id sea consistente.
-            if (id != entity.id)
+            try
             {
-                return BadRequest();
-            }
-            var result = await _unitOfWork.Cargas.UpdateAsync(entity);
-            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-            if (result == 0)
+                // Controlo que el id sea consistente.
+                if (id != entity.id)
+                {
+                    return BadRequest();
+                }
+                var result = await _unitOfWork.Cargas.UpdateAsync(entity);
+                // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+                if (result == 0)
+                {
+                    return NotFound();
+                }
+                // Si llegue hasta aca ... OK
+                return Ok(result);
+            }catch (Exception ex)
             {
-                return NotFound();
+                throw new Exception(ex.Message);
             }
-            // Si llegue hasta aca ... OK
-            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _unitOfWork.Cargas.DeleteAsync(id);
-            // Ninguna fila afectada .... El id no existe
-            if (result == 0)
+            try
             {
-                return NotFound();
+                var result = await _unitOfWork.Cargas.DeleteAsync(id);
+                // Ninguna fila afectada .... El id no existe
+                if (result == 0)
+                {
+                    return NotFound();
+                }
+                // Si llegue hasta aca, OK
+                return Ok(result);
+            }catch(Exception)
+            {
+                throw new Exception($"Could not delete {id}");
             }
-            // Si llegue hasta aca, OK
-            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Carga>> Get(int id)
         {
-            var result = await _unitOfWork.Cargas.GetByIdAsync(id);
-            if (result == null)
+            try
             {
-                return NotFound();
+                var result = await _unitOfWork.Cargas.GetByIdAsync(id);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return result;
+                }
             }
-            else
+            catch (Exception)
             {
-                return result;
+                throw new Exception($"No existe Carga con Id {id}");
             }
         }
 
         [HttpGet(Name = "GetAll Carga")]
         public async Task<IEnumerable<Carga>> GetAll()
         {
-            return await _unitOfWork.Cargas.GetAllAsync();
+            try
+            {
+                return await _unitOfWork.Cargas.GetAllAsync();
+            }catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
     }

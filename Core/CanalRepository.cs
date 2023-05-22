@@ -16,24 +16,35 @@ public class CanalRepository : ICanalRepository
     }
     public async Task<int> AddAsync(Canal entity)
     {
-        var sql = $"INSERT INTO canales (description) VALUES ('{entity.description}')";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
-            var result = await connection.ExecuteAsync(sql, entity);
-            return result;
+            var sql = $"INSERT INTO canales (description) VALUES ('{entity.description}')";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
+    }catch (Exception)
+        {
+            return -1;
         }
     }
     public async Task<int> DeleteAsync(int id)
     {
-        var sql = $"DELETE FROM canales WHERE id = {id}";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        try
         {
-            connection.Open();
+            var sql = $"DELETE FROM canales WHERE id = {id}";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql);
 
-            var result = await connection.ExecuteAsync(sql);
-
-            return result;
+                return result;
+            }
+        }catch (Exception)
+        {
+            return -1;
         }
     }
     public async Task<IEnumerable<Canal>> GetAllAsync()
@@ -48,13 +59,13 @@ public class CanalRepository : ICanalRepository
     }
     public async Task<Canal> GetByIdAsync(int id)
     {
-        var sql = $"SELECT * FROM canales WHERE id = {id}";
-        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
-        {
-            connection.Open();
-            var result = await connection.QuerySingleOrDefaultAsync<Canal>(sql);
-            return result;
-        }
+            var sql = $"SELECT * FROM canales WHERE id = {id}";
+            using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QuerySingleOrDefaultAsync<Canal>(sql);
+                return result;
+            }
     }
     public async Task<int> UpdateAsync(Canal entity)
     {

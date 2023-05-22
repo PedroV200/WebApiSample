@@ -16,11 +16,14 @@ public class TipoDeCambioRepository : ITipoDeCambioRepository
     }
     public async Task<int> AddAsync(TipoDeCambio entity)
     {
-        var sql = $"INSERT INTO TC_CDA (description) VALUES ('{entity.description}')";
+        var sql = $"INSERT INTO TC_CDA (description, Day) VALUES (@description, @day)";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
-            var result = await connection.ExecuteAsync(sql, entity);
+            var result = await connection.ExecuteAsync(sql, new
+            {
+                description = entity.description, day = entity.Day
+            });
             return result;
         }
     }
