@@ -47,7 +47,7 @@ public class CalcController : ControllerBase
             ed.IdEstHeader=readBackHeader.Id; // El ID que la base le asigno al header que acabo de insertar.
             result+=await _unitOfWork.EstimateDetailsDB.AddAsync(ed);
         }
-        //return await myCalc.calcBatch(entity.estHeaderDB.Id);
+        await myCalc.calcBatch(entity.estHeaderDB.EstNumber);
         return result;
     }
 

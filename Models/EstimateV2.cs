@@ -45,4 +45,10 @@ public class EstimateV2
     public double Pagado{get;set;}
     // Lista de los diferentes items con sus valores dados del Estimate.
     public List<EstimateDetail> EstDetails {get; set;}
+
+
+    public EstimateV2()
+    {
+        this.EstDetails=new List<EstimateDetail>();
+    }
 }
