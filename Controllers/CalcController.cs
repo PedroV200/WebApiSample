@@ -19,41 +19,51 @@ public class CalcController : ControllerBase
         _logger = logger;
         _unitOfWork = unitOfWork;
         _estService = estService;
-        //myEstimate = new Estimate(unitOfWork);
         myCalc = new calc(_unitOfWork,_estService);
     }
 
     [HttpPost(Name = "Post Estimate")]
-    public async Task<List<double>>Post(EstimateDB entity)
+    public async Task<int>Post(EstimateDB entity)
     {
         var result=0;
+
+        EstimateHeaderDB readBackHeader=new EstimateHeaderDB();
+        
+        readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(entity.estHeaderDB.EstNumber,entity.estHeaderDB.EstVers);
+        if(readBackHeader !=null)
+        {
+            return -1;
+        }
+
         result=await _unitOfWork.EstimateHeadersDB.AddAsync(entity.estHeaderDB);
+        // Hayun probñema aca. Acabo de insertar un header pero no se que Id aisgno la base
+        // ya que es autoID PK.
+        // No me queda otra que leer de la base el header ingresado para descubrir su id
+        readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(entity.estHeaderDB.EstNumber,entity.estHeaderDB.EstVers);
+        // Ahora si, inserto los detail uno a uno.
+        result=0;
         foreach(EstimateDetailDB ed in entity.estDetailsDB)
         {
-            result=await _unitOfWork.EstimateDetailsDB.AddAsync(ed);
+            ed.IdEstHeader=readBackHeader.Id; // El ID que la base le asigno al header que acabo de insertar.
+            result+=await _unitOfWork.EstimateDetailsDB.AddAsync(ed);
         }
-        return await myCalc.calcBatch(entity.estHeaderDB.Id);
+        //return await myCalc.calcBatch(entity.estHeaderDB.Id);
+        return result;
     }
 
     
    [HttpGet("{id}")]
     public async Task<EstimateDB>Post(int id)
     {
-        EstimateDB myEst=new EstimateDB(); 
-        // La consulta de headers por un numero de presupuesto puede dar como resultado mas
-        // de un header (multiples versiones del mismo presupuesto). 
-        List<EstimateHeaderDB>misDetalles=new List<EstimateHeaderDB>();
-        // La query se hace ORDENADA POR VERSION de MAYOR A MENOR. Es una LISTA de estHeaders
-        var result=await _unitOfWork.EstimateHeadersDB.GetByEstNumberLastVersAsync(id);
-        misDetalles=result.ToList();
-        // El elemento 0 corresponde al header buscado en con la version MAYOR.
-        myEst.estHeaderDB=misDetalles[0];
-        // Con el PK del header anterior me voy a buscar los Details que lo referencia en su FK
-        var result1=await _unitOfWork.EstimateDetailsDB.GetAllByIdEstHeadersync(myEst.estHeaderDB.Id);
-        // De nuevo, la consulta x detalles, da una LISTA como resultado.
-        myEst.estDetailsDB=result1.ToList();
-        // Devuelvo el presupuesto.
-        return myEst;
+        dbutils dbHelper=new dbutils(_unitOfWork);
+        return await dbHelper.getEstimateLastVers(id);
+    }
+
+    [HttpDelete("{estNumber}/{estVers}")]
+    public async Task<int>Delete(int estNumber,int estVers)
+    {
+        dbutils dbHelper=new dbutils(_unitOfWork);
+        return await dbHelper.deleteEstimateByNumByVers(estNumber,estVers);
     }
    
 }

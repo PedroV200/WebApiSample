@@ -36,6 +36,19 @@ public class EstimateDetailDBRepository : IEstimateDetailDBRepository
             return result;
         }
     }
+
+    public async Task<int> DeleteByIdEstHeaderAsync(int IdEstHeader)
+    {
+        var sql = $"DELETE FROM estimatedetails WHERE IdEstHeader = {IdEstHeader}";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+
+            var result = await connection.ExecuteAsync(sql);
+
+            return result;
+        }
+    }
     public async Task<IEnumerable<EstimateDetailDB>>GetAllAsync()
     {
         var sql = "SELECT * FROM estimatedetails";

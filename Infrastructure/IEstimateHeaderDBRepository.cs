@@ -6,4 +6,5 @@ public interface IEstimateHeaderDBRepository : IGenericRepository<EstimateHeader
 {
     
     public Task<IEnumerable<EstimateHeaderDB>> GetByEstNumberLastVersAsync(int estNumber);
+    public Task<EstimateHeaderDB> GetByEstNumberAnyVersAsync(int estnumber, int estVers);
 }
