@@ -20,64 +20,98 @@ public class TerminalController : ControllerBase
     [HttpPost(Name = "Post Terminal")]
     public async Task<IActionResult>Post(Terminal entity)
     {
-        var result=await _unitOfWork.Terminales.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.Terminales.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
+        }catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
-        // Ok
-        return Ok();
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult>Put(int id,Terminal entity)
     {
-        // Controlo que el id sea consistente.
-        if(id!=entity.id)
+        try
         {
-            return BadRequest();
+            // Controlo que el id sea consistente.
+            if (id!=entity.id)
+            {
+                return BadRequest();
+            }
+            var result=await _unitOfWork.Terminales.UpdateAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
         }
-        var result=await _unitOfWork.Terminales.UpdateAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if(result==0)
+        catch (Exception ex)
         {
-            return NotFound();
+            return BadRequest(ex.Message);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult>Delete(int id)
     {
-        var result=await _unitOfWork.Terminales.DeleteAsync(id);
-        // Ninguna fila afectada .... El id no existe
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.Terminales.DeleteAsync(id);
+            // Ninguna fila afectada .... El id no existe
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca, OK
+            return Ok(result);
         }
-        // Si llegue hasta aca, OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Terminal>> Get(int id)
     {
-        var result=await _unitOfWork.Terminales.GetByIdAsync(id);
-        if(result==null)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.Terminales.GetByIdAsync(id);
+            if(result==null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return result;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return result;
+            return BadRequest(ex.Message);
         }
     }
 
     [HttpGet(Name = "GetAll Terminales")]
     public async Task<IEnumerable<Terminal>> GetAll()
     {
-        return await _unitOfWork.Terminales.GetAllAsync();
+        try
+        {
+            return await _unitOfWork.Terminales.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }
