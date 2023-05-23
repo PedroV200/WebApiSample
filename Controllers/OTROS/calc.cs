@@ -32,20 +32,57 @@ public class calc
         myEstV2=dbhelper.transferDataFromDBType(myEstDB);
 
         // Hago algunas cuentas.
+        // Calculo el peso total por articulo
+        // COL J
         myEstV2=_estService.CalcPesoTotal(myEstV2);
+        // COL K
+        myEstV2=_estService.CalcCbmTotal(myEstV2);
+        // COL L. Calculo el fob total por articulo
         myEstV2=_estService.CalcFobTotal(myEstV2);
+        // CELDA L43. Sumo todos los fob totales. Sumatoria de L15-L41 que se copia en celda C3
+        myEstV2.FobGrandTotal=_estService.sumFobTotal(myEstV2);
+        // CELDA C4. Traigo la tarifa del flete desde BASE_TARIFAS por fowarder y tipo cont
+        TarifasFwdCont myTar=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(myEstV2.FreightFwd,myEstV2.FreightType);
+        // De la consulta me quedo con el valor del flete (se usa 60%)
+        myEstV2.FleteTotal=await lookUpTarifaFleteCont(myEstV2);
+        // COL M. Calcula el flete ponderado a cada articulo del detalle.
+        myEstV2=_estService.CalcFleteTotal(myEstV2);
+        // COL N. Calcula el seguro ponderado a cada articulo del detalle 
+        myEstV2=_estService.CalcSeguro(myEstV2);
+        // CELDA AH. Calculo el factor de producto
         myEstV2=_estService.CalcFactorProdTotal(myEstV2);
+        // COL O. Calcula el CIF que solo depende de los datos ya calculados previamente (COL L, N y M)
+        myEstV2=_estService.CalcCif(myEstV2);
+        // COL R (COL O y COL Q no estan en uso)
+        myEstV2=_estService.CalcAjusteIncDec(myEstV2);
+        // COL S (die segun NCM)
+        myEstV2=await _estService.searchNcmDie(myEstV2);
+
         // Fin de las cuentas.
 
 // Tengo que devolver los pesos totales en el POST calculado como parte del ejemplo
         List<double> pesoTot=new List<double>();
-// Para cada porducto del detalel estraigo el peso Total:
+// Para cada porducto del detalle estraigo el peso Total:
         foreach(EstimateDetail ed in myEstV2.EstDetails)
         {
             pesoTot.Add(ed.PesoTot);
         }
 // Devuelvo la lista de lo que saque.
         return pesoTot;
+    }
+
+ 
+
+
+    public async Task<double> lookUpTarifaFleteCont(EstimateV2 est)
+    {
+        TarifasFwdCont myTarCont=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(est.FreightFwd,est.FreightType); 
+
+        if(myTarCont!=null)
+        { 
+            return myTarCont.costoflete060;
+        }
+        return -1;
     }
 
     // Existen 2 clases de Etimate. EstimateDB que es %100 compatible con las tablas
@@ -171,17 +208,7 @@ public class calc
         return tmpL;
     } 
 
-    public async Task<List<double>> lookUpDie(List<EstimateDetail> estDetails)
-    {
-        List<double> tmpL=new List<double>();
-        foreach(EstimateDetail ed in estDetails)
-        {
-            NCM myNCM=await _unitOfWork.NCMs.GetByIdStrAsync(ed.ncm); 
-            // Lo agrega a la lista
-            tmpL.Add(myNCM.die);   
-        }       
-        return tmpL;
-    }
+    
 
     public async Task<Contenedor> lookUpCont(string type)
     {
