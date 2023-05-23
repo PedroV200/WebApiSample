@@ -107,6 +107,10 @@ public class TarifasDepositoRepository : ITarifasDepositoRepository
         //entity.ModifiedOn=DateTime.Now;
         //entity.ModifiedOn=DateTime.Now;
         //var sql = $"UPDATE Products SET Name = '{entity.Name}', Description = '{entity.Description}', Barcode = '{entity.Barcode}', Rate = {entity.Rate}, ModifiedOn = {entity.ModifiedOn}, AddedOn = {entity.AddedOn}  WHERE Id = {entity.Id}";
+
+        // QUERY anterior no funcionaba
+        //var sql = @"UPDATE tarifasdepositos SET depo = @depo, contype = @contype, descarga = @descarga, ingreso = @ingreso, totingreso = @totingreso, carga = @carga,armado = @armado, egreso = @egreso, totegreso = @totegreso WHERE depo = @depo AND contype=@contype";
+        
         var sql = @"UPDATE tarifasdepositos SET 
                     depo = @depo, 
                     contype = @contype, 
@@ -117,7 +121,7 @@ public class TarifasDepositoRepository : ITarifasDepositoRepository
                     armado = @armado,
                     egreso = @egreso,
                     totegreso = @totegreso
-                             WHERE depo = @depo AND contype=@contype";
+                WHERE id = @id";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();

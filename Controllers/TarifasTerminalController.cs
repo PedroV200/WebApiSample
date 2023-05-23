@@ -20,65 +20,99 @@ public class TarifasTerminalController : ControllerBase
     [HttpPost(Name = "Post Terminal/tarifa")]
     public async Task<IActionResult> Post(TarifasTerminal entity)
     {
-        var result = await _unitOfWork.TarifasTerminals.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if (result == 0)
+        try
         {
-            return NotFound();
+            var result = await _unitOfWork.TarifasTerminals.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if (result == 0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
+        }catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
-        // Ok
-        return Ok();
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, TarifasTerminal entity)
     {
-        // Controlo que el id sea consistente.
-        /*if(id!=entity.id)
+        try
         {
-            return BadRequest();
-        }*/
-        var result = await _unitOfWork.TarifasTerminals.UpdateAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if (result == 0)
-        {
-            return NotFound();
+            // Controlo que el id sea consistente.
+            /*if(id!=entity.id)
+            {
+                return BadRequest();
+            }*/
+            var result = await _unitOfWork.TarifasTerminals.UpdateAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if (result == 0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     //[HttpDelete("{id}")]
-    [HttpDelete("{dep}/{cont}")]
-    public async Task<IActionResult> Delete(string dep, string cont)
+    [HttpDelete("{description}/{contype}")]
+    public async Task<IActionResult> Delete(string description, string contype)
     {
-        var result = await _unitOfWork.TarifasTerminals.DeleteByDepoContTypeAsync(dep, cont);
-        // Ninguna fila afectada .... El id no existe
-        if (result == 0)
+        try
         {
-            return NotFound();
+            var result = await _unitOfWork.TarifasTerminals.DeleteByDepoContTypeAsync(description, contype);
+            // Ninguna fila afectada .... El id no existe
+            if (result == 0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca, OK
+            return Ok(result);
         }
-        // Si llegue hasta aca, OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    [HttpGet("{dep}/{cont}")]
-    public async Task<ActionResult<TarifasTerminal>> Get(string dep, string cont)
+    [HttpGet("{description}/{contype}")]
+    public async Task<ActionResult<TarifasTerminal>> Get(string description, string contype)
     {
-        var result = await _unitOfWork.TarifasTerminals.GetByDepoContTypeAsync(dep, cont);
-        if (result == null)
+        try
         {
-            return NotFound();
+            var result = await _unitOfWork.TarifasTerminals.GetByDepoContTypeAsync(description, contype);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return result;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return result;
+            return BadRequest(ex.Message);
         }
     }
 
     [HttpGet(Name = "GetAll Terminal/Tarifas")]
     public async Task<IEnumerable<TarifasTerminal>> GetAll()
     {
-        return await _unitOfWork.TarifasTerminals.GetAllAsync();
+        try
+        {
+            return await _unitOfWork.TarifasTerminals.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }
