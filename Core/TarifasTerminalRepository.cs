@@ -42,7 +42,7 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
     }
     public async Task<int> DeleteByDepoContTypeAsync(string dep, string cont)
     {
-        var sql = $"DELETE FROM tarifasterminals WHERE depo = '{dep}' AND contype = '{cont}'";
+        var sql = $"DELETE FROM tarifasterminals WHERE description = '{dep}' AND contype = '{cont}'";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -74,7 +74,7 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
     }
     public async Task<TarifasTerminal> GetByDepoContTypeAsync(string depo, string cont)
     {
-        var sql = $"SELECT * FROM tarifasterminals WHERE depo = '{depo}' AND contype='{cont}'";
+        var sql = $"SELECT * FROM tarifasterminals WHERE description = '{depo}' AND contype='{cont}'";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
@@ -111,7 +111,7 @@ public class TarifasTerminalRepository : ITarifasTerminalRepository
                     contype = @contype, 
                     gastofijo = @gastofijo, 
                     gastovariable = @gastovariable
-                             WHERE depo = @depo AND contype=@contype";
+                             WHERE description = @description AND contype=@contype";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();

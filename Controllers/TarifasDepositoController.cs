@@ -20,65 +20,99 @@ public class TarifasDepositoController : ControllerBase
     [HttpPost(Name = "Post Deposito/tarifa")]
     public async Task<IActionResult>Post(TarifasDeposito entity)
     {
-        var result=await _unitOfWork.TarifasDepositos.AddAsync(entity);
-        // Cero filas afectada ... we have problems.
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.TarifasDepositos.AddAsync(entity);
+            // Cero filas afectada ... we have problems.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Ok
+            return Ok();
+        }catch (Exception ex)
+        {
+            return BadRequest(ex);
         }
-        // Ok
-        return Ok();
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult>Put(int id,TarifasDeposito entity)
     {
-        // Controlo que el id sea consistente.
-        /*if(id!=entity.id)
+        try
         {
-            return BadRequest();
-        }*/
-        var result=await _unitOfWork.TarifasDepositos.UpdateByDepoContTypeAsync(entity);
-        // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
-        if(result==0)
-        {
-            return NotFound();
+            // Controlo que el id sea consistente.
+            /*if(id!=entity.id)
+            {
+                return BadRequest();
+            }*/
+            var result=await _unitOfWork.TarifasDepositos.UpdateByDepoContTypeAsync(entity);
+            // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca ... OK
+            return Ok(result);
         }
-        // Si llegue hasta aca ... OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
 
     //[HttpDelete("{id}")]
     [HttpDelete("{dep}/{cont}")]
     public async Task<IActionResult>Delete(string dep, string cont)
     {
-        var result=await _unitOfWork.TarifasDepositos.DeleteByDepoContTypeAsync(dep,cont);
-        // Ninguna fila afectada .... El id no existe
-        if(result==0)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.TarifasDepositos.DeleteByDepoContTypeAsync(dep,cont);
+            // Ninguna fila afectada .... El id no existe
+            if(result==0)
+            {
+                return NotFound();
+            }
+            // Si llegue hasta aca, OK
+            return Ok(result);
         }
-        // Si llegue hasta aca, OK
-        return Ok(result);
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
     }
 
     [HttpGet("{dep}/{cont}")]
     public async Task<ActionResult<TarifasDeposito>> Get(string dep,string cont)
     {
-        var result=await _unitOfWork.TarifasDepositos.GetByDepoContTypeAsync(dep,cont);
-        if(result==null)
+        try
         {
-            return NotFound();
+            var result=await _unitOfWork.TarifasDepositos.GetByDepoContTypeAsync(dep,cont);
+            if(result==null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return result;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return result;
+            return BadRequest(ex);
         }
     }
 
     [HttpGet(Name = "GetAll Depositos/Tarifas")]
     public async Task<IEnumerable<TarifasDeposito>> GetAll()
     {
-        return await _unitOfWork.TarifasDepositos.GetAllAsync();
+        try
+        {
+            return await _unitOfWork.TarifasDepositos.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }
