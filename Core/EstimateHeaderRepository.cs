@@ -59,13 +59,23 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
             return result;
         }
     }
-    public async Task<IEnumerable<EstimateHeaderDB>> GetByEstNumberLastVersAsync(int estNumber)
+    public async Task<IEnumerable<EstimateHeaderDB>> GetByEstNumberLastVersAsync(int estnumber)
     {
-        var sql = $"SELECT * FROM estimateheader WHERE EstNumber=estNumber ORDER BY EstVers DESC";
+        var sql = $"SELECT * FROM estimateheader WHERE estnumber={estnumber} ORDER BY estvers DESC";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();
             return await connection.QueryAsync<EstimateHeaderDB>(sql);
+        }
+    }
+
+    public async Task<EstimateHeaderDB> GetByEstNumberAnyVersAsync(int estnumber, int estVers)
+    {
+        var sql = $"SELECT * FROM estimateheader WHERE estnumber={estnumber} AND estVers={estVers}";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            return await connection.QuerySingleOrDefaultAsync<EstimateHeaderDB>(sql);
         }
     }
 

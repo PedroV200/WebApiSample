@@ -20,24 +20,16 @@ public class calc
 // Me dan como parametro el numero de presupuesto.
     public async Task<List<double>> calcBatch(int estNumber)
     {
-        List<EstimateHeaderDB> misDetalles=new List<EstimateHeaderDB>();
         EstimateDB myEstDB=new EstimateDB(); 
-        // Me traigo la ultima version del estNumber pasado como parametro.
-        var result=await _unitOfWork.EstimateHeadersDB.GetByEstNumberLastVersAsync(estNumber);
-        misDetalles=result.ToList();
-        myEstDB.estHeaderDB=misDetalles[0];
-        // Del header obtenido en la consulta anterior, me interesa la PK (Id) por que es FK en 
-        // la tabla estimate details. Busco todos los productos que tengan con FK coincidente con el ID (PK en estHeader)
-        var result1=await _unitOfWork.EstimateDetailsDB.GetAllByIdEstHeadersync(myEstDB.estHeaderDB.Id);
-        // Lo paso a una lista.
-        myEstDB.estDetailsDB=result1.ToList();
+        dbutils dbhelper=new dbutils(_unitOfWork);
+        myEstDB=await dbhelper.getEstimateLastVers(estNumber);
 
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
 
         // Expando el EstimateDB a un EstimateV2
-        myEstV2=transferDataFromDBType(myEstDB);
+        myEstV2=dbhelper.transferDataFromDBType(myEstDB);
 
         // Hago algunas cuentas.
         myEstV2=_estService.CalcPesoTotal(myEstV2);
@@ -60,93 +52,7 @@ public class calc
     // estimateDetail y EstimateHeader en la BD. Y luego esta EstimateV2 que se definio
     // segun lo charlado.
     // Esta funcion pasa un EstimateDB a un EstimateV2.
-    public EstimateV2 transferDataFromDBType(EstimateDB estimateDB)
-    {
-        EstimateV2 myEstV2=new EstimateV2();
-
-        // EstimateV2 no cuenta con un header. Los datos del header se encuentran directamente
-        // como propiedades  .....
-        myEstV2.Id=estimateDB.estHeaderDB.Id;
-        myEstV2.Description=estimateDB.estHeaderDB.Description;
-        myEstV2.EstNumber=estimateDB.estHeaderDB.EstNumber;
-        myEstV2.EstVers=estimateDB.estHeaderDB.EstNumber;
-        myEstV2.Owner=estimateDB.estHeaderDB.Own;
-        myEstV2.ArticleFamily=estimateDB.estHeaderDB.ArticleFamily;
-        myEstV2.OemSupplier=estimateDB.estHeaderDB.OemSupplier;
-        myEstV2.IvaExcento=estimateDB.estHeaderDB.IvaExcento;
-        myEstV2.DollarBillete=estimateDB.estHeaderDB.DollarBillete;
-        myEstV2.FreightType=estimateDB.estHeaderDB.FreightType;
-        myEstV2.FreightFwd=estimateDB.estHeaderDB.FreightFwd;
-        myEstV2.TimeStamp=estimateDB.estHeaderDB.hTimeStamp;
-        myEstV2.FobGrandTotal=estimateDB.estHeaderDB.FobGrandTotal;
-        myEstV2.FleteTotal=estimateDB.estHeaderDB.FleteTotal;
-        myEstV2.Seguro=estimateDB.estHeaderDB.Seguro;
-        myEstV2.Seguroporct=estimateDB.estHeaderDB.SeguroPorct;
-        myEstV2.CantidadContenedores=estimateDB.estHeaderDB.CantidadContenedores;
-        myEstV2.Pagado=estimateDB.estHeaderDB.Pagado;
-
-        // En el caso de los Estimate detail, la DB tiene solo lo datos que se cuardaran
-        // Este tipo se llama EstimateDetailDB. Mientras que el EstimateV2 definido usa el tipo EstimateDetail
-        // que contiene no solo los datos que contiene "EstimateDetailDB" sino ademas provicion para los datos
-        // calculados. Estos no se guardan en la base. De ahi la existencia de 2 clases "EstimateDetail"
-        foreach(EstimateDetailDB edb in estimateDB.estDetailsDB)
-        {
-            EstimateDetail tmp=new EstimateDetail();
-            tmp.id=edb.Id;
-            tmp.modelo=edb.Modelo;
-            tmp.ncm=edb.Ncm;
-            tmp.pesounitxcaja=edb.PesoUnitxCaja;
-            tmp.cbmxcaja=edb.CbmxCaja;
-            tmp.pcsxcaja=edb.PcsxCaja;
-            tmp.fobunit=edb.FobUnit;
-            tmp.cantpcs=edb.CantPcs;
-            tmp.idestheader=edb.IdEstHeader;
-            myEstV2.EstDetails.Add(tmp);
-        }
-        return myEstV2;
-    }
-// La inversa de la anterior. Pasa un EstimateV2 a un EstimateDB.
-    public EstimateDB transferDataToDBType(EstimateV2 myEstV2)
-    {
-         EstimateDB estimateDB=new EstimateDB();
-
-
-        estimateDB.estHeaderDB.Id=myEstV2.Id;
-        estimateDB.estHeaderDB.Description=myEstV2.Description;
-        estimateDB.estHeaderDB.EstNumber=myEstV2.EstNumber;
-        estimateDB.estHeaderDB.EstNumber=myEstV2.EstVers;
-        estimateDB.estHeaderDB.Own=myEstV2.Owner;
-        estimateDB.estHeaderDB.ArticleFamily=myEstV2.ArticleFamily;
-        estimateDB.estHeaderDB.OemSupplier=myEstV2.OemSupplier;
-        estimateDB.estHeaderDB.IvaExcento=myEstV2.IvaExcento;
-        estimateDB.estHeaderDB.DollarBillete=myEstV2.DollarBillete;
-        estimateDB.estHeaderDB.FreightType=myEstV2.FreightType;
-        estimateDB.estHeaderDB.FreightFwd=myEstV2.FreightFwd;
-        estimateDB.estHeaderDB.hTimeStamp=myEstV2.TimeStamp;
-        estimateDB.estHeaderDB.FobGrandTotal=myEstV2.FobGrandTotal;
-        estimateDB.estHeaderDB.FleteTotal=myEstV2.FleteTotal;
-        estimateDB.estHeaderDB.Seguro=myEstV2.Seguro;
-        estimateDB.estHeaderDB.SeguroPorct=myEstV2.Seguroporct;
-        estimateDB.estHeaderDB.CantidadContenedores=myEstV2.CantidadContenedores;
-        estimateDB.estHeaderDB.Pagado=myEstV2.Pagado;
-
-// Aqui se descartan los calculos. Solo se transfieren los valores necesarios para los mismos
-        foreach(EstimateDetail edb in myEstV2.EstDetails)
-        {
-            EstimateDetailDB tmp=new EstimateDetailDB();
-            tmp.Id=edb.id;
-            tmp.Modelo=edb.modelo;
-            tmp.Ncm=edb.ncm;
-            tmp.PesoUnitxCaja=edb.pesounitxcaja;
-            tmp.CbmxCaja=edb.cbmxcaja;
-            tmp.PcsxCaja=edb.pcsxcaja;
-            tmp.FobUnit=edb.fobunit;
-            tmp.CantPcs=edb.cantpcs;
-            tmp.IdEstHeader=edb.idestheader;
-            estimateDB.estDetailsDB.Add(tmp);
-        }
-        return estimateDB;       
-    }
+    
 
  /*   public List<double> calculateCBM(List<EstimateDetail> estDetails)
     {
