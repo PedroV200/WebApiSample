@@ -27,6 +27,27 @@ public interface IEstimateDetailService : IGenericService<EstimateDetail>
     public double CalcDerechos(EstimateDetail est);
     // COL U
     public Task<double> lookUpTe(EstimateDetail estDetails);
+    // COL V
+    public double CalcTasaEstad061(EstimateDetail estDetails);
+    // COL X
+    public double CalcBaseIvaGcias(EstimateDetail estDetails);
+    // COL Y
+    public Task<double> lookUpIVA(EstimateDetail estDetails);
+    // COL Z
+    public double CalcIVA415(EstimateDetail estDetail);
+    // COL AA
+    public Task<double> lookUpIVAadic(EstimateDetail estDetails);
+    // COL AB
+    public double CalcIvaAdic(EstimateDetail estDetails, bool ivaEx);
+    // COL AC
+    public double CalcImpGcias424(EstimateDetail estDetails);
+    // COL AD
+    public double CalcIIBB(EstimateDetail estDetails);
+    // COL AE
+    public double CalcPrecioUnitUSS(EstimateDetail estDetails);
+    // COL AF
+    public double CalcPagado(EstimateDetail estDetails);
+    // TOTALES DE COLUMNA .... FILA 43
     //public double CalcCIF(EstimateDetail estD);
     // COL R
   /*  public double CalcAduanaDivisa(EstimateDetail estD);

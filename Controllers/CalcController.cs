@@ -23,7 +23,7 @@ public class CalcController : ControllerBase
     }
 
     [HttpPost(Name = "Post Estimate")]
-    public async Task<int>Post(EstimateDB entity)
+    public async Task<List<double>>Post(EstimateDB entity)
     {
         var result=0;
 
@@ -32,7 +32,7 @@ public class CalcController : ControllerBase
         readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(entity.estHeaderDB.EstNumber,entity.estHeaderDB.EstVers);
         if(readBackHeader !=null)
         {
-            return -1;
+            return null;
         }
 
         result=await _unitOfWork.EstimateHeadersDB.AddAsync(entity.estHeaderDB);
@@ -47,8 +47,9 @@ public class CalcController : ControllerBase
             ed.IdEstHeader=readBackHeader.Id; // El ID que la base le asigno al header que acabo de insertar.
             result+=await _unitOfWork.EstimateDetailsDB.AddAsync(ed);
         }
-        await myCalc.calcBatch(entity.estHeaderDB.EstNumber);
-        return result;
+        List<double>tmpL=new List<double>();
+        tmpL=await myCalc.calcBatch(entity.estHeaderDB.EstNumber);
+        return tmpL;
     }
 
     

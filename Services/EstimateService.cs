@@ -9,11 +9,11 @@ using System.Globalization;
 
 public class EstimateService: IEstimateService
 {
-    //IUnitOfWork _unitOfWork;
-    public EstimateService(IEstimateDetailService estDetailServices/*,IUnitOfWork unitOfWork*/)
+    IUnitOfWork _unitOfWork;
+    public EstimateService(IEstimateDetailService estDetailServices,IUnitOfWork unitOfWork)
     {
         estDetServices=estDetailServices;
-       // _unitOfWork=unitOfWork;
+       _unitOfWork=unitOfWork;
 
     }
     public IEstimateDetailService estDetServices {get;}
@@ -27,14 +27,7 @@ public class EstimateService: IEstimateService
         return est;
     }
 
-    public EstimateV2 CalcFactorProdTotal(EstimateV2 est)
-    {
-        foreach(EstimateDetail ed in est.EstDetails)
-        {
-            ed.PesoTot=estDetServices.CalcFactorProducto(ed, sumFobTotal(est));       
-        }
-        return est;
-    }
+
 
     public EstimateV2 CalcFobTotal(EstimateV2 est)
     {
@@ -96,17 +89,125 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.Die=await estDetServices.lookUpDie(ed);
+            ed.Die=(await estDetServices.lookUpDie(ed))/100.0;
         }
         return est;
     }
+
+    public EstimateV2 CalcDerechos(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {                                               
+            ed.Derechos=estDetServices.CalcDerechos(ed);
+        }
+        return est;
+    }  
 
     public async Task<EstimateV2> resolveNcmTe(EstimateV2 est)
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.Te=await estDetServices.lookUpTe(ed);
+            ed.Te=(await estDetServices.lookUpTe(ed))/100.0;
         }       
+        return est;
+    }
+
+    public EstimateV2 CalcTasaEstad061(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {                                               
+            ed.TasaEstad061=estDetServices.CalcTasaEstad061(ed);
+        }
+        return est;
+    }  
+
+    public EstimateV2 CalcBaseGcias(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {                                               
+            ed.BaseIvaGcias=estDetServices.CalcBaseIvaGcias(ed);
+        }
+        return est;
+    }  
+
+    public async Task<EstimateV2> searchIva(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.IVA=(await estDetServices.lookUpIVA(ed))/100.0;
+        }       
+        return est;
+    }
+
+    public EstimateV2 CalcIVA415(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.IVA415=estDetServices.CalcIVA415(ed);
+        }
+        return est;
+    }
+
+    public async Task<EstimateV2> searchIvaAdic(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.IVA_ad=(await estDetServices.lookUpIVAadic(ed))/100.0;
+        }
+        return est;
+    } 
+
+    public EstimateV2 CalcIVA_ad_Gcias(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.IVA_ad_gcias=estDetServices.CalcIvaAdic(ed,est.IvaExcento);
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcImpGcias424(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.ImpGcias424=estDetServices.CalcImpGcias424(ed);
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcIIBB900(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.IIBB=estDetServices.CalcIIBB(ed);
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcPrecioUnitUSS(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.PrecioUnitUSS=estDetServices.CalcPrecioUnitUSS(ed);
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcPagado(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.Pagado=estDetServices.CalcPagado(ed);
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcFactorProdTotal(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.FactorProd=estDetServices.CalcFactorProducto(ed, sumFobTotal(est));       
+        }
         return est;
     }
 
@@ -128,6 +229,17 @@ public class EstimateService: IEstimateService
             tmp+=ed.Fob;
         }
         return tmp;
+    }
+
+    public async Task<double> lookUpTarifaFleteCont(EstimateV2 est)
+    {
+        TarifasFwdCont myTarCont=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(est.FreightFwd,est.FreightType); 
+
+        if(myTarCont!=null)
+        { 
+            return myTarCont.costoflete060;
+        }
+        return -1;
     }
 
 }
