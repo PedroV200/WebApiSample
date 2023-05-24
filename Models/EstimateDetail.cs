@@ -24,7 +24,20 @@ public class EstimateDetail
     public double Die {get; set;}
     public double Derechos {get;set;}
     public double Te {get;set;}
-    
-    // SIGUE ......
-
+    public double TasaEstad061 {get;set;}
+    public double BaseIvaGcias {get;set;}
+    public double IVA {get;set;}
+    public double IVA415 {get;set;}
+    public double IVA_ad {get;set;}
+    public double IVA_ad_gcias {get; set;}    
+    public double ImpGcias424 {get;set;}
+    public double IIBB {get;set;}
+    public double PrecioUnitUSS {get;set;}
+    public double Pagado {get;set;}
+    public double FactorProd {get;set;}
+    public double ExtraGastoLocProy {get;set;}
+    public double ExtraGastoLocProyUSS {get;set;}
+    public double OverHead {get;set;}
+    public double CostoUnitUSS {get;set;}
+    public double CostoUnitEstimado {get;set;}
 }
