@@ -34,5 +34,6 @@ public static class ServiceRegistration
         services.AddTransient<IEstimateService,EstimateService>();
         services.AddTransient<IEstimateDetailService, EstimateDetailService>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<IUsuarioRepository, UsuarioRepository>();
     }
 }
