@@ -52,7 +52,7 @@ public class calc
         // CELDA AH. Calculo el factor de producto
         myEstV2=_estService.CalcFactorProdTotal(myEstV2);
         // COL O. Calcula el CIF que solo depende de los datos ya calculados previamente (COL L, N y M)
-        myEstV2=_estService.CalcCif(myEstV2);
+        //myEstV2=_estService.CalcCif(myEstV2);
         // COL R (COL O y COL Q no estan en uso)
         myEstV2=_estService.CalcAjusteIncDec(myEstV2);
         // COL S (die segun NCM)

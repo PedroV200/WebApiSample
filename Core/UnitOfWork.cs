@@ -31,7 +31,8 @@ public class UnitOfWork : IUnitOfWork
                       //ITarifasTteRepository tarifasTteRepository,
                       ITipoDeCambioRepository tipoDeCambioRepository,
                       ISeguroRepository seguroRepository,
-                      ITarifasTerminalRepository TarifasTerminalRepository
+                      ITarifasTerminalRepository TarifasTerminalRepository,
+                      IUsuarioRepository UsuarioRepository
                         
                       )
     {
@@ -64,6 +65,7 @@ public class UnitOfWork : IUnitOfWork
         TiposDeCambio = tipoDeCambioRepository;
         Seguros = seguroRepository;
         TarifasTerminals = TarifasTerminalRepository;
+        Usuarios = UsuarioRepository;
 
     }
 
@@ -95,5 +97,6 @@ public class UnitOfWork : IUnitOfWork
     public ITipoDeCambioRepository TiposDeCambio { get; }
     public ISeguroRepository Seguros { get; }
     public ITarifasTerminalRepository TarifasTerminals { get;}
+    public IUsuarioRepository Usuarios { get; }
 
 }
