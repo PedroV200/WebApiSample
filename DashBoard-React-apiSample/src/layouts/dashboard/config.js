@@ -80,5 +80,15 @@ export const items = [
         <XCircleIcon />
       </SvgIcon>
     )
+  },
+  // Se agrega la pestaña de login auth cero
+  {
+    title: 'Login Auth0',
+    path: '/auth/LoginAuth0',
+    icon: (
+      <SvgIcon fontSize="small">
+        <LockClosedIcon />
+      </SvgIcon>
+    )
   }
 ];

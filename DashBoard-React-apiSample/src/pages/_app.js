@@ -11,7 +11,15 @@ import { createEmotionCache } from 'src/utils/create-emotion-cache';
 import 'simplebar-react/dist/simplebar.min.css';
 
 //importo auh0
-import { useAuth0 } from '@auth0/auth0-react';
+import { Auth0Provider } from '@auth0/auth0-react';
+// configuracion auth0
+const redirectUri = typeof window !== 'undefined' ? window.location.origin : '';
+const auto0Config = {
+  domain: process.env.REACT_APP_AUTH0_DOMAIN,
+  clientId: process.env.REACT_APP_AUTH0_CLIENT_ID,
+  redirectUri: redirectUri
+};
+
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -38,7 +46,10 @@ const App = (props) => {
         />
       </Head>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
+        {/* AuthProvider propaga el estado de autenticación a través del árbol de aplicaciones */}
         <AuthProvider>
+        {/* <Auth0Provider {...auto0Config} useRefreshTokens> */}
+          {/* ThemeProvider Este componente hace que el "tema" esté disponible en el árbol de React */}
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <AuthConsumer>
@@ -48,7 +59,9 @@ const App = (props) => {
                   : getLayout(<Component {...pageProps} />)
               }
             </AuthConsumer>
+            
           </ThemeProvider>
+        {/* </Auth0Provider> */}
         </AuthProvider>
       </LocalizationProvider>
     </CacheProvider>
