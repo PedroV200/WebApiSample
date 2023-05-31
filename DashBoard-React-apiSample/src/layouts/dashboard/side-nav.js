@@ -17,8 +17,10 @@ import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
-//se importa logo
-import logoImage from 'public/favicon-16x16.png';
+
+//se importa el nuevo componente LoginAuth
+// import { LoginAuth0 } from 'src/pages/auth/LoginAuth0';
+
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
@@ -54,9 +56,9 @@ export const SideNav = (props) => {
               width: 32
             }}
           >
-            {/* logo de disbyte aunq rompe */}
-            {/* <img src={logoImage} alt='Disbyte' /> */}
-            <Logo />
+            {/* se quita el logo original de la app */}
+            {/* <Logo /> */}
+            <img src='/favicon-32x32.png' alt='Disbyte' />
           </Box>
           <Box
             sx={{
@@ -75,7 +77,7 @@ export const SideNav = (props) => {
                 color="inherit"
                 variant="subtitle1"
               >
-                Devias
+                Disbyte
               </Typography>
               <Typography
                 color="neutral.400"
@@ -112,6 +114,11 @@ export const SideNav = (props) => {
           >
             {items.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
+
+              // // Agregar esta condición para mostrar el componente LoginAuth0
+              // if (item.path === '/auth/login-auth0') {
+              //   return active ? <LoginAuth0 /> : null;
+              // }
 
               return (
                 <SideNavItem

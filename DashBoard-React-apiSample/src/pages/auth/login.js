@@ -19,6 +19,9 @@ import {
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 
+//importo auth0
+import { useAuth0 } from '@auth0/auth0-react';
+
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
@@ -66,12 +69,15 @@ const Page = () => {
     },
     [auth, router]
   );
+ 
+  //utilizo el metodo LoginWithRedirect de auth0
+  const { loginWithRedirect } = useAuth0();
 
   return (
     <>
       <Head>
         <title>
-          Login | Devias Kit
+          Login | Disbyte
         </title>
       </Head>
       <Box
@@ -175,6 +181,7 @@ const Page = () => {
                   size="large"
                   sx={{ mt: 3 }}
                   type="submit"
+                  onClick={ loginWithRedirect }
                   variant="contained"
                 >
                   Continue
