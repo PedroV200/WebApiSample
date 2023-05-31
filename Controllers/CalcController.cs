@@ -54,8 +54,15 @@ public class CalcController : ControllerBase
 
     
    [HttpGet("{id}")]
-    public async Task<EstimateDB>Post(int id)
+    public async Task<EstimateDB>Get(int id)
     {
+        EstimateV2 tmpV2=new EstimateV2();
+        // Voy a buscar que valor FOB (arrancando en 100) para llegar a un valorAduanaDivisa de 1000.
+        tmpV2=await myCalc.aCalc(940,10,"fobunit",200,"valAduanaDivisa");
+        //tmpV2=await myCalc.aCalc(940,0.18,"Die",5000,"Derechos");
+
+
+
         dbutils dbHelper=new dbutils(_unitOfWork);
         return await dbHelper.getEstimateLastVers(id);
     }
