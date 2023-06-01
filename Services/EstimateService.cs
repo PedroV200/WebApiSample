@@ -175,11 +175,11 @@ public class EstimateService: IEstimateService
         return est;
     }
 
-    public EstimateV2 CalcIIBB900(EstimateV2 est)
+    public async Task<EstimateV2> CalcIIBB900(EstimateV2 est)
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IIBB=estDetServices.CalcIIBB(ed);
+            ed.IIBB=await estDetServices.CalcIIBB(ed);
         }
         return est;
     }

@@ -42,7 +42,7 @@ public interface IEstimateDetailService : IGenericService<EstimateDetail>
     // COL AC
     public double CalcImpGcias424(EstimateDetail estDetails);
     // COL AD
-    public double CalcIIBB(EstimateDetail estDetails);
+    public Task<double> CalcIIBB(EstimateDetail estDetails);
     // COL AE
     public double CalcPrecioUnitUSS(EstimateDetail estDetails);
     // COL AF

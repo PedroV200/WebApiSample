@@ -44,7 +44,7 @@ public interface IEstimateService : IGenericService<EstimateV2>
     // COL AC
     public EstimateV2 CalcImpGcias424(EstimateV2 est);
     // COL AD
-    public EstimateV2 CalcIIBB900(EstimateV2 est);
+    public Task<EstimateV2> CalcIIBB900(EstimateV2 est);
     // COL AE
     public EstimateV2 CalcPrecioUnitUSS(EstimateV2 est);
     // COL AF
