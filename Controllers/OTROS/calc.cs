@@ -18,7 +18,7 @@ public class calc
 // Segun "Presupuestador Argentina, libro N - Duchas Escocesas"
 
 // Me dan como parametro el numero de presupuesto.
-    public async Task<List<double>> calcBatch(int estNumber)
+    public async Task<EstimateV2> calcBatch(int estNumber)
     {
         EstimateDB myEstDB=new EstimateDB(); 
         dbutils dbhelper=new dbutils(_unitOfWork);
@@ -76,7 +76,7 @@ public class calc
         // COL AC
         myEstV2=_estService.CalcImpGcias424(myEstV2);
         // COL AD
-        myEstV2=_estService.CalcIIBB900(myEstV2);
+        myEstV2=await _estService.CalcIIBB900(myEstV2);
         // COL AE
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
         // COL AF
@@ -91,7 +91,7 @@ public class calc
             pesoTot.Add(ed.PesoTot);
         }
 // Devuelvo la lista de lo que saque.
-        return pesoTot;
+        return myEstV2;
     }
 // Este metodo es similar al anterior salvo que tiene opcion de no volver a buscar a base los mismo valores una y otra vez.
 // Es consumido por el metodo aCalc, que "despeja" un valor de una columna a la derecha fijado un valor a la izquierda
@@ -134,7 +134,7 @@ public class calc
         }
         myEstV2=_estService.CalcIVA_ad_Gcias(myEstV2);
         myEstV2=_estService.CalcImpGcias424(myEstV2);
-        myEstV2=_estService.CalcIIBB900(myEstV2);
+        myEstV2=await _estService.CalcIIBB900(myEstV2);
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
         myEstV2=_estService.CalcPagado(myEstV2);
         return myEstV2;
@@ -339,4 +339,8 @@ public class calc
 
         return myEstV2;
     }
+  
 }
+
+
+

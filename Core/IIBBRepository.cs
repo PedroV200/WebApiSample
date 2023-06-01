@@ -46,6 +46,18 @@ public class IIBBRepository : IIIBBrepository
             return await connection.QueryAsync<IIBB>(sql);
         }
     }
+
+    public async Task<double> GetSumFactores()
+    {
+        var sql = "SELECT SUM(factor) FROM iibb";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+
+            return await connection.QuerySingleOrDefaultAsync<double>(sql);
+        }
+    }
+
     public async Task<IIBB> GetByIdAsync(int code)
     {
         var sql = $"SELECT * FROM iibb WHERE code = {code}";

@@ -180,11 +180,9 @@ public class EstimateDetailService: IEstimateDetailService
         return (estDetails.BaseIvaGcias*6)/100;
     }
 
-    public double CalcIIBB(EstimateDetail estDetails)
+    public async Task<double> CalcIIBB(EstimateDetail estDetails)
     {
-        // ADVERTENCIA: Es la suma de todos los valores de IIBB de la tabla IIBB, CELDA D26
-        // IMPLEMENTAR metodo que devuelve la suma usnado query.
-        double totalIIBB=2.8429;
+        double totalIIBB=await _unitOfWork.IIBBs.GetSumFactores();
         return (estDetails.BaseIvaGcias*totalIIBB);
     }
 
