@@ -47,8 +47,8 @@ const App = (props) => {
       </Head>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         {/* AuthProvider propaga el estado de autenticación a través del árbol de aplicaciones */}
-        <AuthProvider>
-        {/* <Auth0Provider {...auto0Config} useRefreshTokens> */}
+        {/* <AuthProvider> */}
+        <Auth0Provider {...auto0Config} useRefreshTokens>
           {/* ThemeProvider Este componente hace que el "tema" esté disponible en el árbol de React */}
           <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -61,8 +61,8 @@ const App = (props) => {
             </AuthConsumer>
             
           </ThemeProvider>
-        {/* </Auth0Provider> */}
-        </AuthProvider>
+        </Auth0Provider>
+        {/* </AuthProvider> */}
       </LocalizationProvider>
     </CacheProvider>
   );
