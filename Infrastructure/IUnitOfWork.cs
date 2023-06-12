@@ -1,3 +1,5 @@
+using WebApiSample.Infrastructure;
+
 namespace WebApiSample.Infrastructure;
 
 public interface IUnitOfWork
@@ -34,4 +36,5 @@ public interface IUnitOfWork
     ISeguroRepository Seguros { get; }
     ITarifasTerminalRepository TarifasTerminals { get; }
     IUsuarioRepository Usuarios { get; }
+    IDespachanteRepository Despachantes { get; }
 }

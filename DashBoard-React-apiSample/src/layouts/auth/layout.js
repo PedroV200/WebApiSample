@@ -79,25 +79,26 @@ export const Layout = (props) => {
               }}
               variant="h1"
             >
-              Welcome to{' '}
+              Welcome to Dashboard Disbyte
+              {/* Welcome to{' '}
               <Box
                 component="a"
                 sx={{ color: '#15B79E' }}
                 target="_blank"
               >
                 Devias Kit
-              </Box>
+              </Box> */}
             </Typography>
             <Typography
               align="center"
               sx={{ mb: 3 }}
               variant="subtitle1"
             >
-              A professional kit that comes with ready-to-use MUI components.
+              {/* A professional kit that comes with ready-to-use MUI components. */}
             </Typography>
             <img
               alt=""
-              src="/assets/auth-illustration.svg"
+              src="/favicon-32x32.png"
             />
           </Box>
         </Grid>

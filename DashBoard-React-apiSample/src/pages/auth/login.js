@@ -16,12 +16,15 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { useAuth } from 'src/hooks/use-auth';
+// import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+
+//importo auth0
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Page = () => {
   const router = useRouter();
-  const auth = useAuth();
+  // const auth = useAuth();
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
@@ -64,14 +67,17 @@ const Page = () => {
       auth.skip();
       router.push('/');
     },
-    [auth, router]
+    // [auth, router]
   );
+ 
+  //utilizo el metodo LoginWithRedirect de auth0
+  const { loginWithRedirect } = useAuth0();
 
   return (
     <>
       <Head>
         <title>
-          Login | Devias Kit
+          Login | Disbyte
         </title>
       </Head>
       <Box
@@ -174,7 +180,8 @@ const Page = () => {
                   fullWidth
                   size="large"
                   sx={{ mt: 3 }}
-                  type="submit"
+                  // type="submit"
+                  onClick={ loginWithRedirect }
                   variant="contained"
                 >
                   Continue

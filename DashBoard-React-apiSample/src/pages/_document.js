@@ -72,6 +72,7 @@ class CustomDocument extends Document {
 }
 
 CustomDocument.getInitialProps = async (ctx) => {
+  console.log(ctx, 'probando comentario');
   const originalRenderPage = ctx.renderPage;
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
