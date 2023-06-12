@@ -23,8 +23,9 @@ public interface IUnitOfWork
     IEstimateDetailDBRepository EstimateDetailsDB {get; }
     ITarifasDepositoRepository TarifasDepositos {get;}
     ITarifasFwdContRepository TarifasFwdContenedores {get;}
-
     IContenedorRepository Contenedores {get;}
+    ITarifasPolizaRepository TarifasPolizas {get;}
+    ITarifasTteLocalRepository TarifasTtesLocal {get;}
     //ITarifasSeguroRepository TarifasSeguros {get;}
     //ITarifasTerminalRepository TarifasTerminales {get;}
     //ITarifasTteRepository TarifasTransportes {get;}

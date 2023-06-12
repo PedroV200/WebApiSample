@@ -1,5 +1,5 @@
 namespace WebApiSample.Models;
-public class TarifasSeguro
+public class TarifasPoliza
 {
     public int id { get; set; }
     public string description { get; set; }
