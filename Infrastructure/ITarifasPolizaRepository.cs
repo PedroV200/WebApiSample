@@ -2,7 +2,7 @@ using WebApiSample.Models;
 
 namespace WebApiSample.Infrastructure;
 
-public interface ITarifasTteRepository:IGenericRepository<TarifasTte>
+public interface ITarifasPolizaRepository:IGenericRepository<TarifasPoliza>
 {
     
 }

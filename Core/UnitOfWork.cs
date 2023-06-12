@@ -26,6 +26,8 @@ public class UnitOfWork : IUnitOfWork
                       ITarifasDepositoRepository tarifasDepositoRepository,
                       ITarifasFwdContRepository tarifasFwdContRepository,
                       IContenedorRepository ContenedorRepository,
+                      ITarifasPolizaRepository TarPolizas,
+                      ITarifasTteLocalRepository TarTte,
                       //ITarifasSeguroRepository tarifasSeguroRepository,
                       //ITarifasTerminalRepository tarifasTerminalRepository,
                       //ITarifasTteRepository tarifasTteRepository,
@@ -58,6 +60,8 @@ public class UnitOfWork : IUnitOfWork
         TarifasDepositos = tarifasDepositoRepository;
         TarifasFwdContenedores = tarifasFwdContRepository;
         Contenedores = ContenedorRepository;
+        TarifasTtesLocal = TarTte;
+        TarifasPolizas = TarPolizas;
         //TarifasSeguros = tarifasSeguroRepository;
         //TarifasTerminales = tarifasTerminalRepository;
         //TarifasTransportes = tarifasTteRepository;
@@ -93,6 +97,9 @@ public class UnitOfWork : IUnitOfWork
     public ITarifasDepositoRepository TarifasDepositos {get;}
     public ITarifasFwdContRepository TarifasFwdContenedores {get;}
     public IContenedorRepository Contenedores {get;}
+
+    public ITarifasPolizaRepository TarifasPolizas {get;}
+    public ITarifasTteLocalRepository TarifasTtesLocal {get;}
     //public ITarifasSeguroRepository TarifasSeguros {get;}
     //public ITarifasTerminalRepository TarifasTerminales{get;}
     //public ITarifasTteRepository TarifasTransportes {get;}

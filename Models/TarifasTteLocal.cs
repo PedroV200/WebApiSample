@@ -1,5 +1,5 @@
 namespace WebApiSample.Models;
-public class TarifasTte
+public class TarifasTteLocal
 {
     public int id { get; set; }
     public string contype { get; set; }
