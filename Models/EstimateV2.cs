@@ -44,11 +44,22 @@ public class EstimateV2
     // CELDA I3 (sumatoria de los AF en AF43)
     public double Pagado{get;set;}
     // Lista de los diferentes items con sus valores dados del Estimate.
+
+
+    // REFACTOR DEL HEADER --------------- 
+    //######################################
+    public double CbmTot {get;set;}
+    public double CifTot {get;set;}
+    public string PolizaProv {get;set;}
+    public double ExtraGastosLocProyectado {get;set;}
+    public CONSTANTES constantes{get;set;}
+    //######################################
     public List<EstimateDetail> EstDetails {get; set;}
 
 
     public EstimateV2()
     {
         this.EstDetails=new List<EstimateDetail>();
+        this.constantes=new CONSTANTES();
     }
 }

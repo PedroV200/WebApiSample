@@ -60,6 +60,17 @@ public class TarifasPolizaRepository : ITarifasPolizaRepository
         }
     }
 
+        public async Task<TarifasPoliza> GetByDescAsync(string proveedor)
+    {
+        var sql = $"SELECT * FROM tarifaspoliza WHERE id = '{proveedor}'";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            var result = await connection.QuerySingleOrDefaultAsync<TarifasPoliza>(sql);
+            return result;
+        }
+    }
+
     public async Task<int> UpdateAsync(TarifasPoliza entity)
     {
         //entity.ModifiedOn=DateTime.Now;

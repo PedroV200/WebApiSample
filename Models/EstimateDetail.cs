@@ -37,7 +37,8 @@ public class EstimateDetail
     public double FactorProd {get;set;}
     public double ExtraGastoLocProy {get;set;}
     public double ExtraGastoLocProyUSS {get;set;}
+    public double ExtraGastoLocProyUnitUSS {get;set;}
     public double OverHead {get;set;}
-    public double CostoUnitUSS {get;set;}
+    public double CostoUnitEstimadoUSS {get;set;}
     public double CostoUnitEstimado {get;set;}
 }

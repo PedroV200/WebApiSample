@@ -34,6 +34,7 @@ public class UnitOfWork : IUnitOfWork
                       ITipoDeCambioRepository tipoDeCambioRepository,
                       ISeguroRepository seguroRepository,
                       ITarifasTerminalRepository TarifasTerminalRepository,
+                      ICnstRepository cnstRepository,
                       IUsuarioRepository UsuarioRepository,
                       IDespachanteRepository DespachanteRepository
                         
@@ -70,6 +71,7 @@ public class UnitOfWork : IUnitOfWork
         TiposDeCambio = tipoDeCambioRepository;
         Seguros = seguroRepository;
         TarifasTerminals = TarifasTerminalRepository;
+        Constantes = cnstRepository;
         Usuarios = UsuarioRepository;
         Despachantes = DespachanteRepository;
 
@@ -106,6 +108,8 @@ public class UnitOfWork : IUnitOfWork
     public ITipoDeCambioRepository TiposDeCambio { get; }
     public ISeguroRepository Seguros { get; }
     public ITarifasTerminalRepository TarifasTerminals { get;}
+
+    public ICnstRepository Constantes{get;}
     public IUsuarioRepository Usuarios { get; }
     public IDespachanteRepository Despachantes { get; }
 

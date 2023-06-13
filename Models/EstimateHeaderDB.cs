@@ -41,4 +41,30 @@ public class EstimateHeaderDB
     public double CantidadContenedores{get;set;}
     // CELDA I3 (sumatoria de los AF en AF43)
     public double Pagado{get;set;}
+
+    public double CbmTot {get;set;}
+    public double CifTot {get;set;}
+    public string PolizaProv {get;set;}
+    public double ExtraGastosLocProyectado {get;set;}
+
+    // CONSTANTES
+    public double c_gdespa_cif_min{get;set;}
+    public double c_gdespa_cif_mult{get;set;}
+    public double c_gdespa_cif_thrhld{get;set;}
+    public double c_gcust_thrshld{get;set;}
+    public double c_ggesdoc_mult{get;set;}
+    public double c_gbanc_mult{get;set;}
+    public double c_ncmdie_min{get;set;}  
+    public double c_est061_thrhldmax{get;set;}
+    public double c_est061_thrhldmin{get;set;}
+    public double c_gcias424_mult{get;set;}
+
+    public string p_gloc_banco{get;set;}
+    public string p_gloc_fwder{get;set;}
+    public string p_gloc_term{get;set;}
+    public string p_gloc_despa{get;set;}
+    public string p_gloc_tte{get;set;}
+    public string p_gloc_cust{get;set;}
+    public string p_gloc_gestdigdoc{get;set;}
+
 }

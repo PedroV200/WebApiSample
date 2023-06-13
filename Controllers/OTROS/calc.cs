@@ -20,6 +20,7 @@ public class calc
 // Me dan como parametro el numero de presupuesto.
     public async Task<EstimateV2> calcBatch(int estNumber)
     {
+
         EstimateDB myEstDB=new EstimateDB(); 
         dbutils dbhelper=new dbutils(_unitOfWork);
         myEstDB=await dbhelper.getEstimateLastVers(estNumber);
@@ -27,6 +28,8 @@ public class calc
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
+        // Levanto todas las constantes.
+        myEstV2= await _estService.loadConstants(myEstV2);
 
         // Expando el EstimateDB a un EstimateV2
         myEstV2=dbhelper.transferDataFromDBType(myEstDB);
@@ -81,16 +84,23 @@ public class calc
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
         // COL AF
         myEstV2=_estService.CalcPagado(myEstV2);
-        // Fin de las cuentas.
+        // AH
+        myEstV2=_estService.CalcFactorProdTotal(myEstV2);
+        // Proceso todos los gastos proyectados.
+        myEstV2.ExtraGastosLocProyectado=await _estService.calcularGastosProyectoUSS(myEstV2);
+        // AI
+        myEstV2=_estService.CalcExtraGastoLocProyecto(myEstV2);
+        //AJ
+        myEstV2=_estService.CalcExtraGastoProyectoUSS(myEstV2);
+        //AK
+        myEstV2=_estService.CalcExtraGastoProyectoUnitUSS(myEstV2);
+        //AL
+        myEstV2=_estService.CalcOverhead(myEstV2);
+        //AM
+        myEstV2=_estService.CalcCostoUnitarioUSS(myEstV2);
+        //AN
+        myEstV2=_estService.CalcCostoUnitario(myEstV2);
 
-        // Tengo que devolver los pesos totales en el POST calculado como parte del ejemplo
-        List<double> pesoTot=new List<double>();
-        // Para cada porducto del detalle estraigo el peso Total:
-        foreach(EstimateDetail ed in myEstV2.EstDetails)
-        {
-            pesoTot.Add(ed.PesoTot);
-        }
-// Devuelvo la lista de lo que saque.
         return myEstV2;
     }
 // Este metodo es similar al anterior salvo que tiene opcion de no volver a buscar a base los mismo valores una y otra vez.

@@ -4,7 +4,7 @@ namespace WebApiSample.Infrastructure;
 
 public interface IEstimateDetailService : IGenericService<EstimateDetail>
 {
-
+    public void loadConstants(CONSTANTES miaConst);
     //IEstimateDetailService estDetServ{get;}
 
     // COL J
@@ -66,5 +66,18 @@ public interface IEstimateDetailService : IGenericService<EstimateDetail>
 
     // SEGUIR HASTA LA COL AN*/
     public double CalcFactorProducto(EstimateDetail estD, double fobTotal);
+
+    public double CalcGastosProyPond(EstimateDetail estD, double gastosProy);
+
+    public double CalcGastosProyPondUSS(EstimateDetail estD,double dolar);
+    
+    public double CalcGastosProyPorUnidUSS(EstimateDetail estD);
+
+    public double CalcOverHeadUnitUSS(EstimateDetail estD);
+
+    public double CalcCostoUnitUSS(EstimateDetail estD);
+
+    public double CalcCostoUnit(EstimateDetail estD, double dolar);
+
 
 }

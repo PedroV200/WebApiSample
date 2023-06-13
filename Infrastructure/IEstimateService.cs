@@ -5,7 +5,9 @@ namespace WebApiSample.Infrastructure;
 public interface IEstimateService : IGenericService<EstimateV2>
 {
 
-    IEstimateDetailService estDetServices {get;}
+    IEstimateDetailService _estDetServices {get;}
+
+    public Task<EstimateV2> loadConstants(EstimateV2 est);
 
     // CELDA I43
     //public EstimateV2 CalcCantPcsTotal(EstimateV2 est);
@@ -51,6 +53,20 @@ public interface IEstimateService : IGenericService<EstimateV2>
     public EstimateV2 CalcPagado(EstimateV2 est);
 
     public EstimateV2 CalcFactorProdTotal(EstimateV2 est);
+
+    public EstimateV2 CalcExtraGastoLocProyecto(EstimateV2 est);
+
+    public EstimateV2 CalcExtraGastoProyectoUSS(EstimateV2 est);
+
+    public EstimateV2 CalcExtraGastoProyectoUnitUSS(EstimateV2 est);
+
+    public EstimateV2 CalcOverhead(EstimateV2 est);
+
+    public EstimateV2 CalcCostoUnitarioUSS(EstimateV2 est);
+
+    public EstimateV2 CalcCostoUnitario(EstimateV2 est); 
+
+    public Task<double> calcularGastosProyectoUSS(EstimateV2 miEst);
 
     public Task<double> lookUpTarifaFleteCont(EstimateV2 est);
     public double sumPesoTotal(EstimateV2 est);
