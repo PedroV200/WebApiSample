@@ -11,9 +11,19 @@ public class EstimateDetailService: IEstimateDetailService
 {
     public IUnitOfWork _unitOfWork {get;}
 
-    public EstimateDetailService(IUnitOfWork unitOfWork)
+    public ICnstService _constService;
+
+    public CONSTANTES misConsts=new CONSTANTES();
+
+    public EstimateDetailService(IUnitOfWork unitOfWork, ICnstService constService)
     {
         _unitOfWork=unitOfWork;
+        _constService=constService;
+    }
+
+    public async void loadConstants(CONSTANTES miaConst)
+    {
+        misConsts=miaConst;
     }
 
     public async Task<double> lookUpDie(EstimateDetail estDetails)
@@ -39,7 +49,8 @@ public class EstimateDetailService: IEstimateDetailService
             }
             else
             { // No, entonces vale 3%.
-                tmpL=3.00000;
+                //tmpL=3.00000;
+                tmpL=misConsts.CONST_NCM_DIE_Min;
             }
             return tmpL;
     }
@@ -108,11 +119,14 @@ public class EstimateDetailService: IEstimateDetailService
         }
         else
         {
-            if(est.valAduanaDivisa<10000)
+            if(est.valAduanaDivisa<misConsts.CNST_ESTAD061_ThrhldMAX)
+            //if(est.valAduanaDivisa<10000)
             {
-                if((est.valAduanaDivisa*est.Te)>180)
+                if((est.valAduanaDivisa*est.Te)>misConsts.CNST_ESTAD061_ThrhldMIN)
+                //if((est.valAduanaDivisa*est.Te)>180)
                 {
-                    return 180;
+                    //return 180;
+                    return misConsts.CNST_ESTAD061_ThrhldMIN;
                 }
                 else
                 {
@@ -177,7 +191,8 @@ public class EstimateDetailService: IEstimateDetailService
 
     public double CalcImpGcias424(EstimateDetail estDetails)
     {
-        return (estDetails.BaseIvaGcias*6)/100;
+        //return (estDetails.BaseIvaGcias*6)/100;
+        return estDetails.BaseIvaGcias*misConsts.CNST_GCIAS_424_Mult;
     }
 
     public async Task<double> CalcIIBB(EstimateDetail estDetails)
@@ -215,5 +230,32 @@ public class EstimateDetailService: IEstimateDetailService
         {
             return -1;
         }
+    }
+
+    public double CalcGastosProyPond(EstimateDetail estD, double gastosTotProy)
+    {
+        return estD.FactorProd*gastosTotProy;
+    }
+    public double CalcGastosProyPondUSS(EstimateDetail estD,double dolar)
+    {
+        return estD.ExtraGastoLocProyUSS/dolar;
+    }
+    public double CalcGastosProyPorUnidUSS(EstimateDetail estD)
+    {
+        return estD.ExtraGastoLocProyUSS/estD.cantpcs;
+    }
+    public double CalcOverHeadUnitUSS(EstimateDetail estD)
+    {
+        return estD.ExtraGastoLocProyUnitUSS/estD.PrecioUnitUSS;
+    }
+
+    public double CalcCostoUnitUSS(EstimateDetail estD)
+    {
+        return estD.PrecioUnitUSS+estD.ExtraGastoLocProyUnitUSS;
+    }
+
+    public double CalcCostoUnit(EstimateDetail estD, double dolar)
+    {
+        return estD.CostoUnitEstimadoUSS*dolar;
     }
 }

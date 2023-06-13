@@ -28,6 +28,8 @@ public interface IUnitOfWork
     IContenedorRepository Contenedores {get;}
     ITarifasPolizaRepository TarifasPolizas {get;}
     ITarifasTteLocalRepository TarifasTtesLocal {get;}
+
+    ICnstRepository Constantes {get;}
     //ITarifasSeguroRepository TarifasSeguros {get;}
     //ITarifasTerminalRepository TarifasTerminales {get;}
     //ITarifasTteRepository TarifasTransportes {get;}

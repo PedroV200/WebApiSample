@@ -12,4 +12,4 @@ public class EstimateDetailDB
     public double FobUnit {get; set;}
     public int CantPcs {get; set;}
     public int IdEstHeader { get; set; }
-}
+} 

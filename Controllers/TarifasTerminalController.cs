@@ -62,12 +62,12 @@ public class TarifasTerminalController : ControllerBase
     }
 
     //[HttpDelete("{id}")]
-    [HttpDelete("{description}/{contype}")]
-    public async Task<IActionResult> Delete(string description, string contype)
+    [HttpDelete("{contype}")]
+    public async Task<IActionResult> Delete(string contype)
     {
         try
         {
-            var result = await _unitOfWork.TarifasTerminals.DeleteByDepoContTypeAsync(description, contype);
+            var result = await _unitOfWork.TarifasTerminals.DeleteByContTypeAsync(contype);
             // Ninguna fila afectada .... El id no existe
             if (result == 0)
             {
@@ -82,12 +82,12 @@ public class TarifasTerminalController : ControllerBase
         }
     }
 
-    [HttpGet("{description}/{contype}")]
+    [HttpGet("{contype}")]
     public async Task<ActionResult<TarifasTerminal>> Get(string description, string contype)
     {
         try
         {
-            var result = await _unitOfWork.TarifasTerminals.GetByDepoContTypeAsync(description, contype);
+            var result = await _unitOfWork.TarifasTerminals.GetByContTypeAsync(contype);
             if (result == null)
             {
                 return NotFound();

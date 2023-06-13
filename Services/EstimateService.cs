@@ -10,19 +10,34 @@ using System.Globalization;
 public class EstimateService: IEstimateService
 {
     IUnitOfWork _unitOfWork;
-    public EstimateService(IEstimateDetailService estDetailServices,IUnitOfWork unitOfWork)
+    public EstimateService(IEstimateDetailService estDetailServices,IUnitOfWork unitOfWork, ICnstService constService)
     {
-        estDetServices=estDetailServices;
+       _estDetServices=estDetailServices;
        _unitOfWork=unitOfWork;
+       _cnstService=constService;
 
     }
-    public IEstimateDetailService estDetServices {get;}
+    public IEstimateDetailService _estDetServices {get;}
+    public ICnstService _cnstService {get;}
+
+// ADVERTENCIA: Esta funcion es equi a init(), debe llamarse antes que cualquier cuenta de modo que las constantes
+// esten todas populadas.
+// Se encarga de obtener las constantes que se usan en diverso calculos desde la tabla constantes.
+// Le pasa estas constantes tmb a estDetailService.
+    public async Task<EstimateV2> loadConstants(EstimateV2 est)
+    {
+        est.constantes=await _cnstService.getConstantes();
+        // Le paso las constantes a estDetailService tmb.
+        _estDetServices.loadConstants(est.constantes);
+        return est;
+        
+    }
 
     public EstimateV2 CalcPesoTotal(EstimateV2 est)
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.PesoTot=estDetServices.CalcPesoTotal(ed);       
+            ed.PesoTot=_estDetServices.CalcPesoTotal(ed);       
         }
         return est;
     }
@@ -33,7 +48,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.Fob=estDetServices.CalcFob(ed);       
+            ed.Fob=_estDetServices.CalcFob(ed);       
         }
         return est;
     }
@@ -42,7 +57,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.CbmTot=estDetServices.CalcCbmTotal(ed);       
+            ed.CbmTot=_estDetServices.CalcCbmTotal(ed);       
         }
         return est;
     }
@@ -51,7 +66,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.Flete=estDetServices.CalcFlete(ed,est.FleteTotal,est.FobGrandTotal);       
+            ed.Flete=_estDetServices.CalcFlete(ed,est.FleteTotal,est.FobGrandTotal);       
         }
         return est;
     }
@@ -60,7 +75,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               // CELDA C5=0.1*C3
-            ed.Seguro=estDetServices.CalcSeguro(ed,(est.Seguro*est.Seguroporct),est.FobGrandTotal);       
+            ed.Seguro=_estDetServices.CalcSeguro(ed,(est.Seguro*est.Seguroporct),est.FobGrandTotal);       
         }
         return est;
     }
@@ -69,7 +84,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.Cif=estDetServices.CalcCif(ed);
+            ed.Cif=_estDetServices.CalcCif(ed);
         }
         return est;
     }
@@ -80,7 +95,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.valAduanaDivisa=estDetServices.CalcValorEnAduanaDivisa(ed);
+            ed.valAduanaDivisa=_estDetServices.CalcValorEnAduanaDivisa(ed);
         }
         return est;
     }
@@ -89,7 +104,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.Die=(await estDetServices.lookUpDie(ed))/100.0;
+            ed.Die=(await _estDetServices.lookUpDie(ed))/100.0;
         }
         return est;
     }
@@ -98,7 +113,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.Derechos=estDetServices.CalcDerechos(ed);
+            ed.Derechos=_estDetServices.CalcDerechos(ed);
         }
         return est;
     }  
@@ -107,7 +122,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.Te=(await estDetServices.lookUpTe(ed))/100.0;
+            ed.Te=(await _estDetServices.lookUpTe(ed))/100.0;
         }       
         return est;
     }
@@ -116,7 +131,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.TasaEstad061=estDetServices.CalcTasaEstad061(ed);
+            ed.TasaEstad061=_estDetServices.CalcTasaEstad061(ed);
         }
         return est;
     }  
@@ -125,7 +140,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.BaseIvaGcias=estDetServices.CalcBaseIvaGcias(ed);
+            ed.BaseIvaGcias=_estDetServices.CalcBaseIvaGcias(ed);
         }
         return est;
     }  
@@ -134,7 +149,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IVA=(await estDetServices.lookUpIVA(ed))/100.0;
+            ed.IVA=(await _estDetServices.lookUpIVA(ed))/100.0;
         }       
         return est;
     }
@@ -143,7 +158,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IVA415=estDetServices.CalcIVA415(ed);
+            ed.IVA415=_estDetServices.CalcIVA415(ed);
         }
         return est;
     }
@@ -152,7 +167,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IVA_ad=(await estDetServices.lookUpIVAadic(ed))/100.0;
+            ed.IVA_ad=(await _estDetServices.lookUpIVAadic(ed))/100.0;
         }
         return est;
     } 
@@ -161,7 +176,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IVA_ad_gcias=estDetServices.CalcIvaAdic(ed,est.IvaExcento);
+            ed.IVA_ad_gcias=_estDetServices.CalcIvaAdic(ed,est.IvaExcento);
         }
         return est;
     }
@@ -170,7 +185,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.ImpGcias424=estDetServices.CalcImpGcias424(ed);
+            ed.ImpGcias424=_estDetServices.CalcImpGcias424(ed);
         }
         return est;
     }
@@ -179,7 +194,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IIBB=await estDetServices.CalcIIBB(ed);
+            ed.IIBB=await _estDetServices.CalcIIBB(ed);
         }
         return est;
     }
@@ -188,7 +203,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.PrecioUnitUSS=estDetServices.CalcPrecioUnitUSS(ed);
+            ed.PrecioUnitUSS=_estDetServices.CalcPrecioUnitUSS(ed);
         }
         return est;
     }
@@ -197,7 +212,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.Pagado=estDetServices.CalcPagado(ed);
+            ed.Pagado=_estDetServices.CalcPagado(ed);
         }
         return est;
     }
@@ -206,7 +221,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.FactorProd=estDetServices.CalcFactorProducto(ed, sumFobTotal(est));       
+            ed.FactorProd=_estDetServices.CalcFactorProducto(ed, sumFobTotal(est));       
         }
         return est;
     }
@@ -241,5 +256,235 @@ public class EstimateService: IEstimateService
         }
         return -1;
     }
+
+
+    public async Task<double> calcularGastosFwd(EstimateV2 miEst)
+    {
+        TarifasFwdCont myContFwd=new TarifasFwdCont();
+        
+        if(miEst!=null && miEst.FreightType!=null && miEst.FreightFwd!=null)
+        {
+            myContFwd= await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(miEst.FreightFwd,miEst.FreightType);
+        }
+        else
+        {   // El estimate pasado como parametro o alguno de sus miembros es null !!!. OJO.
+            return -1;
+        }
+
+        if(myContFwd==null)
+        {
+            return -1;
+        }
+
+        
+        if(miEst.FreightType=="LCL")
+        {
+            return (myContFwd.costoflete040*miEst.CbmTot*miEst.DollarBillete)+myContFwd.gastos1*miEst.DollarBillete;
+        }
+        else
+        {
+            return (myContFwd.costoflete040+myContFwd.gastos1)*miEst.DollarBillete*miEst.CantidadContenedores;
+        }
+    }
+
+    public async Task<double> calcularGastosTerminal(EstimateV2 miEst)
+    {
+        TarifasTerminal myTar=new TarifasTerminal();
+        if(miEst==null || miEst.FreightType==null)
+        {
+            return -1;
+        }
+        myTar= await _unitOfWork.TarifasTerminals.GetByContTypeAsync(miEst.FreightType);
+        if(myTar==null)
+        {
+            return -1;
+        }
+        return ((myTar.gastoFijo+myTar.gastoVariable)*miEst.DollarBillete);
+    }
+
+    public async Task<double> calcularGastosDespachante(EstimateV2 miEst)
+    {
+        double tmp;
+        if(miEst==null)
+        {   // OJO con que me pasen NULL.   
+            return -1;
+        }
+
+        if((miEst.CifTot*miEst.constantes.CNST_GASTOS_DESPA_Cif_Mult)>miEst.constantes.CNST_GASTOS_DESPA_Cif_Thrhld)
+        {
+            tmp=miEst.CifTot*miEst.constantes.CNST_GASTOS_DESPA_Cif_Mult*miEst.DollarBillete;
+        }
+        else
+        {
+            tmp=miEst.DollarBillete*miEst.constantes.CNST_GASTOS_DESPA_Cif_Min;
+        }
+
+        return tmp+(miEst.constantes.CNST_GASTOS_DESPA_Cif_Thrhld*miEst.DollarBillete);
+    }
+
+    public async Task<double> calcularGastosTteLocal(EstimateV2 miEst)
+    {
+        double tmp;
+        if(miEst==null || miEst.FreightType==null)
+        {
+            return -1;
+        }
+
+        TarifasTteLocal myTar= await _unitOfWork.TarifasTtesLocal.GetByTteTarifaByContAsync(miEst.FreightType);
+
+        if(myTar==null)
+        {
+            return -1;
+        }
+        // Calculos los gastos totales de transporte. Aun cuando tenga un campo gastostot.
+        tmp=myTar.fleteint+myTar.devacio+myTar.demora+myTar.guarderia;
+        // si es un LCL, es menos que un contenedor. No se multiplica por Cantidad de Contenedores.
+        if(miEst.FreightType=="LCL")
+        {
+            return tmp;
+        }
+        else
+        {
+            return tmp*miEst.CantidadContenedores;
+        }
+    }
+
+    public async Task<double> calcularGastosCustodia(EstimateV2 miEst)
+    {
+            TarifasPoliza myTar=new TarifasPoliza();
+
+            if(miEst==null)
+            {
+                return -1;
+            }
+
+            myTar=await _unitOfWork.TarifasPolizas.GetByDescAsync(miEst.PolizaProv);
+
+            if(myTar==null)
+            {
+                return -1;
+            }
+
+            if(miEst.FobGrandTotal>miEst.constantes.CNST_GASTOS_CUSTODIA_Thrshld)
+            {
+                return (myTar.prima+myTar.demora) + ((myTar.prima+myTar.demora)*(myTar.impint/100)*(myTar.sellos/100));
+            }
+            else
+            {
+                return 0;
+            }
+    }
+
+    public double calcularGastosGestDigDocs(EstimateV2 miEst)
+    {
+        return miEst.constantes.CNST_GASTOS_GETDIGDOC_Mult*miEst.DollarBillete;
+    }
+
+    public double calcularGastosBancarios(EstimateV2 miEst)
+    {
+        return miEst.constantes.CNST_GASTOS_BANCARIOS_Mult*miEst.DollarBillete;
+    }
+
+// Hace las cuentas de la tabla inferior del presupuestador, gastos locales / proyectados.
+// Los devuelve en dolarbillete. CELDA D59
+    public async Task<double> calcularGastosProyectoUSS(EstimateV2 miEst)
+    {
+        double tmp;
+        double result;
+
+        tmp=await calcularGastosFwd(miEst);
+        if(tmp<0)
+        {   // Todos los metodos que consultan una tabla tienen opcion de devolver -1 si algo no salio bien.
+            return tmp;
+        }
+        result=tmp;
+        tmp=await calcularGastosTerminal(miEst);
+        if(tmp<0)
+        {
+            return tmp;
+        }
+        result=result+tmp;
+        tmp=await calcularGastosDespachante(miEst);
+        if(tmp<0)
+        {
+            return tmp;
+        }
+        result=result+tmp;
+        tmp=await calcularGastosTteLocal(miEst);
+        if(tmp<0)
+        {
+            return tmp;
+        }
+        result=result+tmp;
+        tmp=await calcularGastosCustodia(miEst);
+        if(tmp<0)
+        {
+            return tmp;
+        }
+        result=result+tmp;
+        tmp=calcularGastosGestDigDocs(miEst);       // Este metodo no involucra una consulta a tabla, tmp np puede ser negativo
+        result=result+tmp;
+        tmp=calcularGastosBancarios(miEst);         // Este idem.
+        result=result+tmp;
+
+        return (result/miEst.DollarBillete);
+
+    }
+
+
+
+    public EstimateV2 CalcExtraGastoLocProyecto(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.ExtraGastoLocProy=_estDetServices.CalcGastosProyPond(ed,est.ExtraGastosLocProyectado);       
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcExtraGastoProyectoUSS(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.ExtraGastoLocProyUSS=_estDetServices.CalcGastosProyPondUSS(ed,est.DollarBillete);       
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcExtraGastoProyectoUnitUSS(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.ExtraGastoLocProyUnitUSS=_estDetServices.CalcGastosProyPorUnidUSS(ed);       
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcOverhead(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.OverHead=_estDetServices.CalcOverHeadUnitUSS(ed);       
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcCostoUnitarioUSS(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.CostoUnitEstimadoUSS=_estDetServices.CalcCostoUnitUSS(ed);       
+        }
+        return est;
+    }
+
+    public EstimateV2 CalcCostoUnitario(EstimateV2 est)
+    {
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            ed.CostoUnitEstimado=_estDetServices.CalcCostoUnit(ed,est.DollarBillete);       
+        }
+        return est;
+    } 
 
 }
