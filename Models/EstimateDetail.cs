@@ -12,6 +12,13 @@ public class EstimateDetail
     public double fobunit {get; set;}
     public int cantpcs {get; set;}
     public int idestheader { get; set; }
+
+    //Valores congelados ....
+    public double ncm_die { get; set; }
+    public double ncm_te { get; set; }
+    public double ncm_iva { get; set; }
+    public double ncm_ivaad { get; set; }
+
     // VALORES CALCULADOS
     public double PesoTot {get;set;}
     public double CbmTot {get;set;}

@@ -4,6 +4,8 @@ using WebApiSample.Infrastructure;
 using WebApiSample.Core;
 namespace WebApiSample.Controllers;
 
+
+
 [ApiController]
 [Route("[controller]")]
 public class CalcController : ControllerBase
@@ -59,7 +61,7 @@ public class CalcController : ControllerBase
     {
         EstimateV2 tmpV2=new EstimateV2();
         // Voy a buscar que valor FOB (arrancando en 100) para llegar a un valorAduanaDivisa de 1000.
-        tmpV2=await myCalc.aCalc(940,10,"fobunit",200,"valAduanaDivisa");
+        //tmpV2=await myCalc.aCalc(940,10,"fobunit",200,"valAduanaDivisa");
         //tmpV2=await myCalc.aCalc(940,0.18,"Die",5000,"Derechos");
 
 

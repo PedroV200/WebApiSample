@@ -72,7 +72,6 @@ public class dbutils
         myEstV2.EstVers=estimateDB.estHeaderDB.EstNumber;
         myEstV2.Owner=estimateDB.estHeaderDB.Own;
         myEstV2.ArticleFamily=estimateDB.estHeaderDB.ArticleFamily;
-        myEstV2.OemSupplier=estimateDB.estHeaderDB.oemprove1;
         myEstV2.IvaExcento=estimateDB.estHeaderDB.IvaExcento;
         myEstV2.DollarBillete=estimateDB.estHeaderDB.DollarBillete;
         myEstV2.FreightType=estimateDB.estHeaderDB.FreightType;
@@ -84,6 +83,38 @@ public class dbutils
         myEstV2.Seguroporct=estimateDB.estHeaderDB.SeguroPorct;
         myEstV2.CantidadContenedores=estimateDB.estHeaderDB.CantidadContenedores;
         myEstV2.Pagado=estimateDB.estHeaderDB.Pagado;
+        myEstV2.CbmTot=estimateDB.estHeaderDB.CbmTot;
+        myEstV2.CifTot=estimateDB.estHeaderDB.CifTot;
+        myEstV2.IibbTot=estimateDB.estHeaderDB.IibbTot;
+        myEstV2.ExtraGastosLocProyectado=estimateDB.estHeaderDB.ExtraGastosLocProyectado;  
+
+        // Cargo las Constantes ....
+        myEstV2.constantes.CNST_ESTAD061_ThrhldMAX=estimateDB.estHeaderDB.c_est061_thrhldmax;
+        myEstV2.constantes.CNST_ESTAD061_ThrhldMIN=estimateDB.estHeaderDB.c_est061_thrhldmin;
+        myEstV2.constantes.CNST_GASTOS_BANCARIOS_Mult=estimateDB.estHeaderDB.c_gbanc_mult;
+        myEstV2.constantes.CNST_GCIAS_424_Mult=estimateDB.estHeaderDB.c_gcias424_mult;
+        myEstV2.constantes.CNST_GASTOS_CUSTODIA_Thrshld=estimateDB.estHeaderDB.c_gcust_thrshld;
+        myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Min=estimateDB.estHeaderDB.c_gdespa_cif_min;
+        myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Mult=estimateDB.estHeaderDB.c_gdespa_cif_mult;
+        myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Thrhld=estimateDB.estHeaderDB.c_gdespa_cif_thrhld;
+        myEstV2.constantes.CNST_GASTOS_GETDIGDOC_Mult=estimateDB.estHeaderDB.c_ggesdoc_mult;
+        myEstV2.constantes.CONST_NCM_DIE_Min=estimateDB.estHeaderDB.c_ncmdie_min;
+
+        myEstV2.p_gloc_banco=estimateDB.estHeaderDB.p_gloc_banco;
+        myEstV2.p_gloc_cust=estimateDB.estHeaderDB.p_gloc_cust;
+        myEstV2.p_gloc_despa=estimateDB.estHeaderDB.p_gloc_despa;
+        myEstV2.p_gloc_gestdigdoc=estimateDB.estHeaderDB.p_gloc_gestdigdoc;
+        myEstV2.p_gloc_fwder=estimateDB.estHeaderDB.p_gloc_fwder;
+        myEstV2.p_gloc_term=estimateDB.estHeaderDB.p_gloc_term;
+        myEstV2.p_gloc_tte=estimateDB.estHeaderDB.p_gloc_tte;
+
+        myEstV2.oemprove1=estimateDB.estHeaderDB.oemprove1;
+        myEstV2.oemprove2=estimateDB.estHeaderDB.oemprove2;
+        myEstV2.oemprove3=estimateDB.estHeaderDB.oemprove3;
+        myEstV2.oemprove4=estimateDB.estHeaderDB.oemprove4;
+        myEstV2.oemprove5=estimateDB.estHeaderDB.oemprove5;
+        myEstV2.oemprove6=estimateDB.estHeaderDB.oemprove6;
+        myEstV2.oemprove7=estimateDB.estHeaderDB.oemprove7;
 
         // En el caso de los Estimate detail, la DB tiene solo lo datos que se cuardaran
         // Este tipo se llama EstimateDetailDB. Mientras que el EstimateV2 definido usa el tipo EstimateDetail
@@ -101,6 +132,10 @@ public class dbutils
             tmp.fobunit=edb.FobUnit;
             tmp.cantpcs=edb.CantPcs;
             tmp.idestheader=edb.IdEstHeader;
+            tmp.ncm_die=edb.ncm_die;
+            tmp.ncm_te=edb.ncm_te;
+            tmp.ncm_iva=edb.ncm_iva;
+            tmp.ncm_ivaad=edb.ncm_ivaad;
             myEstV2.EstDetails.Add(tmp);
         }
         return myEstV2;
@@ -117,7 +152,6 @@ public class dbutils
         estimateDB.estHeaderDB.EstNumber=myEstV2.EstVers;
         estimateDB.estHeaderDB.Own=myEstV2.Owner;
         estimateDB.estHeaderDB.ArticleFamily=myEstV2.ArticleFamily;
-        estimateDB.estHeaderDB.oemprove1=myEstV2.OemSupplier;
         estimateDB.estHeaderDB.IvaExcento=myEstV2.IvaExcento;
         estimateDB.estHeaderDB.DollarBillete=myEstV2.DollarBillete;
         estimateDB.estHeaderDB.FreightType=myEstV2.FreightType;
@@ -129,6 +163,39 @@ public class dbutils
         estimateDB.estHeaderDB.SeguroPorct=myEstV2.Seguroporct;
         estimateDB.estHeaderDB.CantidadContenedores=myEstV2.CantidadContenedores;
         estimateDB.estHeaderDB.Pagado=myEstV2.Pagado;
+
+        myEstV2.CbmTot=estimateDB.estHeaderDB.CbmTot;
+        myEstV2.CifTot=estimateDB.estHeaderDB.CifTot;
+        myEstV2.IibbTot=estimateDB.estHeaderDB.IibbTot;
+        myEstV2.ExtraGastosLocProyectado=estimateDB.estHeaderDB.ExtraGastosLocProyectado;  
+
+        // Cargo las Constantes ....
+        estimateDB.estHeaderDB.c_est061_thrhldmax=myEstV2.constantes.CNST_ESTAD061_ThrhldMAX;
+        estimateDB.estHeaderDB.c_est061_thrhldmin=myEstV2.constantes.CNST_ESTAD061_ThrhldMIN;
+        estimateDB.estHeaderDB.c_gbanc_mult=myEstV2.constantes.CNST_GASTOS_BANCARIOS_Mult;
+        estimateDB.estHeaderDB.c_gcias424_mult=myEstV2.constantes.CNST_GCIAS_424_Mult;
+        estimateDB.estHeaderDB.c_gcust_thrshld=myEstV2.constantes.CNST_GASTOS_CUSTODIA_Thrshld;
+        estimateDB.estHeaderDB.c_gdespa_cif_min=myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Min;
+        estimateDB.estHeaderDB.c_gdespa_cif_mult=myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Mult;
+        estimateDB.estHeaderDB.c_gdespa_cif_thrhld=myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Thrhld;
+        estimateDB.estHeaderDB.c_ggesdoc_mult=myEstV2.constantes.CNST_GASTOS_GETDIGDOC_Mult;
+        estimateDB.estHeaderDB.c_ncmdie_min=myEstV2.constantes.CONST_NCM_DIE_Min;
+
+        estimateDB.estHeaderDB.p_gloc_banco=myEstV2.p_gloc_banco;
+        estimateDB.estHeaderDB.p_gloc_cust=myEstV2.p_gloc_cust;
+        estimateDB.estHeaderDB.p_gloc_despa=myEstV2.p_gloc_despa;
+        estimateDB.estHeaderDB.p_gloc_gestdigdoc=myEstV2.p_gloc_gestdigdoc;
+        estimateDB.estHeaderDB.p_gloc_fwder=myEstV2.p_gloc_fwder;
+        estimateDB.estHeaderDB.p_gloc_term=myEstV2.p_gloc_term;
+        estimateDB.estHeaderDB.p_gloc_tte=myEstV2.p_gloc_tte;
+
+        estimateDB.estHeaderDB.oemprove1=myEstV2.oemprove1;
+        estimateDB.estHeaderDB.oemprove2=myEstV2.oemprove2;
+        estimateDB.estHeaderDB.oemprove3=myEstV2.oemprove3;
+        estimateDB.estHeaderDB.oemprove4=myEstV2.oemprove4;
+        estimateDB.estHeaderDB.oemprove5=myEstV2.oemprove5;
+        estimateDB.estHeaderDB.oemprove6=myEstV2.oemprove6;
+        estimateDB.estHeaderDB.oemprove7=myEstV2.oemprove7;
 
 // Aqui se descartan los calculos. Solo se transfieren los valores necesarios para los mismos
         foreach(EstimateDetail edb in myEstV2.EstDetails)
@@ -143,6 +210,10 @@ public class dbutils
             tmp.FobUnit=edb.fobunit;
             tmp.CantPcs=edb.cantpcs;
             tmp.IdEstHeader=edb.idestheader;
+            edb.ncm_die=tmp.ncm_die;
+            edb.ncm_te=tmp.ncm_te;
+            edb.ncm_iva=tmp.ncm_iva;
+            edb.ncm_ivaad=tmp.ncm_ivaad;
             estimateDB.estDetailsDB.Add(tmp);
         }
         return estimateDB;       
