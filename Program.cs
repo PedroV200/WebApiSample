@@ -1,5 +1,9 @@
 using Auth0.AspNetCore.Authentication; //requiero el paquete de auth0 instalado previamente x nuget
 
+// using de politicas CORS para consultar api local desde localhost de React
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -26,6 +30,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Agrega el middleware CORS antes de app.Run()
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 // habilito autenticacion y autorizacion de auth0
 app.UseAuthentication();
