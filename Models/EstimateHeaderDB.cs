@@ -13,8 +13,6 @@ public class EstimateHeaderDB
     public string Own { get; set;}
     // Categoria de Articulo    SOLPA DEL LIBRO
     public string ArticleFamily {get; set;}
-    // Proveedor                CELDA E6-E13
-    public string OemSupplier {get; set; }
     // Condicion ante el iva    CELDA I5
     public bool IvaExcento {get; set;}
     // CELDA F3
@@ -27,8 +25,7 @@ public class EstimateHeaderDB
     // Seguro: Un porcentaje sobre el FOBT TOTAL (lasumatoria de todos los fobs del detalle)
     // USADO EN CALCULO CELDA C5
     
-    // Momento de la emision
-    public DateTime hTimeStamp {get; set;}
+    
     // Celda C3
     public double FobGrandTotal {get;set;}
     // Celda C4
@@ -44,6 +41,7 @@ public class EstimateHeaderDB
 
     public double CbmTot {get;set;}
     public double CifTot {get;set;}
+    public double IibbTot {get;set;}
     public string PolizaProv {get;set;}
     public double ExtraGastosLocProyectado {get;set;}
 
@@ -66,5 +64,34 @@ public class EstimateHeaderDB
     public string p_gloc_tte{get;set;}
     public string p_gloc_cust{get;set;}
     public string p_gloc_gestdigdoc{get;set;}
+    // Provvedores: CELDA E6 a E13
+    public string oemprove1{get;set;}
+    public string oemprove2{get;set;}
+    public string oemprove3{get;set;}
+    public string oemprove4{get;set;}
+    public string oemprove5{get;set;}
+    public string oemprove6{get;set;}
+    public string oemprove7{get;set;}
+
+    public string spares1{get;set;}
+    public string spares2{get;set;}
+    public string spares3{get;set;}
+    public string spares4{get;set;}
+    public string spares5{get;set;}
+   
+    public double sparef1{get;set;}
+    public double sparef2{get;set;}
+    public double sparef3{get;set;}
+    public double sparef4{get;set;}
+    public double sparef5{get;set;}
+    public double sparef6{get;set;}
+    public double sparef7{get;set;}
+    public double sparef8{get;set;}
+    public double sparef9{get;set;}
+    public double sparef10{get;set;}
+
+    // Momento de la emision
+    public DateTime hTimeStamp {get; set;}
+
 
 }

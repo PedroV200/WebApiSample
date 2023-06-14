@@ -72,7 +72,7 @@ public class dbutils
         myEstV2.EstVers=estimateDB.estHeaderDB.EstNumber;
         myEstV2.Owner=estimateDB.estHeaderDB.Own;
         myEstV2.ArticleFamily=estimateDB.estHeaderDB.ArticleFamily;
-        myEstV2.OemSupplier=estimateDB.estHeaderDB.OemSupplier;
+        myEstV2.OemSupplier=estimateDB.estHeaderDB.oemprove1;
         myEstV2.IvaExcento=estimateDB.estHeaderDB.IvaExcento;
         myEstV2.DollarBillete=estimateDB.estHeaderDB.DollarBillete;
         myEstV2.FreightType=estimateDB.estHeaderDB.FreightType;
@@ -117,7 +117,7 @@ public class dbutils
         estimateDB.estHeaderDB.EstNumber=myEstV2.EstVers;
         estimateDB.estHeaderDB.Own=myEstV2.Owner;
         estimateDB.estHeaderDB.ArticleFamily=myEstV2.ArticleFamily;
-        estimateDB.estHeaderDB.OemSupplier=myEstV2.OemSupplier;
+        estimateDB.estHeaderDB.oemprove1=myEstV2.OemSupplier;
         estimateDB.estHeaderDB.IvaExcento=myEstV2.IvaExcento;
         estimateDB.estHeaderDB.DollarBillete=myEstV2.DollarBillete;
         estimateDB.estHeaderDB.FreightType=myEstV2.FreightType;
