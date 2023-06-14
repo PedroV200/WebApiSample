@@ -15,8 +15,6 @@ public class EstimateV2
     public string Owner { get; set;}
     // Categoria de Articulo    SOLPA DEL LIBRO
     public string ArticleFamily {get; set;}
-    // Proveedor                CELDA E6-E13
-    public string OemSupplier {get; set; }
     // Condicion ante el iva    CELDA I5
     public bool IvaExcento {get; set;}
     // CELDA F3
@@ -50,9 +48,27 @@ public class EstimateV2
     //######################################
     public double CbmTot {get;set;}
     public double CifTot {get;set;}
+
+    public double IibbTot {get;set;}
     public string PolizaProv {get;set;}
     public double ExtraGastosLocProyectado {get;set;}
     public CONSTANTES constantes{get;set;}
+
+    public string p_gloc_banco{get;set;} 
+    public string p_gloc_fwder{get;set;}  
+    public string p_gloc_term{get;set;}  
+    public string p_gloc_despa{get;set;}  
+    public string p_gloc_tte{get;set;}  
+    public string p_gloc_cust{get;set;}  
+    public string p_gloc_gestdigdoc{get;set;} 	
+	public string oemprove1{get;set;} 
+    public string oemprove2{get;set;}
+    public string oemprove3{get;set;}
+    public string oemprove4{get;set;}
+    public string oemprove5{get;set;}
+    public string oemprove6{get;set;}
+    public string oemprove7{get;set;}
+
     //######################################
     public List<EstimateDetail> EstDetails {get; set;}
 
