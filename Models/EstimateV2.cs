@@ -18,7 +18,7 @@ public class EstimateV2
     // Condicion ante el iva    CELDA I5
     public bool IvaExcento {get; set;}
     // CELDA F3
-    public double DollarBillete{get;set;}             
+    public double DolarBillete{get;set;}             
     // Tipo de contenedor: 40HQ / 40ST / 20ST / LCL   CELDA C9
     public string FreightType {get; set; }
     // Foward from: CHINA / PANAMA                    VAR LIBRO BASE_TARIFAS

@@ -1,6 +1,8 @@
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 
+// PRE LISTED 15_6_2023 15:31
+
 public class calc
 {
     // Con UnitOfWork accedo a todos los repositorios.
@@ -52,10 +54,8 @@ public class calc
         myEstV2=_estService.CalcFleteTotal(myEstV2);
         // COL N. Calcula el seguro ponderado a cada articulo del detalle 
         myEstV2=_estService.CalcSeguro(myEstV2);
-        // CELDA AH. Calculo el factor de producto
-        myEstV2=_estService.CalcFactorProdTotal(myEstV2);
         // COL O. Calcula el CIF que solo depende de los datos ya calculados previamente (COL L, N y M)
-        //myEstV2=_estService.CalcCif(myEstV2);
+        myEstV2=_estService.CalcCif(myEstV2);
         // COL R (COL O y COL Q no estan en uso)
         myEstV2=_estService.CalcAjusteIncDec(myEstV2);
         // COL S (die segun NCM)
@@ -87,7 +87,7 @@ public class calc
         // AH
         myEstV2=_estService.CalcFactorProdTotal(myEstV2);
         // Proceso todos los gastos proyectados.
-        myEstV2.ExtraGastosLocProyectado=await _estService.calcularGastosProyectoUSS(myEstV2);
+        myEstV2.ExtraGastosLocProyectado=await _estService.calcularGastosProyecto(myEstV2);
         // AI
         myEstV2=_estService.CalcExtraGastoLocProyecto(myEstV2);
         //AJ

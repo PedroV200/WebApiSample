@@ -16,7 +16,7 @@ public class EstimateHeaderDB
     // Condicion ante el iva    CELDA I5
     public bool IvaExcento {get; set;}
     // CELDA F3
-    public double DollarBillete{get;set;}             
+             
     // Tipo de contenedor: 40HQ / 40ST / 20ST / LCL   CELDA C9
     public string FreightType {get; set; }
     // Foward from: CHINA / PANAMA                    VAR LIBRO BASE_TARIFAS
@@ -56,6 +56,8 @@ public class EstimateHeaderDB
     public double c_est061_thrhldmax{get;set;}
     public double c_est061_thrhldmin{get;set;}
     public double c_gcias424_mult{get;set;}
+    public double DolarBillete{get;set;}    
+
 
     public string p_gloc_banco{get;set;}
     public string p_gloc_fwder{get;set;}
@@ -73,22 +75,7 @@ public class EstimateHeaderDB
     public string oemprove6{get;set;}
     public string oemprove7{get;set;}
 
-    public string spares1{get;set;}
-    public string spares2{get;set;}
-    public string spares3{get;set;}
-    public string spares4{get;set;}
-    public string spares5{get;set;}
    
-    public double sparef1{get;set;}
-    public double sparef2{get;set;}
-    public double sparef3{get;set;}
-    public double sparef4{get;set;}
-    public double sparef5{get;set;}
-    public double sparef6{get;set;}
-    public double sparef7{get;set;}
-    public double sparef8{get;set;}
-    public double sparef9{get;set;}
-    public double sparef10{get;set;}
 
     // Momento de la emision
     public DateTime hTimeStamp {get; set;}

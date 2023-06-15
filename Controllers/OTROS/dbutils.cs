@@ -73,7 +73,7 @@ public class dbutils
         myEstV2.Owner=estimateDB.estHeaderDB.Own;
         myEstV2.ArticleFamily=estimateDB.estHeaderDB.ArticleFamily;
         myEstV2.IvaExcento=estimateDB.estHeaderDB.IvaExcento;
-        myEstV2.DollarBillete=estimateDB.estHeaderDB.DollarBillete;
+        
         myEstV2.FreightType=estimateDB.estHeaderDB.FreightType;
         myEstV2.FreightFwd=estimateDB.estHeaderDB.FreightFwd;
         myEstV2.TimeStamp=estimateDB.estHeaderDB.hTimeStamp;
@@ -86,6 +86,7 @@ public class dbutils
         myEstV2.CbmTot=estimateDB.estHeaderDB.CbmTot;
         myEstV2.CifTot=estimateDB.estHeaderDB.CifTot;
         myEstV2.IibbTot=estimateDB.estHeaderDB.IibbTot;
+        myEstV2.PolizaProv=estimateDB.estHeaderDB.PolizaProv;
         myEstV2.ExtraGastosLocProyectado=estimateDB.estHeaderDB.ExtraGastosLocProyectado;  
 
         // Cargo las Constantes ....
@@ -99,6 +100,8 @@ public class dbutils
         myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Thrhld=estimateDB.estHeaderDB.c_gdespa_cif_thrhld;
         myEstV2.constantes.CNST_GASTOS_GETDIGDOC_Mult=estimateDB.estHeaderDB.c_ggesdoc_mult;
         myEstV2.constantes.CONST_NCM_DIE_Min=estimateDB.estHeaderDB.c_ncmdie_min;
+        myEstV2.DolarBillete=estimateDB.estHeaderDB.DolarBillete;
+
 
         myEstV2.p_gloc_banco=estimateDB.estHeaderDB.p_gloc_banco;
         myEstV2.p_gloc_cust=estimateDB.estHeaderDB.p_gloc_cust;
@@ -153,7 +156,7 @@ public class dbutils
         estimateDB.estHeaderDB.Own=myEstV2.Owner;
         estimateDB.estHeaderDB.ArticleFamily=myEstV2.ArticleFamily;
         estimateDB.estHeaderDB.IvaExcento=myEstV2.IvaExcento;
-        estimateDB.estHeaderDB.DollarBillete=myEstV2.DollarBillete;
+        
         estimateDB.estHeaderDB.FreightType=myEstV2.FreightType;
         estimateDB.estHeaderDB.FreightFwd=myEstV2.FreightFwd;
         estimateDB.estHeaderDB.hTimeStamp=myEstV2.TimeStamp;
@@ -167,6 +170,7 @@ public class dbutils
         myEstV2.CbmTot=estimateDB.estHeaderDB.CbmTot;
         myEstV2.CifTot=estimateDB.estHeaderDB.CifTot;
         myEstV2.IibbTot=estimateDB.estHeaderDB.IibbTot;
+        estimateDB.estHeaderDB.PolizaProv=myEstV2.PolizaProv;
         myEstV2.ExtraGastosLocProyectado=estimateDB.estHeaderDB.ExtraGastosLocProyectado;  
 
         // Cargo las Constantes ....
@@ -180,6 +184,9 @@ public class dbutils
         estimateDB.estHeaderDB.c_gdespa_cif_thrhld=myEstV2.constantes.CNST_GASTOS_DESPA_Cif_Thrhld;
         estimateDB.estHeaderDB.c_ggesdoc_mult=myEstV2.constantes.CNST_GASTOS_GETDIGDOC_Mult;
         estimateDB.estHeaderDB.c_ncmdie_min=myEstV2.constantes.CONST_NCM_DIE_Min;
+        
+        estimateDB.estHeaderDB.DolarBillete=myEstV2.DolarBillete;
+        
 
         estimateDB.estHeaderDB.p_gloc_banco=myEstV2.p_gloc_banco;
         estimateDB.estHeaderDB.p_gloc_cust=myEstV2.p_gloc_cust;

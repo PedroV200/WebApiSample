@@ -238,7 +238,7 @@ public class EstimateDetailService: IEstimateDetailService
     }
     public double CalcGastosProyPondUSS(EstimateDetail estD,double dolar)
     {
-        return estD.ExtraGastoLocProyUSS/dolar;
+        return estD.ExtraGastoLocProy/dolar;
     }
     public double CalcGastosProyPorUnidUSS(EstimateDetail estD)
     {
@@ -246,7 +246,14 @@ public class EstimateDetailService: IEstimateDetailService
     }
     public double CalcOverHeadUnitUSS(EstimateDetail estD)
     {
-        return estD.ExtraGastoLocProyUnitUSS/estD.PrecioUnitUSS;
+        if(estD.PrecioUnitUSS!=0)
+        {
+            return estD.ExtraGastoLocProyUnitUSS/estD.PrecioUnitUSS;
+        }
+        else
+        {
+            return -1;
+        }
     }
 
     public double CalcCostoUnitUSS(EstimateDetail estD)
