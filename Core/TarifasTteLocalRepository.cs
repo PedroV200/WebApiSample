@@ -57,7 +57,7 @@ public class TarifasTteLocalRepository : ITarifasTteLocalRepository
             return result;
         }
     }
-    public async Task<TarifasTteLocal> GetByTteTarifaByContAsync(string cont)
+    public async Task<TarifasTteLocal> GetTarifaTteByContAsync(string cont)
     {
         var sql = $"SELECT * FROM tarifasttelocal WHERE contype='{cont}'";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))

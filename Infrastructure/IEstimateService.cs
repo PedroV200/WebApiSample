@@ -66,7 +66,7 @@ public interface IEstimateService : IGenericService<EstimateV2>
 
     public EstimateV2 CalcCostoUnitario(EstimateV2 est); 
 
-    public Task<double> calcularGastosProyectoUSS(EstimateV2 miEst);
+    public Task<double> calcularGastosProyecto(EstimateV2 miEst);
 
     public Task<double> lookUpTarifaFleteCont(EstimateV2 est);
     public double sumPesoTotal(EstimateV2 est);

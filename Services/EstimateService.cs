@@ -279,11 +279,11 @@ public class EstimateService: IEstimateService
         
         if(miEst.FreightType=="LCL")
         {
-            return (myContFwd.costoflete040*miEst.CbmTot*miEst.DollarBillete)+myContFwd.gastos1*miEst.DollarBillete;
+            return (myContFwd.costoflete040*miEst.CbmTot*miEst.DolarBillete)+myContFwd.gastos1*miEst.DolarBillete;
         }
         else
         {
-            return (myContFwd.costoflete040+myContFwd.gastos1)*miEst.DollarBillete*miEst.CantidadContenedores;
+            return (myContFwd.costoflete040+myContFwd.gastos1)*miEst.DolarBillete*miEst.CantidadContenedores;
         }
     }
 
@@ -299,7 +299,7 @@ public class EstimateService: IEstimateService
         {
             return -1;
         }
-        return ((myTar.gastoFijo+myTar.gastoVariable)*miEst.DollarBillete);
+        return ((myTar.gastoFijo+myTar.gastoVariable)*miEst.DolarBillete);
     }
 
     public async Task<double> calcularGastosDespachante(EstimateV2 miEst)
@@ -312,14 +312,14 @@ public class EstimateService: IEstimateService
 
         if((miEst.CifTot*miEst.constantes.CNST_GASTOS_DESPA_Cif_Mult)>miEst.constantes.CNST_GASTOS_DESPA_Cif_Thrhld)
         {
-            tmp=miEst.CifTot*miEst.constantes.CNST_GASTOS_DESPA_Cif_Mult*miEst.DollarBillete;
+            tmp=miEst.CifTot*miEst.constantes.CNST_GASTOS_DESPA_Cif_Mult*miEst.DolarBillete;
         }
         else
         {
-            tmp=miEst.DollarBillete*miEst.constantes.CNST_GASTOS_DESPA_Cif_Min;
+            tmp=miEst.DolarBillete*miEst.constantes.CNST_GASTOS_DESPA_Cif_Min;
         }
 
-        return tmp+(miEst.constantes.CNST_GASTOS_DESPA_Cif_Thrhld*miEst.DollarBillete);
+        return tmp+(miEst.constantes.CNST_GASTOS_DESPA_Cif_Thrhld*miEst.DolarBillete);
     }
 
     public async Task<double> calcularGastosTteLocal(EstimateV2 miEst)
@@ -330,7 +330,7 @@ public class EstimateService: IEstimateService
             return -1;
         }
 
-        TarifasTteLocal myTar= await _unitOfWork.TarifasTtesLocal.GetByTteTarifaByContAsync(miEst.FreightType);
+        TarifasTteLocal myTar= await _unitOfWork.TarifasTtesLocal.GetTarifaTteByContAsync(miEst.FreightType);
 
         if(myTar==null)
         {
@@ -377,17 +377,17 @@ public class EstimateService: IEstimateService
 
     public double calcularGastosGestDigDocs(EstimateV2 miEst)
     {
-        return miEst.constantes.CNST_GASTOS_GETDIGDOC_Mult*miEst.DollarBillete;
+        return miEst.constantes.CNST_GASTOS_GETDIGDOC_Mult*miEst.DolarBillete;
     }
 
     public double calcularGastosBancarios(EstimateV2 miEst)
     {
-        return miEst.constantes.CNST_GASTOS_BANCARIOS_Mult*miEst.DollarBillete;
+        return miEst.constantes.CNST_GASTOS_BANCARIOS_Mult*miEst.DolarBillete;
     }
 
 // Hace las cuentas de la tabla inferior del presupuestador, gastos locales / proyectados.
 // Los devuelve en dolarbillete. CELDA D59
-    public async Task<double> calcularGastosProyectoUSS(EstimateV2 miEst)
+    public async Task<double> calcularGastosProyecto(EstimateV2 miEst)
     {
         double tmp;
         double result;
@@ -427,7 +427,7 @@ public class EstimateService: IEstimateService
         tmp=calcularGastosBancarios(miEst);         // Este idem.
         result=result+tmp;
 
-        return (result/miEst.DollarBillete);
+        return (result);
 
     }
 
@@ -446,7 +446,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.ExtraGastoLocProyUSS=_estDetServices.CalcGastosProyPondUSS(ed,est.DollarBillete);       
+            ed.ExtraGastoLocProyUSS=_estDetServices.CalcGastosProyPondUSS(ed,est.DolarBillete);       
         }
         return est;
     }
@@ -482,7 +482,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.CostoUnitEstimado=_estDetServices.CalcCostoUnit(ed,est.DollarBillete);       
+            ed.CostoUnitEstimado=_estDetServices.CalcCostoUnit(ed,est.DolarBillete);       
         }
         return est;
     } 

@@ -4,6 +4,6 @@ namespace WebApiSample.Infrastructure;
 
 public interface ITarifasTteLocalRepository:IGenericRepository<TarifasTteLocal>
 {
-    public  Task<TarifasTteLocal> GetByTteTarifaByContAsync(string cont);
+    public  Task<TarifasTteLocal> GetTarifaTteByContAsync(string cont);
     public Task<int> UpdateTteTarifaByContTypeAsync(TarifasTteLocal entity);
 }

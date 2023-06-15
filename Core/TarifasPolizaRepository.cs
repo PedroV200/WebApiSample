@@ -62,7 +62,7 @@ public class TarifasPolizaRepository : ITarifasPolizaRepository
 
         public async Task<TarifasPoliza> GetByDescAsync(string proveedor)
     {
-        var sql = $"SELECT * FROM tarifaspoliza WHERE id = '{proveedor}'";
+        var sql = $"SELECT * FROM tarifaspoliza WHERE description = '{proveedor}'";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
         {
             connection.Open();

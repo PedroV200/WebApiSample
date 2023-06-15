@@ -89,7 +89,7 @@ public class TarifasTteLocalController : ControllerBase
     {
         try
         {
-            var result=await _unitOfWork.TarifasTtesLocal.GetByTteTarifaByContAsync(contype);
+            var result=await _unitOfWork.TarifasTtesLocal.GetTarifaTteByContAsync(contype);
             if(result==null)
             {
                 return NotFound();
