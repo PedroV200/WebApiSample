@@ -62,7 +62,7 @@ public class EstimateService: IEstimateService
         return est;
     }
 
-    public EstimateV2 CalcFleteTotal(EstimateV2 est)
+    public EstimateV2 CalcFleteTotalByProd(EstimateV2 est)
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
@@ -75,7 +75,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               // CELDA C5=0.1*C3
-            ed.Seguro=_estDetServices.CalcSeguro(ed,(est.Seguro*est.Seguroporct),est.FobGrandTotal);       
+            ed.Seguro=_estDetServices.CalcSeguro(ed,(est.Seguro*est.SeguroPorct),est.FobGrandTotal);       
         }
         return est;
     }
@@ -246,6 +246,28 @@ public class EstimateService: IEstimateService
         return tmp;
     }
 
+    public EstimateV2 CalcCbmGrandTotal(EstimateV2 est)
+    {
+        double tmp=0;
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            tmp+=ed.CbmTot;
+        }
+        est.CbmGrandTot=tmp;
+        return est;
+    }
+
+    public EstimateV2 CalcCifTotal(EstimateV2 est)
+    {
+        double tmp=0;
+        foreach(EstimateDetail ed in est.EstDetails)
+        {
+            tmp+=ed.Cif;
+        }
+        est.CifTot=tmp;
+        return est;
+    }
+
     public async Task<double> lookUpTarifaFleteCont(EstimateV2 est)
     {
         TarifasFwdCont myTarCont=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(est.FreightFwd,est.FreightType); 
@@ -279,7 +301,7 @@ public class EstimateService: IEstimateService
         
         if(miEst.FreightType=="LCL")
         {
-            return (myContFwd.costoflete040*miEst.CbmTot*miEst.DolarBillete)+myContFwd.gastos1*miEst.DolarBillete;
+            return (myContFwd.costoflete040*miEst.CbmGrandTot*miEst.DolarBillete)+myContFwd.gastos1*miEst.DolarBillete;
         }
         else
         {
@@ -299,7 +321,7 @@ public class EstimateService: IEstimateService
         {
             return -1;
         }
-        return ((myTar.gastoFijo+myTar.gastoVariable)*miEst.DolarBillete);
+        return ((myTar.gastoFijo+myTar.gastoVariable)*miEst.DolarBillete*miEst.CantidadContenedores);
     }
 
     public async Task<double> calcularGastosDespachante(EstimateV2 miEst)
@@ -486,5 +508,22 @@ public class EstimateService: IEstimateService
         }
         return est;
     } 
+
+    public async Task<EstimateV2> CalcularCantContenedores(EstimateV2 est)
+    {
+        Contenedor myCont=new Contenedor();
+        myCont=await _unitOfWork.Contenedores.GetByTipoContAsync(est.FreightType);
+        est.CantidadContenedores=est.CbmGrandTot/myCont.volume;
+        return est;
+    }
+
+    public async Task<EstimateV2> CalcFleteTotal(EstimateV2 est)
+    {
+        double tmp;
+        tmp=await lookUpTarifaFleteCont(est);
+        tmp=tmp*est.CantidadContenedores;
+        est.FleteTotal=tmp;
+        return est;
+    }
 
 }

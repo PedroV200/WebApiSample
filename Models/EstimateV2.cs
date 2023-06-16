@@ -34,7 +34,7 @@ public class EstimateV2
     // Celda C4
     public double FleteTotal {get;set;}
     // El valor magico "0.1 en la formula de C5
-    public double Seguroporct {get;set;}
+    public double SeguroPorct {get;set;}
     // CELDA C5
     public double Seguro{get; set;}
     // CELDA C10
@@ -46,7 +46,7 @@ public class EstimateV2
 
     // REFACTOR DEL HEADER --------------- 
     //######################################
-    public double CbmTot {get;set;}
+    public double CbmGrandTot {get;set;}
     public double CifTot {get;set;}
 
     public double IibbTot {get;set;}

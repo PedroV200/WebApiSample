@@ -42,20 +42,31 @@ public class calc
         myEstV2=_estService.CalcPesoTotal(myEstV2);
         // COL K
         myEstV2=_estService.CalcCbmTotal(myEstV2);
+        // CELDA K43
+        myEstV2=_estService.CalcCbmGrandTotal(myEstV2);
+        // CELDA C10
+        myEstV2=await _estService.CalcularCantContenedores(myEstV2);
         // COL L. Calculo el fob total por articulo
         myEstV2=_estService.CalcFobTotal(myEstV2);
         // CELDA L43. Sumo todos los fob totales. Sumatoria de L15-L41 que se copia en celda C3
         myEstV2.FobGrandTotal=_estService.sumFobTotal(myEstV2);
         // CELDA C4. Traigo la tarifa del flete desde BASE_TARIFAS por fowarder y tipo cont
-        TarifasFwdCont myTar=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(myEstV2.FreightFwd,myEstV2.FreightType);
+        //TarifasFwdCont myTar=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(myEstV2.FreightFwd,myEstV2.FreightType);
         // De la consulta me quedo con el valor del flete (se usa 60%)
-        myEstV2.FleteTotal=await _estService.lookUpTarifaFleteCont(myEstV2);
+        //myEstV2.FleteTotal=await _estService.lookUpTarifaFleteCont(myEstV2);
+        myEstV2=await _estService.CalcFleteTotal(myEstV2);
         // COL M. Calcula el flete ponderado a cada articulo del detalle.
-        myEstV2=_estService.CalcFleteTotal(myEstV2);
+        myEstV2=_estService.CalcFleteTotalByProd(myEstV2);
         // COL N. Calcula el seguro ponderado a cada articulo del detalle 
+
+// LISTED 16_6_2023 17:47
+
+
         myEstV2=_estService.CalcSeguro(myEstV2);
         // COL O. Calcula el CIF que solo depende de los datos ya calculados previamente (COL L, N y M)
         myEstV2=_estService.CalcCif(myEstV2);
+        // CELDA =43
+        myEstV2=_estService.CalcCifTotal(myEstV2);
         // COL R (COL O y COL Q no estan en uso)
         myEstV2=_estService.CalcAjusteIncDec(myEstV2);
         // COL S (die segun NCM)
@@ -117,7 +128,7 @@ public class calc
             TarifasFwdCont myTar=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(myEstV2.FreightFwd,myEstV2.FreightType);
             myEstV2.FleteTotal=await _estService.lookUpTarifaFleteCont(myEstV2);
         }
-        myEstV2=_estService.CalcFleteTotal(myEstV2);
+        myEstV2=_estService.CalcFleteTotalByProd(myEstV2);
         myEstV2=_estService.CalcSeguro(myEstV2);
         myEstV2=_estService.CalcFactorProdTotal(myEstV2);
         myEstV2=_estService.CalcCif(myEstV2);
