@@ -18,7 +18,7 @@ public interface IEstimateService : IGenericService<EstimateV2>
     // CELDA L43 y CELDA C3
     public EstimateV2 CalcFobTotal(EstimateV2 est);
     // CELDA M43
-    public EstimateV2 CalcFleteTotal(EstimateV2 est);
+    public EstimateV2 CalcFleteTotalByProd(EstimateV2 est);
     // COL N
     public EstimateV2 CalcSeguro(EstimateV2 est);
     // COL O
@@ -69,6 +69,15 @@ public interface IEstimateService : IGenericService<EstimateV2>
     public Task<double> calcularGastosProyecto(EstimateV2 miEst);
 
     public Task<double> lookUpTarifaFleteCont(EstimateV2 est);
+
+    public Task<EstimateV2> CalcularCantContenedores(EstimateV2 est);
+
+    public EstimateV2 CalcCbmGrandTotal(EstimateV2 est);
+
+    public EstimateV2 CalcCifTotal(EstimateV2 est);
+
+    public Task<EstimateV2> CalcFleteTotal(EstimateV2 est);
+
     public double sumPesoTotal(EstimateV2 est);
     public double sumFobTotal(EstimateV2 est);
 

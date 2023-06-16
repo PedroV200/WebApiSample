@@ -80,10 +80,10 @@ public class dbutils
         myEstV2.FobGrandTotal=estimateDB.estHeaderDB.FobGrandTotal;
         myEstV2.FleteTotal=estimateDB.estHeaderDB.FleteTotal;
         myEstV2.Seguro=estimateDB.estHeaderDB.Seguro;
-        myEstV2.Seguroporct=estimateDB.estHeaderDB.SeguroPorct;
+        myEstV2.SeguroPorct=estimateDB.estHeaderDB.SeguroPorct;
         myEstV2.CantidadContenedores=estimateDB.estHeaderDB.CantidadContenedores;
         myEstV2.Pagado=estimateDB.estHeaderDB.Pagado;
-        myEstV2.CbmTot=estimateDB.estHeaderDB.CbmTot;
+        myEstV2.CbmGrandTot=estimateDB.estHeaderDB.CbmTot;
         myEstV2.CifTot=estimateDB.estHeaderDB.CifTot;
         myEstV2.IibbTot=estimateDB.estHeaderDB.IibbTot;
         myEstV2.PolizaProv=estimateDB.estHeaderDB.PolizaProv;
@@ -163,15 +163,15 @@ public class dbutils
         estimateDB.estHeaderDB.FobGrandTotal=myEstV2.FobGrandTotal;
         estimateDB.estHeaderDB.FleteTotal=myEstV2.FleteTotal;
         estimateDB.estHeaderDB.Seguro=myEstV2.Seguro;
-        estimateDB.estHeaderDB.SeguroPorct=myEstV2.Seguroporct;
+        estimateDB.estHeaderDB.SeguroPorct=myEstV2.SeguroPorct;
         estimateDB.estHeaderDB.CantidadContenedores=myEstV2.CantidadContenedores;
         estimateDB.estHeaderDB.Pagado=myEstV2.Pagado;
 
-        myEstV2.CbmTot=estimateDB.estHeaderDB.CbmTot;
-        myEstV2.CifTot=estimateDB.estHeaderDB.CifTot;
-        myEstV2.IibbTot=estimateDB.estHeaderDB.IibbTot;
+        estimateDB.estHeaderDB.CbmTot=myEstV2.CbmGrandTot;
+        estimateDB.estHeaderDB.CifTot=myEstV2.CifTot;
+        estimateDB.estHeaderDB.IibbTot=myEstV2.IibbTot;
         estimateDB.estHeaderDB.PolizaProv=myEstV2.PolizaProv;
-        myEstV2.ExtraGastosLocProyectado=estimateDB.estHeaderDB.ExtraGastosLocProyectado;  
+        estimateDB.estHeaderDB.ExtraGastosLocProyectado=myEstV2.ExtraGastosLocProyectado;  
 
         // Cargo las Constantes ....
         estimateDB.estHeaderDB.c_est061_thrhldmax=myEstV2.constantes.CNST_ESTAD061_ThrhldMAX;
