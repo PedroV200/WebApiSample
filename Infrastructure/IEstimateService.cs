@@ -81,5 +81,7 @@ public interface IEstimateService : IGenericService<EstimateV2>
     public double sumPesoTotal(EstimateV2 est);
     public double sumFobTotal(EstimateV2 est);
 
+     public EstimateV2 CalcSeguroTotal(EstimateV2 miEst);
+
     // SIGUE .....
     }

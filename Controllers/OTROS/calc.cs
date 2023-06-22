@@ -50,6 +50,8 @@ public class calc
         myEstV2=_estService.CalcFobTotal(myEstV2);
         // CELDA L43. Sumo todos los fob totales. Sumatoria de L15-L41 que se copia en celda C3
         myEstV2.FobGrandTotal=_estService.sumFobTotal(myEstV2);
+        // CELDA C5 que es funcion del valor FOB
+        myEstV2=_estService.CalcSeguroTotal(myEstV2);
         // CELDA C4. Traigo la tarifa del flete desde BASE_TARIFAS por fowarder y tipo cont
         //TarifasFwdCont myTar=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(myEstV2.FreightFwd,myEstV2.FreightType);
         // De la consulta me quedo con el valor del flete (se usa 60%)
@@ -89,12 +91,18 @@ public class calc
         myEstV2=_estService.CalcIVA_ad_Gcias(myEstV2);
         // COL AC
         myEstV2=_estService.CalcImpGcias424(myEstV2);
+
+        // LISTED 21_6_2023 15:10
+
         // COL AD
-        myEstV2=await _estService.CalcIIBB900(myEstV2);
+        myEstV2=await _estService.CalcIIBB900(myEstV2); 
         // COL AE
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
         // COL AF
         myEstV2=_estService.CalcPagado(myEstV2);
+
+        // LISTED 21_6_2023 17:10 
+
         // AH
         myEstV2=_estService.CalcFactorProdTotal(myEstV2);
         // Proceso todos los gastos proyectados.

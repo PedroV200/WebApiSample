@@ -198,7 +198,7 @@ public class EstimateDetailService: IEstimateDetailService
     public async Task<double> CalcIIBB(EstimateDetail estDetails)
     {
         double totalIIBB=await _unitOfWork.IIBBs.GetSumFactores();
-        return (estDetails.BaseIvaGcias*totalIIBB);
+        return (estDetails.BaseIvaGcias*(totalIIBB/100));
     }
 
     public double CalcPrecioUnitUSS(EstimateDetail estDetails)
@@ -215,7 +215,7 @@ public class EstimateDetailService: IEstimateDetailService
 
     public double CalcPagado(EstimateDetail estDetails)
     {
-        return(estDetails.IIBB+estDetails.ImpGcias424+estDetails.IVA_ad+estDetails.TasaEstad061+estDetails.Derechos);
+        return(estDetails.IIBB+estDetails.ImpGcias424+estDetails.IVA_ad_gcias+estDetails.IVA415+estDetails.TasaEstad061+estDetails.Derechos);
     }
 
     
