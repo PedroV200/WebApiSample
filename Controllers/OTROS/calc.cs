@@ -1,7 +1,7 @@
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 
-// PRE LISTED 15_6_2023 15:31
+// LISTED 22_6_2023 10:58
 
 public class calc
 {
@@ -20,13 +20,20 @@ public class calc
 // Segun "Presupuestador Argentina, libro N - Duchas Escocesas"
 
 // Me dan como parametro el numero de presupuesto.
-    public async Task<EstimateV2> calcBatch(int estNumber)
+    public async Task<EstimateV2> calcBatch(EstimateDB miEst)
     {
 
         EstimateDB myEstDB=new EstimateDB(); 
         dbutils dbhelper=new dbutils(_unitOfWork);
-        myEstDB=await dbhelper.getEstimateLastVers(estNumber);
 
+        if(miEst.estHeaderDB.EstNumber>0)
+        {
+            myEstDB=await dbhelper.getEstimateLastVers(miEst.estHeaderDB.EstNumber);
+        }
+        else
+        {
+            myEstDB=miEst;
+        }
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
@@ -60,10 +67,6 @@ public class calc
         // COL M. Calcula el flete ponderado a cada articulo del detalle.
         myEstV2=_estService.CalcFleteTotalByProd(myEstV2);
         // COL N. Calcula el seguro ponderado a cada articulo del detalle 
-
-// LISTED 16_6_2023 17:47
-
-
         myEstV2=_estService.CalcSeguro(myEstV2);
         // COL O. Calcula el CIF que solo depende de los datos ya calculados previamente (COL L, N y M)
         myEstV2=_estService.CalcCif(myEstV2);
@@ -71,38 +74,37 @@ public class calc
         myEstV2=_estService.CalcCifTotal(myEstV2);
         // COL R (COL O y COL Q no estan en uso)
         myEstV2=_estService.CalcAjusteIncDec(myEstV2);
-        // COL S (die segun NCM)
-        myEstV2=await _estService.searchNcmDie(myEstV2);
+        // COL S, COL U, COLY, COL AA 
+        // Evito consultar la base de NCM una vez por cada factor necesario. Se que son 4 los factores.
+        // Los traigo en una sola consulta (una consulta x item)
+        myEstV2=await _estService.search_NCM_DATA(myEstV2);
+        //myEstV2=await _estService.searchNcmDie(myEstV2);
         // COL T
         myEstV2=_estService.CalcDerechos(myEstV2);
         // COL U
-        myEstV2=await _estService.resolveNcmTe(myEstV2);
+        //myEstV2=await _estService.resolveNcmTe(myEstV2);
         // COL V
         myEstV2=_estService.CalcTasaEstad061(myEstV2);
         // COL X
         myEstV2=_estService.CalcBaseGcias(myEstV2); 
         // COL Y
-        myEstV2=await _estService.searchIva(myEstV2);
+        //myEstV2=await _estService.searchIva(myEstV2); 
         // COL Z
         myEstV2=_estService.CalcIVA415(myEstV2);
         // COL AA
-        myEstV2= await _estService.searchIvaAdic(myEstV2);
+        //myEstV2= await _estService.searchIvaAdic(myEstV2);
         // COL AB
         myEstV2=_estService.CalcIVA_ad_Gcias(myEstV2);
         // COL AC
         myEstV2=_estService.CalcImpGcias424(myEstV2);
-
-        // LISTED 21_6_2023 15:10
-
         // COL AD
         myEstV2=await _estService.CalcIIBB900(myEstV2); 
         // COL AE
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
         // COL AF
         myEstV2=_estService.CalcPagado(myEstV2);
-
-        // LISTED 21_6_2023 17:10 
-
+        // CELDA AF43
+        myEstV2=_estService.CalcPagadoTot(myEstV2);
         // AH
         myEstV2=_estService.CalcFactorProdTotal(myEstV2);
         // Proceso todos los gastos proyectados.
@@ -119,7 +121,7 @@ public class calc
         myEstV2=_estService.CalcCostoUnitarioUSS(myEstV2);
         //AN
         myEstV2=_estService.CalcCostoUnitario(myEstV2);
-
+        // LISTED 22_6_2023 !!!. Todas las cuentas OK-
         return myEstV2;
     }
 // Este metodo es similar al anterior salvo que tiene opcion de no volver a buscar a base los mismo valores una y otra vez.

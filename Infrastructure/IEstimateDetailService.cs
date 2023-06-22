@@ -79,5 +79,6 @@ public interface IEstimateDetailService : IGenericService<EstimateDetail>
 
     public double CalcCostoUnit(EstimateDetail estD, double dolar);
 
+    public Task<NCM> lookUp_NCM_Data(EstimateDetail estDetails);
 
 }
