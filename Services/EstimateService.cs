@@ -7,6 +7,8 @@ using Dapper;
 using System.Data;
 using System.Globalization;
 
+// LISTED 22_6_2023 10:57
+
 public class EstimateService: IEstimateService
 {
     IUnitOfWork _unitOfWork;
@@ -170,7 +172,21 @@ public class EstimateService: IEstimateService
             ed.IVA_ad=(await _estDetServices.lookUpIVAadic(ed))/100.0;
         }
         return est;
-    } 
+    }
+
+     public async Task<EstimateV2> search_NCM_DATA(EstimateV2 est)
+    {
+        NCM myNCM=new NCM();
+        foreach(EstimateDetail ed in est.EstDetails)
+        {  
+           myNCM=await _estDetServices.lookUp_NCM_Data(ed); 
+           ed.Die=myNCM.die/100.0;
+           ed.Te=myNCM.te/100.0;
+           ed.IVA=myNCM.iva/100.0;
+           ed.IVA_ad=myNCM.iva_ad/100.0; 
+        }
+        return est;
+    }
 
     public EstimateV2 CalcIVA_ad_Gcias(EstimateV2 est)
     {
@@ -221,7 +237,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.FactorProd=_estDetServices.CalcFactorProducto(ed, sumFobTotal(est));       
+            ed.FactorProd=_estDetServices.CalcFactorProducto(ed,est.FobGrandTotal);       
         }
         return est;
     }
@@ -529,6 +545,17 @@ public class EstimateService: IEstimateService
     public EstimateV2 CalcSeguroTotal(EstimateV2 miEst)
     {
         miEst.Seguro=(miEst.SeguroPorct/100)*miEst.FobGrandTotal;
+        return miEst;
+    }
+
+    public EstimateV2 CalcPagadoTot(EstimateV2 miEst)
+    {
+        double tmp=0;
+        foreach(EstimateDetail ed in miEst.EstDetails)
+        {
+            tmp+=ed.Pagado;
+        }
+        miEst.Pagado=tmp+miEst.ArancelSim;
         return miEst;
     }
 

@@ -34,6 +34,8 @@ public class EstimateHeaderDB
     public double SeguroPorct {get;set;}
     // CELDA C5
     public double Seguro{get; set;}
+    // CELDA C7 
+    public double ArancelSim{get;set;}
     // CELDA C10
     public double CantidadContenedores{get;set;}
     // CELDA I3 (sumatoria de los AF en AF43)

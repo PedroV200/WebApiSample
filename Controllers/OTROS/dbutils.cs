@@ -17,6 +17,10 @@ public class dbutils
         List<EstimateHeaderDB>misDetalles=new List<EstimateHeaderDB>();
         // La query se hace ORDENADA POR VERSION de MAYOR A MENOR. Es una LISTA de estHeaders
         var result=await _unitOfWork.EstimateHeadersDB.GetByEstNumberLastVersAsync(estNumber);
+        if(result==null)
+        {
+            return null;
+        }
         misDetalles=result.ToList();
         // El elemento 0 corresponde al header buscado en con la version MAYOR.
         myEst.estHeaderDB=misDetalles[0];
@@ -60,6 +64,19 @@ public class dbutils
         return result;
     }
 
+    public async Task<EstimateDB> GetEstimateByNumByVers(int estNumber, int estVers)
+    {
+        EstimateDB myEst=new EstimateDB();
+        myEst.estHeaderDB=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(estNumber,estVers);
+        if(myEst.estHeaderDB==null)
+        {
+            return null;
+        }
+        var result=await _unitOfWork.EstimateDetailsDB.GetAllByIdEstHeadersync(myEst.estHeaderDB.Id);
+        myEst.estDetailsDB=result.ToList();
+        return myEst;
+    }
+
     public EstimateV2 transferDataFromDBType(EstimateDB estimateDB)
     {
         EstimateV2 myEstV2=new EstimateV2();
@@ -69,7 +86,7 @@ public class dbutils
         myEstV2.Id=estimateDB.estHeaderDB.Id;
         myEstV2.Description=estimateDB.estHeaderDB.Description;
         myEstV2.EstNumber=estimateDB.estHeaderDB.EstNumber;
-        myEstV2.EstVers=estimateDB.estHeaderDB.EstNumber;
+        myEstV2.EstVers=estimateDB.estHeaderDB.EstVers;
         myEstV2.Owner=estimateDB.estHeaderDB.Own;
         myEstV2.ArticleFamily=estimateDB.estHeaderDB.ArticleFamily;
         myEstV2.IvaExcento=estimateDB.estHeaderDB.IvaExcento;
@@ -80,6 +97,7 @@ public class dbutils
         myEstV2.FobGrandTotal=estimateDB.estHeaderDB.FobGrandTotal;
         myEstV2.FleteTotal=estimateDB.estHeaderDB.FleteTotal;
         myEstV2.Seguro=estimateDB.estHeaderDB.Seguro;
+        myEstV2.ArancelSim=estimateDB.estHeaderDB.ArancelSim;
         myEstV2.SeguroPorct=estimateDB.estHeaderDB.SeguroPorct;
         myEstV2.CantidadContenedores=estimateDB.estHeaderDB.CantidadContenedores;
         myEstV2.Pagado=estimateDB.estHeaderDB.Pagado;
@@ -163,6 +181,7 @@ public class dbutils
         estimateDB.estHeaderDB.FobGrandTotal=myEstV2.FobGrandTotal;
         estimateDB.estHeaderDB.FleteTotal=myEstV2.FleteTotal;
         estimateDB.estHeaderDB.Seguro=myEstV2.Seguro;
+        estimateDB.estHeaderDB.ArancelSim=myEstV2.ArancelSim;
         estimateDB.estHeaderDB.SeguroPorct=myEstV2.SeguroPorct;
         estimateDB.estHeaderDB.CantidadContenedores=myEstV2.CantidadContenedores;
         estimateDB.estHeaderDB.Pagado=myEstV2.Pagado;

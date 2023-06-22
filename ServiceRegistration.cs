@@ -35,6 +35,7 @@ public static class ServiceRegistration
         services.AddTransient<ITarifasTteLocalRepository, TarifasTteLocalRepository>();
         services.AddTransient<IEstimateService,EstimateService>();
         services.AddTransient<IEstimateDetailService, EstimateDetailService>();
+        services.AddTransient<IPresupuestoService, PresupuestoService>();
         services.AddTransient<ICnstService, CnstService>(); 
         services.AddTransient<ICnstRepository, CnstRepository>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();

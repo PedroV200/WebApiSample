@@ -79,9 +79,13 @@ public interface IEstimateService : IGenericService<EstimateV2>
     public Task<EstimateV2> CalcFleteTotal(EstimateV2 est);
 
     public double sumPesoTotal(EstimateV2 est);
+
     public double sumFobTotal(EstimateV2 est);
 
-     public EstimateV2 CalcSeguroTotal(EstimateV2 miEst);
+    public EstimateV2 CalcSeguroTotal(EstimateV2 miEst);
 
-    // SIGUE .....
+    public EstimateV2 CalcPagadoTot(EstimateV2 miEst);
+
+    public Task<EstimateV2> search_NCM_DATA(EstimateV2 est);
+
     }

@@ -26,6 +26,17 @@ public class EstimateDetailService: IEstimateDetailService
         misConsts=miaConst;
     }
 
+
+    public async Task<NCM> lookUp_NCM_Data(EstimateDetail estDetails)
+    {
+        NCM myNCM=await _unitOfWork.NCMs.GetByIdStrAsync(estDetails.ncm); 
+        if(myNCM!=null)
+        {
+            return myNCM;
+        }   
+        return null;
+    }
+
     public async Task<double> lookUpDie(EstimateDetail estDetails)
     {
         NCM myNCM=await _unitOfWork.NCMs.GetByIdStrAsync(estDetails.ncm); 
@@ -224,7 +235,7 @@ public class EstimateDetailService: IEstimateDetailService
     {
         if(fobTotal!=0)
         {
-            return (estD.fobunit/fobTotal);
+            return (estD.Fob/fobTotal);
         }
         else
         {
