@@ -75,7 +75,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               // CELDA C5=0.1*C3
-            ed.Seguro=_estDetServices.CalcSeguro(ed,(est.Seguro*est.SeguroPorct),est.FobGrandTotal);       
+            ed.Seguro=_estDetServices.CalcSeguro(ed,est.Seguro,est.FobGrandTotal);       
         }
         return est;
     }
@@ -524,6 +524,12 @@ public class EstimateService: IEstimateService
         tmp=tmp*est.CantidadContenedores;
         est.FleteTotal=tmp;
         return est;
+    }
+
+    public EstimateV2 CalcSeguroTotal(EstimateV2 miEst)
+    {
+        miEst.Seguro=(miEst.SeguroPorct/100)*miEst.FobGrandTotal;
+        return miEst;
     }
 
 }
