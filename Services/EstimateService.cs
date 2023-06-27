@@ -12,6 +12,8 @@ using System.Globalization;
 public class EstimateService: IEstimateService
 {
     IUnitOfWork _unitOfWork;
+
+    string haltError;
     public EstimateService(IEstimateDetailService estDetailServices,IUnitOfWork unitOfWork, ICnstService constService)
     {
        _estDetServices=estDetailServices;
@@ -29,6 +31,10 @@ public class EstimateService: IEstimateService
     public async Task<EstimateV2> loadConstants(EstimateV2 est)
     {
         est.constantes=await _cnstService.getConstantes();
+        if(est.constantes==null)
+        {
+            return null;
+        }
         // Le paso las constantes a estDetailService tmb.
         _estDetServices.loadConstants(est.constantes);
         return est;
@@ -39,7 +45,12 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.PesoTot=_estDetServices.CalcPesoTotal(ed);       
+            ed.PesoTot=_estDetServices.CalcPesoTotal(ed); 
+            if(ed.PesoTot<0)
+            {
+                haltError=$"ATENCION: El articulo modelo '{ed.modelo}' tiene cant pcs x caja = 0. DIV 0 !";
+                return null;
+            }      
         }
         return est;
     }
@@ -59,7 +70,12 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.CbmTot=_estDetServices.CalcCbmTotal(ed);       
+            ed.CbmTot=_estDetServices.CalcCbmTotal(ed);   
+            if(ed.CbmTot<0)
+            {
+                haltError=$"ATENCION: El articulo '{ed.modelo}' tiene cant pcs por caja = 0. DIV 0 !";
+                return null;
+            }    
         }
         return est;
     }
@@ -68,7 +84,11 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.Flete=_estDetServices.CalcFlete(ed,est.FleteTotal,est.FobGrandTotal);       
+            ed.Flete=_estDetServices.CalcFlete(ed,est.FleteTotal,est.FobGrandTotal); 
+            if(ed.Flete<0)
+            {
+                return null;
+            }      
         }
         return est;
     }
@@ -77,7 +97,11 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               // CELDA C5=0.1*C3
-            ed.Seguro=_estDetServices.CalcSeguro(ed,est.Seguro,est.FobGrandTotal);       
+            ed.Seguro=_estDetServices.CalcSeguro(ed,est.Seguro,est.FobGrandTotal);   
+            if(ed.Seguro<0)
+            {
+                return null;
+            }    
         }
         return est;
     }
@@ -177,9 +201,15 @@ public class EstimateService: IEstimateService
      public async Task<EstimateV2> search_NCM_DATA(EstimateV2 est)
     {
         NCM myNCM=new NCM();
+
         foreach(EstimateDetail ed in est.EstDetails)
         {  
            myNCM=await _estDetServices.lookUp_NCM_Data(ed); 
+           if(myNCM==null)
+           {    // Logeo que NCM / Articulo fallo
+                haltError=$"FALLO NCM='{ed.ncm}', DET= '{ed.modelo}";
+                return null;
+           }
            ed.Die=myNCM.die/100.0;
            ed.Te=myNCM.te/100.0;
            ed.IVA=myNCM.iva/100.0;
@@ -220,6 +250,11 @@ public class EstimateService: IEstimateService
         foreach(EstimateDetail ed in est.EstDetails)
         {
             ed.PrecioUnitUSS=_estDetServices.CalcPrecioUnitUSS(ed);
+            if(ed.PrecioUnitUSS<0)
+            {
+                haltError=$"ATENCION: Articulo '{ed.modelo}' tiene can pcs = 0. DIV 0 !";
+                return null;
+            }
         }
         return est;
     }
@@ -237,7 +272,12 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.FactorProd=_estDetServices.CalcFactorProducto(ed,est.FobGrandTotal);       
+            ed.FactorProd=_estDetServices.CalcFactorProducto(ed,est.FobGrandTotal);   
+            if(ed.FactorProd<0)
+            {
+                haltError=$"ATENCION: El articulo '{ed.modelo}' tiene un FOB TOT de 0. Div 0!";
+                return null;
+            }    
         }
         return est;
     }
@@ -433,30 +473,36 @@ public class EstimateService: IEstimateService
         tmp=await calcularGastosFwd(miEst);
         if(tmp<0)
         {   // Todos los metodos que consultan una tabla tienen opcion de devolver -1 si algo no salio bien.
+            haltError="FALLA CALCULAR GASTOS FWD. TABLA TarifasFWD no accesible o no existen datos para el tipo de contenedor / origen indicados";
             return tmp;
         }
         result=tmp;
         tmp=await calcularGastosTerminal(miEst);
         if(tmp<0)
         {
+            haltError="FALLA AL CALCULAR GASTOS DE TERMINAL. TAbla no accesible o no existen datos para el tipo de contenedor ingresado";
             return tmp;
         }
         result=result+tmp;
         tmp=await calcularGastosDespachante(miEst);
         if(tmp<0)
         {
+
             return tmp;
         }
         result=result+tmp;
         tmp=await calcularGastosTteLocal(miEst);
         if(tmp<0)
         {
+            haltError="FALLA AL CALCULAR LOS GASTOS DE TTE LOC. Tabla de tarifa no accesible o no existen datos para el contenedor ingresado";
             return tmp;
         }
         result=result+tmp;
         tmp=await calcularGastosCustodia(miEst);
+
         if(tmp<0)
         {
+            haltError="FALLO AL CALCULAR LOS GASTOS DE CUSTODIA. Tabla de tarifa no accesible o no existen datos para el Proveedor de Poliza ingresado";
             return tmp;
         }
         result=result+tmp;
@@ -493,7 +539,12 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.ExtraGastoLocProyUnitUSS=_estDetServices.CalcGastosProyPorUnidUSS(ed);       
+            ed.ExtraGastoLocProyUnitUSS=_estDetServices.CalcGastosProyPorUnidUSS(ed); 
+            if(ed.ExtraGastoLocProyUnitUSS<0)
+            {
+                haltError=$"ATENCION: El articulo '{ed.modelo}' tiene cant de pcs = 0. DIV 0!";
+                return null;
+            }      
         }
         return est;
     }
@@ -502,7 +553,12 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.OverHead=_estDetServices.CalcOverHeadUnitUSS(ed);       
+            ed.OverHead=_estDetServices.CalcOverHeadUnitUSS(ed);  
+            if(ed.OverHead<0)
+            {
+                haltError=$"ATENCION: El articulo '{ed.modelo}' tiene un PRECIO USS UNIT de 0. Div 0 !";
+                return null;
+            }     
         }
         return est;
     }
@@ -529,7 +585,18 @@ public class EstimateService: IEstimateService
     {
         Contenedor myCont=new Contenedor();
         myCont=await _unitOfWork.Contenedores.GetByTipoContAsync(est.FreightType);
-        est.CantidadContenedores=est.CbmGrandTot/myCont.volume;
+        if(myCont==null)        
+        {
+            return null;
+        }
+        if(myCont.volume>0)
+        {
+            est.CantidadContenedores=est.CbmGrandTot/myCont.volume;
+        }
+        else
+        {
+            return null;
+        }
         return est;
     }
 
@@ -537,6 +604,10 @@ public class EstimateService: IEstimateService
     {
         double tmp;
         tmp=await lookUpTarifaFleteCont(est);
+        if(tmp==-1)
+        {
+            return null;
+        }
         tmp=tmp*est.CantidadContenedores;
         est.FleteTotal=tmp;
         return est;
@@ -557,6 +628,11 @@ public class EstimateService: IEstimateService
         }
         miEst.Pagado=tmp+miEst.ArancelSim;
         return miEst;
+    }
+
+    public string getLastError()
+    {
+        return haltError;
     }
 
 }

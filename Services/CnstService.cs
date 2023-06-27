@@ -20,6 +20,10 @@ public class CnstService: ICnstService
         List<Cnst> tablaConstantes=new List<Cnst>();
         CONSTANTES misConstantes=new CONSTANTES();
         var tmp=await _unitOfWork.Constantes.GetAllAsync();
+        if(tmp==null)
+        {
+            return null;
+        }
         tablaConstantes=tmp.ToList();
         foreach(Cnst cons in tablaConstantes)
         {

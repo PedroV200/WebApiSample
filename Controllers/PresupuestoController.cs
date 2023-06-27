@@ -27,9 +27,17 @@ public class PresupuestoController : ControllerBase
     }
 
     [HttpPost(Name = "Post Estimate")]
-    public async Task<EstimateV2>Post(EstimateDB entity)
+    public async Task<ActionResult<EstimateV2>>Post(EstimateDB entity)
     {
-        return await _presupService.submitPresupuesto(entity);
+        var result=await _presupService.submitPresupuesto(entity);
+        if(result==null)
+        {
+            return BadRequest(_presupService.getLastErr());
+        }
+        else
+        {
+            return result;
+        }
     }
 
     

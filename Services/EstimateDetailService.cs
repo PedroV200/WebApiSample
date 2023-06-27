@@ -253,7 +253,14 @@ public class EstimateDetailService: IEstimateDetailService
     }
     public double CalcGastosProyPorUnidUSS(EstimateDetail estD)
     {
-        return estD.ExtraGastoLocProyUSS/estD.cantpcs;
+        if(estD.cantpcs>0)
+        {
+            return estD.ExtraGastoLocProyUSS/estD.cantpcs;
+        }
+        else
+        {
+            return -1;
+        }
     }
     public double CalcOverHeadUnitUSS(EstimateDetail estD)
     {

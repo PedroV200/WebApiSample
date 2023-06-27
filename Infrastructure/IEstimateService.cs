@@ -88,4 +88,6 @@ public interface IEstimateService : IGenericService<EstimateV2>
 
     public Task<EstimateV2> search_NCM_DATA(EstimateV2 est);
 
+    public string getLastError();
+
     }
