@@ -1,13 +1,16 @@
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 
-// LISTED 22_6_2023 10:58
+// LISTED 27_6_2023 16:51
 
 public class calc
 {
     // Con UnitOfWork accedo a todos los repositorios.
     private IUnitOfWork _unitOfWork;
     private IEstimateService _estService;
+
+    public string  haltError;
+    public string  warnings;
 
     public calc(IUnitOfWork unitOfWork, IEstimateService estService)
     {
@@ -29,6 +32,11 @@ public class calc
         if(miEst.estHeaderDB.EstNumber>0)
         {
             myEstDB=await dbhelper.getEstimateLastVers(miEst.estHeaderDB.EstNumber);
+            if(myEstDB==null)
+            {
+                haltError=$"NO SE ENCONTRO HEADER ! estNum:{miEst.estHeaderDB.EstNumber}";
+                return null;
+            }
         }
         else
         {
@@ -39,6 +47,11 @@ public class calc
         EstimateV2 myEstV2=new EstimateV2();
         // Levanto todas las constantes.
         myEstV2= await _estService.loadConstants(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="Tabla Constantes no accesible";
+            return null;
+        }
 
         // Expando el EstimateDB a un EstimateV2
         myEstV2=dbhelper.transferDataFromDBType(myEstDB);
@@ -47,12 +60,27 @@ public class calc
         // Calculo el peso total por articulo
         // COL J
         myEstV2=_estService.CalcPesoTotal(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
         // COL K
         myEstV2=_estService.CalcCbmTotal(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
         // CELDA K43
         myEstV2=_estService.CalcCbmGrandTotal(myEstV2);
         // CELDA C10
         myEstV2=await _estService.CalcularCantContenedores(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="La tabla de contenedores no es accesible o el volumen del contenedor es 0";
+            return null;
+        }
         // COL L. Calculo el fob total por articulo
         myEstV2=_estService.CalcFobTotal(myEstV2);
         // CELDA L43. Sumo todos los fob totales. Sumatoria de L15-L41 que se copia en celda C3
@@ -64,10 +92,24 @@ public class calc
         // De la consulta me quedo con el valor del flete (se usa 60%)
         //myEstV2.FleteTotal=await _estService.lookUpTarifaFleteCont(myEstV2);
         myEstV2=await _estService.CalcFleteTotal(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="Tarifas Flete Fowarder Inaccesible";
+            return null;
+        }
         // COL M. Calcula el flete ponderado a cada articulo del detalle.
         myEstV2=_estService.CalcFleteTotalByProd(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="ATENCION: CalcFleteTotalByProd. FOB GRAND TOTAL ES 0. DIV 0 !";
+            return null;
+        }
         // COL N. Calcula el seguro ponderado a cada articulo del detalle 
         myEstV2=_estService.CalcSeguro(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="ATENCION: CalcSeguro. FOB GRAND TOTAL es 0. DOV 0 !";
+        }
         // COL O. Calcula el CIF que solo depende de los datos ya calculados previamente (COL L, N y M)
         myEstV2=_estService.CalcCif(myEstV2);
         // CELDA =43
@@ -78,6 +120,11 @@ public class calc
         // Evito consultar la base de NCM una vez por cada factor necesario. Se que son 4 los factores.
         // Los traigo en una sola consulta (una consulta x item)
         myEstV2=await _estService.search_NCM_DATA(myEstV2);
+        if(myEstV2==null)
+        {   
+            haltError=_estService.getLastError();
+            return null;
+        }
         //myEstV2=await _estService.searchNcmDie(myEstV2);
         // COL T
         myEstV2=_estService.CalcDerechos(myEstV2);
@@ -101,22 +148,47 @@ public class calc
         myEstV2=await _estService.CalcIIBB900(myEstV2); 
         // COL AE
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
         // COL AF
         myEstV2=_estService.CalcPagado(myEstV2);
         // CELDA AF43
         myEstV2=_estService.CalcPagadoTot(myEstV2);
         // AH
         myEstV2=_estService.CalcFactorProdTotal(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
         // Proceso todos los gastos proyectados.
         myEstV2.ExtraGastosLocProyectado=await _estService.calcularGastosProyecto(myEstV2);
+        if(myEstV2.ExtraGastosLocProyectado<0)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
         // AI
         myEstV2=_estService.CalcExtraGastoLocProyecto(myEstV2);
         //AJ
         myEstV2=_estService.CalcExtraGastoProyectoUSS(myEstV2);
         //AK
         myEstV2=_estService.CalcExtraGastoProyectoUnitUSS(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
         //AL
         myEstV2=_estService.CalcOverhead(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
         //AM
         myEstV2=_estService.CalcCostoUnitarioUSS(myEstV2);
         //AN

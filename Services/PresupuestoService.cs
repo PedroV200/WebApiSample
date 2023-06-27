@@ -25,6 +25,11 @@ public class PresupuestoService:IPresupuestoService
          myCalc = new calc(_unitOfWork,_estService);
     }
 
+    public string getLastErr()
+    {
+        return myCalc.haltError;
+    }
+
     public async Task<EstimateV2>submitPresupuesto(EstimateDB miEst)
     {
         var result=0;
