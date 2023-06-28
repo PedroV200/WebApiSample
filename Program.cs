@@ -1,28 +1,96 @@
-using Auth0.AspNetCore.Authentication; //requiero el paquete de auth0 instalado previamente x nuget
-
-// using de politicas CORS para consultar api local desde localhost de React
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
+using App.Middlewares;
+using App.ValidateScopes;
+using dotenv.net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructure();
 
-// se agrega configuracion de auth0
-builder.Services.AddAuth0WebAppAuthentication(options =>
+builder.Host.ConfigureAppConfiguration((configBuilder) =>
 {
-    options.Domain = "dev-7qwkde4r318nfwz7.us.auth0.com";
-    options.ClientId = "RnSKO2i02EoE9cpB7gtY8i0m2WstwGpo";
+    //configBuilder.Sources.Clear();
+    DotEnv.Load();
+    configBuilder.AddEnvironmentVariables();
 });
 
-var app = builder.Build();
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.AddServerHeader = false;
+});
 
+// Add services to the container.
+//builder.Services.AddScoped<IMessageService, MessageService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(
+            builder.Configuration.GetValue<string>("CLIENT_ORIGIN_URL"))
+            .WithHeaders(new string[] {
+                HeaderNames.ContentType,
+                HeaderNames.Authorization,
+            })
+            .WithMethods("GET")
+            .SetPreflightMaxAge(TimeSpan.FromSeconds(86400));
+    });
+});
+
+builder.Services.AddControllers();
+
+builder.Host.ConfigureServices((services) =>
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            var audience = builder.Configuration.GetValue<string>("AUTH0_AUDIENCE");
+
+            options.Authority = $"https://{builder.Configuration.GetValue<string>("AUTH0_DOMAIN")}/";
+            options.Audience = audience;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                NameClaimType = ClaimTypes.NameIdentifier
+            };
+        })
+);
+
+
+
+/*
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+    options.Authority = domain;
+    options.Audience = builder.Configuration["Auth0:Audience"];
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        NameClaimType = ClaimTypes.NameIdentifier
+    };
+});
+*/
+
+var domain =  $"https://{builder.Configuration.GetValue<string>("AUTH0_DOMAIN")}/";
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("read:sample-role-admin-messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:sample-role-admin-messages", domain)));
+    options.AddPolicy("put:sample-role-admin-messages", policy => policy.Requirements.Add(new HasScopeRequirement("put:sample-role-admin-messages", domain)));
+});
+
+
+
+builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -31,18 +99,49 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 // Agrega el middleware CORS antes de app.Run()
 app.UseCors(builder => builder
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-// habilito autenticacion y autorizacion de auth0
-app.UseAuthentication();
-app.UseAuthorization();
+var requiredVars =
+    new string[] {
+          "PORT",
+          "CLIENT_ORIGIN_URL",
+          "AUTH0_DOMAIN",
+          "AUTH0_AUDIENCE",
+    };
 
-app.UseAuthorization();
+foreach (var key in requiredVars)
+{
+    var value = app.Configuration.GetValue<string>(key);
 
+    if (value == "" || value == null)
+    {
+        throw new Exception($"Config variable missing: {key}.");
+    }
+}
+
+// app.Urls.Add($"http://+:{app.Configuration.GetValue<string>("PORT")}");
+
+
+
+app.UseErrorHandler();
+app.UseSecureHeaders();
 app.MapControllers();
+app.UseCors();
+
+app.UseAuthentication();
+app.UseRouting();
+app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+
+
+
 
 app.Run();

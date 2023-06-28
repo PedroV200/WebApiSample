@@ -199,47 +199,135 @@ public class calc
 // Este metodo es similar al anterior salvo que tiene opcion de no volver a buscar a base los mismo valores una y otra vez.
 // Es consumido por el metodo aCalc, que "despeja" un valor de una columna a la derecha fijado un valor a la izquierda
 // Ejemplo, determina el valor fobunit para alcanzar un valor de aduanaDivisa dado.
-    public async Task<EstimateV2> calcOnce(EstimateV2 myEstV2,bool once)
+    public async Task<EstimateV2> calcOnce(EstimateV2 myEstV2, Contenedor myCont,double tarifaFleteCont,NCM myNCM,double sumarIIBB,bool once)
     {
-        myEstV2=_estService.CalcPesoTotal(myEstV2);
-        myEstV2=_estService.CalcCbmTotal(myEstV2);
-        myEstV2=_estService.CalcFobTotal(myEstV2);
-        myEstV2.FobGrandTotal=_estService.sumFobTotal(myEstV2);
+        EstimateDB myEstDB=new EstimateDB(); 
+        dbutils dbhelper=new dbutils(_unitOfWork);
+
+        // COL J
+        myEstV2.EstDetails[0].PesoTot=_estService._estDetServices.CalcPesoTotal(myEstV2.EstDetails[0]); 
+        if(myEstV2.EstDetails[0].PesoTot<0)
+        {
+            return null;
+        }
+        // COL K
+        myEstV2.EstDetails[0].CbmTot=_estService._estDetServices.CalcCbmTotal(myEstV2.EstDetails[0]);  
+        if(myEstV2.EstDetails[0].CbmTot<0) 
+        {
+            return null;
+        }
+        myEstV2.CbmGrandTot=myEstV2.EstDetails[0].CbmTot;
+        // CELDA C10
+        if(myCont==null)        
+        {
+            return null;
+        }
+        if(myCont.volume>0)
+        {
+            myEstV2.CantidadContenedores=myEstV2.CbmGrandTot/myCont.volume;
+        }
+        else
+        {
+            return null;
+        }
+        // FIN CELDA C10.
+        // COL L
+        myEstV2.EstDetails[0].Fob=_estService._estDetServices.CalcFob(myEstV2.EstDetails[0]);    
+        // CELDA L43
+        myEstV2.FobGrandTotal=myEstV2.EstDetails[0].Fob;
+        // CELDA C5
+        myEstV2.Seguro=(myEstV2.SeguroPorct/100)*myEstV2.FobGrandTotal;
+        // CELDA C4
+        myEstV2.FleteTotal=tarifaFleteCont*myEstV2.CantidadContenedores;
+        // COL M
+        myEstV2.EstDetails[0].Flete=_estService._estDetServices.CalcFlete(myEstV2.EstDetails[0],myEstV2.FleteTotal,myEstV2.FobGrandTotal);
+        if(myEstV2.EstDetails[0].Flete<0)
+        {
+            return null;
+        }
+        // COL N
+        myEstV2.EstDetails[0].Seguro=_estService._estDetServices.CalcSeguro(myEstV2.EstDetails[0],myEstV2.Seguro,myEstV2.FobGrandTotal);   
+        if(myEstV2.EstDetails[0].Seguro<0)
+        {
+            return null;
+        }
+        // COL O
+        myEstV2.EstDetails[0].Cif=_estService._estDetServices.CalcCif(myEstV2.EstDetails[0]);
+        // CELDA O43
+        myEstV2.CifTot=myEstV2.EstDetails[0].Cif;
+        // COL R
+        myEstV2.EstDetails[0].valAduanaDivisa=_estService._estDetServices.CalcValorEnAduanaDivisa(myEstV2.EstDetails[0]);
+        // COL S, U, Y, AA
+        myEstV2.EstDetails[0].Die=myNCM.die/100.0;
+        myEstV2.EstDetails[0].Te=myNCM.te/100.0;
+        myEstV2.EstDetails[0].IVA=myNCM.iva/100.0;
+        myEstV2.EstDetails[0].IVA_ad=myNCM.iva_ad/100.0; 
+        // COL T
+        myEstV2.EstDetails[0].Derechos=_estService._estDetServices.CalcDerechos(myEstV2.EstDetails[0]);
+        // COL V
+        myEstV2.EstDetails[0].TasaEstad061=_estService._estDetServices.CalcTasaEstad061(myEstV2.EstDetails[0]);
+        // COL X
+        myEstV2.EstDetails[0].BaseIvaGcias=_estService._estDetServices.CalcBaseIvaGcias(myEstV2.EstDetails[0]);
+        // COL Z
+        myEstV2.EstDetails[0].IVA415=_estService._estDetServices.CalcIVA415(myEstV2.EstDetails[0]);
+        // COL AB
+        myEstV2.EstDetails[0].IVA_ad_gcias=_estService._estDetServices.CalcIvaAdic(myEstV2.EstDetails[0],myEstV2.IvaExcento);
+        // COL AC
+        myEstV2.EstDetails[0].ImpGcias424=_estService._estDetServices.CalcImpGcias424(myEstV2.EstDetails[0]);
+        // COL AD
+        myEstV2.EstDetails[0].IIBB=sumarIIBB;
+        // COL AE
+        myEstV2.EstDetails[0].PrecioUnitUSS=_estService._estDetServices.CalcPrecioUnitUSS(myEstV2.EstDetails[0]);
+        if(myEstV2.EstDetails[0].PrecioUnitUSS<0)
+        {
+            return null;
+        }
+        // COL AF
+        myEstV2.EstDetails[0].Pagado=_estService._estDetServices.CalcPagado(myEstV2.EstDetails[0]);
+        // CELDA AF43
+        myEstV2.Pagado=myEstV2.EstDetails[0].Pagado+myEstV2.ArancelSim;
+        // COL AH
+        myEstV2.EstDetails[0].FactorProd=_estService._estDetServices.CalcFactorProducto(myEstV2.EstDetails[0],myEstV2.FobGrandTotal); 
+        if( myEstV2.EstDetails[0].FactorProd<0)
+        {
+            return null;
+        }
+        // TABLA DE GASTOS PROYECTADOS: SACO EL TOTAL EN PESOS.
+        // Nota, no lo puedo llamar afuera de esta funcion por que los calculos solo
+        // podran hacrse cuando los datos necesarios hayan sido populados
+        // Uso el flag once para que solo se ejecute una vez, en el primer llamado.
         if(once)
         {
-            TarifasFwdCont myTar=await _unitOfWork.TarifasFwdContenedores.GetByFwdContTypeAsync(myEstV2.FreightFwd,myEstV2.FreightType);
-            myEstV2.FleteTotal=await _estService.lookUpTarifaFleteCont(myEstV2);
+            myEstV2.ExtraGastosLocProyectado=await _estService.calcularGastosProyecto(myEstV2);
+            if(myEstV2.ExtraGastosLocProyectado<0)
+            {
+                haltError=_estService.getLastError();
+                return null;
+            }
         }
-        myEstV2=_estService.CalcFleteTotalByProd(myEstV2);
-        myEstV2=_estService.CalcSeguro(myEstV2);
-        myEstV2=_estService.CalcFactorProdTotal(myEstV2);
-        myEstV2=_estService.CalcCif(myEstV2);
-        myEstV2=_estService.CalcAjusteIncDec(myEstV2);
-        if(once)
+        // COL AI
+        myEstV2.EstDetails[0].ExtraGastoLocProy=_estService._estDetServices.CalcGastosProyPond(myEstV2.EstDetails[0],myEstV2.ExtraGastosLocProyectado);       
+        // COL AJ
+        myEstV2.EstDetails[0].ExtraGastoLocProyUSS=_estService._estDetServices.CalcGastosProyPondUSS(myEstV2.EstDetails[0],myEstV2.DolarBillete);       
+        // COL AK
+        myEstV2.EstDetails[0].ExtraGastoLocProyUnitUSS=_estService._estDetServices.CalcGastosProyPorUnidUSS(myEstV2.EstDetails[0]); 
+        if(myEstV2.EstDetails[0].ExtraGastoLocProyUnitUSS<0)
         {
-            myEstV2=await _estService.searchNcmDie(myEstV2);
+            return null;
         }
-        myEstV2=_estService.CalcDerechos(myEstV2);
-        if(once)
+        // COL AL
+        myEstV2.EstDetails[0].OverHead=_estService._estDetServices.CalcOverHeadUnitUSS(myEstV2.EstDetails[0]);  
+        if(myEstV2.EstDetails[0].OverHead<0)
         {
-            myEstV2=await _estService.resolveNcmTe(myEstV2);
+            return null;
         }
-        myEstV2=_estService.CalcTasaEstad061(myEstV2);
-        myEstV2=_estService.CalcBaseGcias(myEstV2);
-        if(once) 
-        {
-            myEstV2=await _estService.searchIva(myEstV2);
-        }
-        myEstV2=_estService.CalcIVA415(myEstV2);
-        if(once)
-        {
-            myEstV2= await _estService.searchIvaAdic(myEstV2);
-        }
-        myEstV2=_estService.CalcIVA_ad_Gcias(myEstV2);
-        myEstV2=_estService.CalcImpGcias424(myEstV2);
-        myEstV2=await _estService.CalcIIBB900(myEstV2);
-        myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
-        myEstV2=_estService.CalcPagado(myEstV2);
+        // COL AM
+        myEstV2.EstDetails[0].CostoUnitEstimadoUSS=_estService._estDetServices.CalcCostoUnitUSS(myEstV2.EstDetails[0]); 
+        // COL AN
+        myEstV2.EstDetails[0].CostoUnitEstimado=_estService._estDetServices.CalcCostoUnit(myEstV2.EstDetails[0],myEstV2.DolarBillete); 
+        
+
+        return myEstV2;
         return myEstV2;
     }
 
@@ -253,6 +341,7 @@ public class calc
     // Para evitar agregar lentitud, los items que sean de consulta a la base se haran por una unica vez, dado que estos no variaran a lo 
     // largo de las iteraciones.
     // El ajuste es tipo PD, donde el step es ajustado segun la diferencia entre el traget y el iterado.
+    // LISTED 28/6/2023 12:55 
     public async Task<EstimateV2>aCalc(int estNumber,double adjValueIn, string propertyNameIn, double adjValueOut, string propertyNameOut)
     {
         EstimateDB myEstDB=new EstimateDB(); 
@@ -277,7 +366,13 @@ public class calc
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
-
+        // Levanto todas las constantes.
+        myEstV2= await _estService.loadConstants(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="Tabla Constantes no accesible";
+            return null;
+        }
         // Expando el EstimateDB a un EstimateV2
         myEstV2=dbhelper.transferDataFromDBType(myEstDB);
 
@@ -304,9 +399,42 @@ public class calc
         {
             return null;
         }
-        // Hago los calculos forzando (por unica vez) que todos lo datos que vienen de otras tablas sean consultados.
-        myEstV2=await calcOnce(myEstV2,true);
 
+// FIN TEST - DESCOMENTAR 
+
+// TEST - COMENTAR
+/*public async Task<EstimateV2>calcOnceTest(EstimateDB myEstDB)
+{ 
+        dbutils dbhelper=new dbutils(_unitOfWork);
+        EstimateV2 myEstV2=new EstimateV2();
+        // Levanto todas las constantes.
+        myEstV2= await _estService.loadConstants(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="Tabla Constantes no accesible";
+            return null;
+        }
+        myEstV2=dbhelper.transferDataFromDBType(myEstDB);
+// FIN TEST - COMENTAR */
+
+        Contenedor myCont=new Contenedor();
+        myCont=await _unitOfWork.Contenedores.GetByTipoContAsync(myEstV2.FreightType);
+
+        double tarifaFleteCont;
+        tarifaFleteCont=await _estService.lookUpTarifaFleteCont(myEstV2);
+
+        NCM myNCM=new NCM();
+        myNCM=await _estService._estDetServices.lookUp_NCM_Data(myEstV2.EstDetails[0]); 
+
+        double sumaIIBB;
+        sumaIIBB=await _estService._estDetServices.CalcIIBB(myEstV2.EstDetails[0]);
+
+
+        // Hago los calculos forzando (por unica vez) que todos lo datos que vienen de otras tablas sean consultados.
+        myEstV2=await calcOnce(myEstV2,myCont,tarifaFleteCont,myNCM,sumaIIBB,true);
+
+
+    
         tmpOut=(double)adjPropOut.GetValue(myEstV2.EstDetails[0]);
 
         // Inicializo la cantidad de pasadas.
@@ -431,7 +559,7 @@ public class calc
             // Lo cargo en el objeto.
             adjPropIn.SetValue(myEstV2.EstDetails[0],adjValueIn);
             // Corro los calculos de nuevo
-            myEstV2=await calcOnce(myEstV2,false);
+            calcOnce(myEstV2,myCont,tarifaFleteCont,myNCM,sumaIIBB,true);
             // Me fijo el valor saliente (este vlaor lo fijo el usuario como DATO)
             tmpOut=(double)adjPropOut.GetValue(myEstV2.EstDetails[0]);
 

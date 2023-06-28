@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 using WebApiSample.Core;
+using Microsoft.AspNetCore.Authorization;
+
 namespace WebApiSample.Controllers;
 
 [ApiController]
@@ -97,6 +99,7 @@ public class BancoController : ControllerBase
     }
 
     [HttpGet(Name = "GetAll Banco")]
+    [Authorize("put:sample-role-admin-messages")]
     public async Task<IEnumerable<Banco>> GetAll()
     {
         try
