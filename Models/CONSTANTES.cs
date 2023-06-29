@@ -9,10 +9,12 @@
     public double CNST_GASTOS_DESPA_Cif_Mult{get;set;}
     public double CNST_GASTOS_DESPA_Cif_Thrhld{get;set;}
     public double CNST_GASTOS_CUSTODIA_Thrshld{get;set;}
-    public double CNST_GASTOS_GETDIGDOC_Mult{get;set;}
+    public double CNST_GASTOS_GESTDIGDOC_Mult{get;set;}
     public double CNST_GASTOS_BANCARIOS_Mult{get;set;}
     public double CONST_NCM_DIE_Min{get;set;}  
     public double CNST_ESTAD061_ThrhldMAX{get;set;}
     public double CNST_ESTAD061_ThrhldMIN{get;set;}
     public double CNST_GCIAS_424_Mult{get;set;}
+    public double CNST_SEGURO_PORCT{get;set;}
+    public double CNST_ARANCEL_SIM{get;set;}
     }

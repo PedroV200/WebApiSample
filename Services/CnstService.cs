@@ -33,12 +33,14 @@ public class CnstService: ICnstService
                 case "CNST_GASTOS_DESPA_Cif_Mult":      misConstantes.CNST_GASTOS_DESPA_Cif_Mult=cons.val;    break;
                 case "CNST_GASTOS_DESPA_Cif_Thrhld":    misConstantes.CNST_GASTOS_DESPA_Cif_Thrhld=cons.val;  break;
                 case "CNST_GASTOS_CUSTODIA_Thrshld":    misConstantes.CNST_GASTOS_CUSTODIA_Thrshld=cons.val;  break;
-                case "CNST_GASTOS_GETDIGDOC_Mult":      misConstantes.CNST_GASTOS_GETDIGDOC_Mult=cons.val;    break;
+                case "CNST_GASTOS_GESTDIGDOC_Mult":     misConstantes.CNST_GASTOS_GESTDIGDOC_Mult=cons.val;    break;
                 case "CNST_GASTOS_BANCARIOS_Mult":      misConstantes.CNST_GASTOS_BANCARIOS_Mult=cons.val;    break;
-                case "CONST_NCM_DIE_Min":               misConstantes.CONST_NCM_DIE_Min=cons.val;             break;
+                case "CNST_NCM_DIE_Min":                misConstantes.CONST_NCM_DIE_Min=cons.val;             break;
                 case "CNST_ESTAD061_ThrhldMAX":         misConstantes.CNST_ESTAD061_ThrhldMAX=cons.val;       break;
                 case "CNST_ESTAD061_ThrhldMIN":         misConstantes.CNST_ESTAD061_ThrhldMIN=cons.val;       break;
                 case "CNST_GCIAS_424_Mult":             misConstantes.CNST_GCIAS_424_Mult=cons.val;           break;
+                case "CNST_SEGURO_PORCT":               misConstantes.CNST_SEGURO_PORCT=cons.val;             break;
+                case "CNST_ARANCEL_SIM":                misConstantes.CNST_ARANCEL_SIM=cons.val;              break;
                 default: break;
             }       
         }
