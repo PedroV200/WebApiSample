@@ -141,6 +141,7 @@ public class dbutils
         myEstV2.oemprove6=estimateDB.estHeaderDB.oemprove6;
         myEstV2.oemprove7=estimateDB.estHeaderDB.oemprove7;
 
+        myEstV2.id_PolizaProv=estimateDB.estHeaderDB.id_PolizaProv;
         myEstV2.id_p_gloc_banco=estimateDB.estHeaderDB.id_p_gloc_banco;
         myEstV2.id_p_gloc_cust=estimateDB.estHeaderDB.id_p_gloc_cust;
         myEstV2.id_p_gloc_despa=estimateDB.estHeaderDB.id_p_gloc_despa;
@@ -246,6 +247,7 @@ public class dbutils
         estimateDB.estHeaderDB.oemprove6=myEstV2.oemprove6;
         estimateDB.estHeaderDB.oemprove7=myEstV2.oemprove7;
 
+        estimateDB.estHeaderDB.id_PolizaProv=myEstV2.id_PolizaProv;
         estimateDB.estHeaderDB.id_p_gloc_banco=myEstV2.id_p_gloc_banco;
         estimateDB.estHeaderDB.id_p_gloc_cust=myEstV2.id_p_gloc_cust;
         estimateDB.estHeaderDB.id_p_gloc_despa=myEstV2.id_p_gloc_despa;

@@ -44,7 +44,6 @@ public class EstimateHeaderDB
     public double CbmTot {get;set;}
     public double CifTot {get;set;}
     public double IibbTot {get;set;}
-    public string PolizaProv {get;set;}
     public double ExtraGastosLocProyectado {get;set;}
 
     // CONSTANTES
@@ -60,10 +59,8 @@ public class EstimateHeaderDB
     public double c_gcias424_mult{get;set;}
     public double c_seguroporct{get;set;}
     public double c_arancelsim{get;set;}
-
     public double DolarBillete{get;set;}    
-
-
+    public string PolizaProv {get;set;}
     public string p_gloc_banco{get;set;}
     public string p_gloc_fwder{get;set;}
     public string p_gloc_term{get;set;}
@@ -79,7 +76,7 @@ public class EstimateHeaderDB
     public string oemprove5{get;set;}
     public string oemprove6{get;set;}
     public string oemprove7{get;set;}
-
+    public int id_PolizaProv{get;set;}
     public int id_p_gloc_banco{get;set;}
     public int id_p_gloc_fwder{get;set;}
     public int id_p_gloc_term{get;set;}

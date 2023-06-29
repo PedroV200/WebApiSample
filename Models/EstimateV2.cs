@@ -52,10 +52,10 @@ public class EstimateV2
     public double CifTot {get;set;}
 
     public double IibbTot {get;set;}
-    public string PolizaProv {get;set;}
+ 
     public double ExtraGastosLocProyectado {get;set;}
-    public CONSTANTES constantes{get;set;}
-
+    public CONSTANTES constantes{get;set;} 
+    public string PolizaProv {get;set;}
     public string p_gloc_banco{get;set;} 
     public string p_gloc_fwder{get;set;}  
     public string p_gloc_term{get;set;}  
@@ -70,6 +70,7 @@ public class EstimateV2
     public string oemprove5{get;set;}
     public string oemprove6{get;set;}
     public string oemprove7{get;set;}
+    public int id_PolizaProv{get;set;}
     public int id_p_gloc_banco{get;set;}
     public int id_p_gloc_fwder{get;set;}
     public int id_p_gloc_term{get;set;}
