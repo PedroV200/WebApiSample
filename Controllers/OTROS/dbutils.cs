@@ -141,6 +141,23 @@ public class dbutils
         myEstV2.oemprove6=estimateDB.estHeaderDB.oemprove6;
         myEstV2.oemprove7=estimateDB.estHeaderDB.oemprove7;
 
+        myEstV2.id_p_gloc_banco=estimateDB.estHeaderDB.id_p_gloc_banco;
+        myEstV2.id_p_gloc_cust=estimateDB.estHeaderDB.id_p_gloc_cust;
+        myEstV2.id_p_gloc_despa=estimateDB.estHeaderDB.id_p_gloc_despa;
+        myEstV2.id_p_gloc_gestdigdoc=estimateDB.estHeaderDB.id_p_gloc_gestdigdoc;
+        myEstV2.id_p_gloc_fwder=estimateDB.estHeaderDB.id_p_gloc_fwder;
+        myEstV2.id_p_gloc_term=estimateDB.estHeaderDB.id_p_gloc_term;
+        myEstV2.id_p_gloc_tte=estimateDB.estHeaderDB.id_p_gloc_tte;
+
+        myEstV2.id_oemprove1=estimateDB.estHeaderDB.id_oemprove1;
+        myEstV2.id_oemprove2=estimateDB.estHeaderDB.id_oemprove2;
+        myEstV2.id_oemprove3=estimateDB.estHeaderDB.id_oemprove3;
+        myEstV2.id_oemprove4=estimateDB.estHeaderDB.id_oemprove4;
+        myEstV2.id_oemprove5=estimateDB.estHeaderDB.id_oemprove5;
+        myEstV2.id_oemprove6=estimateDB.estHeaderDB.id_oemprove6;
+        myEstV2.id_oemprove7=estimateDB.estHeaderDB.id_oemprove7;
+
+
         // En el caso de los Estimate detail, la DB tiene solo lo datos que se cuardaran
         // Este tipo se llama EstimateDetailDB. Mientras que el EstimateV2 definido usa el tipo EstimateDetail
         // que contiene no solo los datos que contiene "EstimateDetailDB" sino ademas provicion para los datos
@@ -228,6 +245,22 @@ public class dbutils
         estimateDB.estHeaderDB.oemprove5=myEstV2.oemprove5;
         estimateDB.estHeaderDB.oemprove6=myEstV2.oemprove6;
         estimateDB.estHeaderDB.oemprove7=myEstV2.oemprove7;
+
+        estimateDB.estHeaderDB.id_p_gloc_banco=myEstV2.id_p_gloc_banco;
+        estimateDB.estHeaderDB.id_p_gloc_cust=myEstV2.id_p_gloc_cust;
+        estimateDB.estHeaderDB.id_p_gloc_despa=myEstV2.id_p_gloc_despa;
+        estimateDB.estHeaderDB.id_p_gloc_gestdigdoc=myEstV2.id_p_gloc_gestdigdoc;
+        estimateDB.estHeaderDB.id_p_gloc_fwder=myEstV2.id_p_gloc_fwder;
+        estimateDB.estHeaderDB.id_p_gloc_term=myEstV2.id_p_gloc_term;
+        estimateDB.estHeaderDB.id_p_gloc_tte=myEstV2.id_p_gloc_tte;
+
+        estimateDB.estHeaderDB.id_oemprove1=myEstV2.id_oemprove1;
+        estimateDB.estHeaderDB.id_oemprove2=myEstV2.id_oemprove2;
+        estimateDB.estHeaderDB.id_oemprove3=myEstV2.id_oemprove3;
+        estimateDB.estHeaderDB.id_oemprove4=myEstV2.id_oemprove4;
+        estimateDB.estHeaderDB.id_oemprove5=myEstV2.id_oemprove5;
+        estimateDB.estHeaderDB.id_oemprove6=myEstV2.id_oemprove6;
+        estimateDB.estHeaderDB.id_oemprove7=myEstV2.id_oemprove7;
 
 // Aqui se descartan los calculos. Solo se transfieren los valores necesarios para los mismos
         foreach(EstimateDetail edb in myEstV2.EstDetails)

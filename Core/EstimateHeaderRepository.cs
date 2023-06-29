@@ -7,7 +7,9 @@ using Dapper;
 using System.Data;
 using System.Globalization; 
 
-// LISTED 14_06_2023 11_49AM
+
+// LISTED 29_6_2023 16:34 - REFACTOR agrega IDs (FKs a los maestros) para todos los 
+// proveedores (servicios u OEM) 
 
 public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
 {
@@ -67,6 +69,22 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     oemprove5,   
                     oemprove6,
                     oemprove7,   
+
+                    id_p_gloc_banco,
+                    id_p_gloc_fwder,  
+                    id_p_gloc_term, 
+                    id_p_gloc_despa,
+                    id_p_gloc_tte, 
+                    id_p_gloc_cust,
+                    id_p_gloc_gestdigdoc,
+                    id_oemprove1,   
+                    id_oemprove2,
+                    id_oemprove3,   
+                    id_oemprove4,
+                    id_oemprove5,   
+                    id_oemprove6,
+                    id_oemprove7,   
+
                 htimestamp) 
                             VALUES 
                                     ('{entity.Description}',
@@ -116,6 +134,21 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                                     '{entity.oemprove5}',
                                     '{entity.oemprove6}',
                                     '{entity.oemprove7}',
+
+                                    {entity.id_p_gloc_banco},
+                                    {entity.id_p_gloc_fwder},
+                                    {entity.id_p_gloc_term},
+                                    {entity.id_p_gloc_despa},
+                                    {entity.id_p_gloc_tte},
+                                    {entity.id_p_gloc_cust},
+                                    {entity.id_p_gloc_gestdigdoc},
+                                    {entity.id_oemprove1},
+                                    {entity.id_oemprove2},
+                                    {entity.id_oemprove3},
+                                    {entity.id_oemprove4},
+                                    {entity.id_oemprove5},
+                                    {entity.id_oemprove6},
+                                    {entity.id_oemprove7},
                                     '{tmpString}')";
 
  
@@ -230,6 +263,22 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     oemprove1=@oemprove5,
                     oemprove1=@oemprove6,
                     oemprove1=@oemprove7,
+
+                    id_p_gloc_banco= @id_p_gloc_banco,
+                    id_p_gloc_fwder=@id_p_gloc_fwder,  
+                    id_p_gloc_term= @id_p_gloc_term, 
+                    id_p_gloc_despa= @id_p_gloc_despa,
+                    id_p_gloc_tte=@id_p_gloc_tte, 
+                    id_p_gloc_cust= @id_p_gloc_cust,
+                    id_p_gloc_gestdigdoc=@id_p_gloc_gestdigdoc,
+                    id_oemprove1=@id_oemprove1,
+                    id_oemprove1=@id_oemprove2,
+                    id_oemprove1=@id_oemprove3,
+                    id_oemprove1=@id_oemprove4,
+                    id_oemprove1=@id_oemprove5,
+                    id_oemprove1=@id_oemprove6,
+                    id_oemprove1=@id_oemprove7,
+
                         hTimeStamp = @hTimeStamp
                              WHERE Id = @Id";
         using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))

@@ -80,6 +80,21 @@ public class EstimateHeaderDB
     public string oemprove6{get;set;}
     public string oemprove7{get;set;}
 
+    public int id_p_gloc_banco{get;set;}
+    public int id_p_gloc_fwder{get;set;}
+    public int id_p_gloc_term{get;set;}
+    public int id_p_gloc_despa{get;set;}
+    public int id_p_gloc_tte{get;set;}
+    public int id_p_gloc_cust{get;set;}
+    public int id_p_gloc_gestdigdoc{get;set;}
+    public int id_oemprove1{get;set;}
+    public int id_oemprove2{get;set;}
+    public int id_oemprove3{get;set;}
+    public int id_oemprove4{get;set;}
+    public int id_oemprove5{get;set;}
+    public int id_oemprove6{get;set;}
+    public int id_oemprove7{get;set;}
+
    
 
     // Momento de la emision
