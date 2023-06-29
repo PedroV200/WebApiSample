@@ -8,8 +8,11 @@ using System.Data;
 using System.Globalization; 
 
 
-// LISTED 29_6_2023 16:34 - REFACTOR agrega IDs (FKs a los maestros) para todos los 
-// proveedores (servicios u OEM) 
+// LISTED 29_6_2023 17:56 
+//REFACTOR agrega IDs (FKs a los maestros) para todos los proveedores (servicios u OEM) 
+//REFACTOR para tratar al proveedor de poliza igual que al resto de los proveedores (descrip / ID)
+
+
 
 public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
 {
@@ -40,7 +43,6 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     CbmTot, 
 	                CifTot,
                     IibbTot,
-                    PolizaProv ,
                     ExtraGastosLocProyectado, 
                     c_gdespa_cif_min,
                     c_gdespa_cif_mult, 
@@ -55,6 +57,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                         c_seguroporct,
                     c_arancelsim,
                     DolarBillete, 
+                    PolizaProv,
                     p_gloc_banco,
                     p_gloc_fwder,  
                     p_gloc_term, 
@@ -69,7 +72,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     oemprove5,   
                     oemprove6,
                     oemprove7,   
-
+                    id_polizaprov,
                     id_p_gloc_banco,
                     id_p_gloc_fwder,  
                     id_p_gloc_term, 
@@ -105,7 +108,6 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                                     '{entity.CbmTot.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.CifTot.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.IibbTot.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
-                                    '{entity.PolizaProv}',
                                     '{entity.ExtraGastosLocProyectado.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.c_gdespa_cif_min.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.c_gdespa_cif_mult.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
@@ -120,6 +122,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                                     '{entity.c_seguroporct.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.c_arancelsim.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.DolarBillete.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
+                                    '{entity.PolizaProv}',
                                     '{entity.p_gloc_banco}',
                                     '{entity.p_gloc_fwder}',
                                     '{entity.p_gloc_term}',
@@ -135,6 +138,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                                     '{entity.oemprove6}',
                                     '{entity.oemprove7}',
 
+                                    {entity.id_PolizaProv},
                                     {entity.id_p_gloc_banco},
                                     {entity.id_p_gloc_fwder},
                                     {entity.id_p_gloc_term},
@@ -234,7 +238,6 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     CbmTot = @CbmTot, 
 	                CifTot= @CifTot,
                     IibbTot= @IibbTot,
-                    PolizaProv = @PolizaProv,
                     ExtraGastosLocProyectado= @ExtraGastosLocProyectado, 
                     c_gdespa_cif_min= @c_gdespa_cif_min,
                     c_gdespa_cif_mult=  @c_gdespa_cif_mult, 
@@ -249,6 +252,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     c_seguroporct = @seguroporct,
                     c_arancelsim = @c_arancelsim,
                     DolarBillete = @DolarBillete,
+                    PolizaProv = @PolizaProv,
                     p_gloc_banco= @p_gloc_banco,
                     p_gloc_fwder=@p_gloc_fwder,  
                     p_gloc_term= @p_gloc_term, 
@@ -264,6 +268,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     oemprove1=@oemprove6,
                     oemprove1=@oemprove7,
 
+                    id_polizaprov=@id_polizaprov,
                     id_p_gloc_banco= @id_p_gloc_banco,
                     id_p_gloc_fwder=@id_p_gloc_fwder,  
                     id_p_gloc_term= @id_p_gloc_term, 
