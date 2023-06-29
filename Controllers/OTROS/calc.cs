@@ -45,6 +45,11 @@ public class calc
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
+        
+
+        // Expando el EstimateDB a un EstimateV2
+        myEstV2=dbhelper.transferDataFromDBType(myEstDB);
+
         // Levanto todas las constantes.
         myEstV2= await _estService.loadConstants(myEstV2);
         if(myEstV2==null)
@@ -52,9 +57,6 @@ public class calc
             haltError="Tabla Constantes no accesible";
             return null;
         }
-
-        // Expando el EstimateDB a un EstimateV2
-        myEstV2=dbhelper.transferDataFromDBType(myEstDB);
 
         // Hago algunas cuentas.
         // Calculo el peso total por articulo
@@ -236,7 +238,7 @@ public class calc
         // CELDA L43
         myEstV2.FobGrandTotal=myEstV2.EstDetails[0].Fob;
         // CELDA C5
-        myEstV2.Seguro=(myEstV2.SeguroPorct/100)*myEstV2.FobGrandTotal;
+        myEstV2.Seguro=(myEstV2.constantes.CNST_SEGURO_PORCT/100)*myEstV2.FobGrandTotal;
         // CELDA C4
         myEstV2.FleteTotal=tarifaFleteCont*myEstV2.CantidadContenedores;
         // COL M
@@ -285,7 +287,7 @@ public class calc
         // COL AF
         myEstV2.EstDetails[0].Pagado=_estService._estDetServices.CalcPagado(myEstV2.EstDetails[0]);
         // CELDA AF43
-        myEstV2.Pagado=myEstV2.EstDetails[0].Pagado+myEstV2.ArancelSim;
+        myEstV2.Pagado=myEstV2.EstDetails[0].Pagado+myEstV2.constantes.CNST_ARANCEL_SIM;
         // COL AH
         myEstV2.EstDetails[0].FactorProd=_estService._estDetServices.CalcFactorProducto(myEstV2.EstDetails[0],myEstV2.FobGrandTotal); 
         if( myEstV2.EstDetails[0].FactorProd<0)

@@ -58,7 +58,7 @@ public class PresupuestoService:IPresupuestoService
         // No me queda otra que leer de la base el header ingresado para descubrir su id
         readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(miEst.estHeaderDB.EstNumber,miEst.estHeaderDB.EstVers);
         // Ahora si, inserto los detail uno a uno.
-        result=0;
+            
         foreach(EstimateDetailDB ed in miEst.estDetailsDB)
         {
             ed.IdEstHeader=readBackHeader.Id; // El ID que la base le asigno al header que acabo de insertar.

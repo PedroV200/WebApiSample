@@ -34,11 +34,11 @@ public class EstimateV2
     // Celda C4
     public double FleteTotal {get;set;}
     // El valor magico "0.1 en la formula de C5
-    public double SeguroPorct {get;set;}
+    //public double SeguroPorct {get;set;}
     // CELDA C5
     public double Seguro{get; set;}
     // CELDA C7 
-     public double ArancelSim{get;set;}
+    // public double ArancelSim{get;set;}
     // CELDA C10
     public double CantidadContenedores{get;set;}
     // CELDA I3 (sumatoria de los AF en AF43)

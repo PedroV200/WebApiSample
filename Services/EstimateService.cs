@@ -7,7 +7,7 @@ using Dapper;
 using System.Data;
 using System.Globalization;
 
-// LISTED 22_6_2023 10:57
+// LISTED 29_6_2023 14:48
 
 public class EstimateService: IEstimateService
 {
@@ -455,7 +455,7 @@ public class EstimateService: IEstimateService
 
     public double calcularGastosGestDigDocs(EstimateV2 miEst)
     {
-        return miEst.constantes.CNST_GASTOS_GETDIGDOC_Mult*miEst.DolarBillete;
+        return miEst.constantes.CNST_GASTOS_GESTDIGDOC_Mult*miEst.DolarBillete;
     }
 
     public double calcularGastosBancarios(EstimateV2 miEst)
@@ -615,7 +615,7 @@ public class EstimateService: IEstimateService
 
     public EstimateV2 CalcSeguroTotal(EstimateV2 miEst)
     {
-        miEst.Seguro=(miEst.SeguroPorct/100)*miEst.FobGrandTotal;
+        miEst.Seguro=(miEst.constantes.CNST_SEGURO_PORCT/100)*miEst.FobGrandTotal;
         return miEst;
     }
 
@@ -626,7 +626,7 @@ public class EstimateService: IEstimateService
         {
             tmp+=ed.Pagado;
         }
-        miEst.Pagado=tmp+miEst.ArancelSim;
+        miEst.Pagado=tmp+miEst.constantes.CNST_ARANCEL_SIM;
         return miEst;
     }
 
