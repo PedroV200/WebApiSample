@@ -192,7 +192,7 @@ public class dbutils
         estimateDB.estHeaderDB.Id=myEstV2.Id;
         estimateDB.estHeaderDB.Description=myEstV2.Description;
         estimateDB.estHeaderDB.EstNumber=myEstV2.EstNumber;
-        estimateDB.estHeaderDB.EstNumber=myEstV2.EstVers;
+        estimateDB.estHeaderDB.EstVers=myEstV2.EstVers;
         estimateDB.estHeaderDB.Own=myEstV2.Owner;
         estimateDB.estHeaderDB.ArticleFamily=myEstV2.ArticleFamily;
         estimateDB.estHeaderDB.IvaExcento=myEstV2.IvaExcento;
@@ -211,7 +211,7 @@ public class dbutils
         estimateDB.estHeaderDB.CbmTot=myEstV2.CbmGrandTot;
         estimateDB.estHeaderDB.CifTot=myEstV2.CifTot;
         estimateDB.estHeaderDB.IibbTot=myEstV2.IibbTot;
-        estimateDB.estHeaderDB.PolizaProv=myEstV2.PolizaProv;
+
         estimateDB.estHeaderDB.ExtraGastosLocProyectado=myEstV2.ExtraGastosLocProyectado;  
 
         // Cargo las Constantes ....
@@ -230,7 +230,7 @@ public class dbutils
         
         estimateDB.estHeaderDB.DolarBillete=myEstV2.DolarBillete;
         
-
+        estimateDB.estHeaderDB.PolizaProv=myEstV2.PolizaProv;
         estimateDB.estHeaderDB.p_gloc_banco=myEstV2.p_gloc_banco;
         estimateDB.estHeaderDB.p_gloc_cust=myEstV2.p_gloc_cust;
         estimateDB.estHeaderDB.p_gloc_despa=myEstV2.p_gloc_despa;

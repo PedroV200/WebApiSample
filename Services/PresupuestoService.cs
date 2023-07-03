@@ -8,7 +8,7 @@ using System.Data;
 using System.Globalization;
 
 
-// LISTED 22_6_2023 15:59 PM
+// LISTED 3_7_2023 15:02 PM
 public class PresupuestoService:IPresupuestoService
 {
     
@@ -52,22 +52,68 @@ public class PresupuestoService:IPresupuestoService
              return null;
         }
 
-        result=await _unitOfWork.EstimateHeadersDB.AddAsync(miEst.estHeaderDB);
-        // Hayun probñema aca. Acabo de insertar un header pero no se que Id aisgno la base
-        // ya que es autoID PK.
-        // No me queda otra que leer de la base el header ingresado para descubrir su id
-        readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(miEst.estHeaderDB.EstNumber,miEst.estHeaderDB.EstVers);
-        // Ahora si, inserto los detail uno a uno.
-            
-        foreach(EstimateDetailDB ed in miEst.estDetailsDB)
+        ret=await myCalc.calcBatch(miEst);
+        // Si los calculos fallan, no hacer nada.
+        if(ret==null)
+        {
+            return null;
+        }
+        // lo que me deuvelve la rutina de calculo es un EstimateV2, cuyo Detail es mucho mas extenso
+        // En la base no se guardan calculos,  por lo que debi convertir el estimate V2 a estimate DB y guardarlo.
+        dbutils myDBhelper=new dbutils(_unitOfWork);
+        EstimateDB resultEDB=new EstimateDB();
+        resultEDB=myDBhelper.transferDataToDBType(ret);
+
+        // Guardo el header.
+        result=await _unitOfWork.EstimateHeadersDB.AddAsync(resultEDB.estHeaderDB);
+        // Veo que ID le asigno la base:
+        readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(resultEDB.estHeaderDB.EstNumber,miEst.estHeaderDB.EstVers);
+        // Ahora si, inserto los detail uno a uno ne la base
+        foreach(EstimateDetailDB ed in resultEDB.estDetailsDB)
         {
             ed.IdEstHeader=readBackHeader.Id; // El ID que la base le asigno al header que acabo de insertar.
             result+=await _unitOfWork.EstimateDetailsDB.AddAsync(ed);
         }
-        ret=await myCalc.calcBatch(miEst);
-
-        return ret;
         
+        return ret;      
+    }
+
+
+    public async Task<EstimateV2>reclaimPresupuesto(int estNumber,int estVers)
+    {
+        EstimateV2 ret=new EstimateV2();
+
+
+
+        EstimateDB miEst=new EstimateDB();
+
+        // Levanto el header segun numero y version
+        miEst.estHeaderDB=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(estNumber,estVers);
+        if(miEst.estHeaderDB ==null)
+        {   // OJO
+             return null;
+        }
+        // Con el ID del header levanto el estDetail.
+        var result=await _unitOfWork.EstimateDetailsDB.GetAllByIdEstHeadersync(miEst.estHeaderDB.Id);
+        if(result==null)
+        {
+            return null;
+        }
+        miEst.estDetailsDB=result.ToList();
+
+        // Ya tengo mi estimateDB completo desde la tabla.
+        // CalcRestore se vale del hecho de que muchos calculos ya estan resueltos en el header.
+        // y aun tambien las constantes, con lo que no es preciso hacerlas de nuevo o solicitar nuevas
+        // consultas a la base.
+        ret=await myCalc.calcReclaim(miEst);
+
+        // Si los calculos fallan, no hacer nada.
+        if(ret==null)
+        {
+            return null;
+        }
+        
+        return ret;      
     }
 
 }

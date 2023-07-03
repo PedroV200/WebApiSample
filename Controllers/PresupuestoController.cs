@@ -42,29 +42,20 @@ public class PresupuestoController : ControllerBase
 
     
    [HttpGet("{id}/{vers}")]
-    public async Task<ActionResult<EstimateDB>>Get(int id, int vers) 
+    public async Task<ActionResult<EstimateV2>>Get(int id, int vers) 
     {
        
-        EstimateDB tmpED=new EstimateDB();
-  
+        EstimateV2 myEst=new EstimateV2();
 
-        dbutils dbHelper=new dbutils(_unitOfWork);
-        if(vers==0)
-        {
-            tmpED=await dbHelper.getEstimateLastVers(id);
-        }
-        else
-        {
-            tmpED=await dbHelper.GetEstimateByNumByVers(id,vers);
-        }
+        myEst= await _presupService.reclaimPresupuesto(id,vers);
 
-        if(tmpED==null)
+        if(myEst==null)
         {
             return NotFound();
         }
         else
         {
-            return tmpED;
+            return myEst;
         }
     }
 
