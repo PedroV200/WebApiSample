@@ -21,15 +21,19 @@ public class calc
 
 // Ejecuta el batch de calculos, de izq a derecha conforme el libro de XLS
 // Segun "Presupuestador Argentina, libro N - Duchas Escocesas"
-
-// Me dan como parametro el numero de presupuesto.
+// MODIFICADO 3_7_2023 ==>
+// Calcbatch antes trabajaba sobre registros ingresados a la base.
+// Esto debe hacerse en RAM, para evitar grabar presupuestos ANTES de saber si los calculos
+// fallan. Una vez que los calclos son correctos, el etimateV2 se pasa a EstimateDB 
+// y se guerda en la basa. El estimateV2 es en verdad lo que se envia como JSON se salida
     public async Task<EstimateV2> calcBatch(EstimateDB miEst)
     {
 
         EstimateDB myEstDB=new EstimateDB(); 
         dbutils dbhelper=new dbutils(_unitOfWork);
 
-        if(miEst.estHeaderDB.EstNumber>0)
+        // Comentado 3_7_2023
+        /*if(miEst.estHeaderDB.EstNumber>0)
         {
             myEstDB=await dbhelper.getEstimateLastVers(miEst.estHeaderDB.EstNumber);
             if(myEstDB==null)
@@ -37,11 +41,11 @@ public class calc
                 haltError=$"NO SE ENCONTRO HEADER ! estNum:{miEst.estHeaderDB.EstNumber}";
                 return null;
             }
-        }
-        else
-        {
+        }*/
+        //else
+        //{
             myEstDB=miEst;
-        }
+        //}
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
@@ -198,6 +202,164 @@ public class calc
         // LISTED 22_6_2023 !!!. Todas las cuentas OK-
         return myEstV2;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
+    {
+
+        EstimateDB myEstDB=new EstimateDB(); 
+        dbutils dbhelper=new dbutils(_unitOfWork);
+
+
+        myEstDB=miEst;
+
+        // El objeto Estimate que se definio. 
+        EstimateV2 myEstV2=new EstimateV2();
+        
+
+        // Expando el EstimateDB a un EstimateV2
+        myEstV2=dbhelper.transferDataFromDBType(myEstDB);
+
+        // Hago algunas cuentas.
+        // Calculo el peso total por articulo
+        // COL J
+        myEstV2=_estService.CalcPesoTotal(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
+        // COL K
+        myEstV2=_estService.CalcCbmTotal(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
+
+        // COL L. Calculo el fob total por articulo
+        myEstV2=_estService.CalcFobTotal(myEstV2);
+
+        // COL M. Calcula el flete ponderado a cada articulo del detalle.
+        myEstV2=_estService.CalcFleteTotalByProd(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="ATENCION: CalcFleteTotalByProd. FOB GRAND TOTAL ES 0. DIV 0 !";
+            return null;
+        }
+        // COL N. Calcula el seguro ponderado a cada articulo del detalle 
+        myEstV2=_estService.CalcSeguro(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError="ATENCION: CalcSeguro. FOB GRAND TOTAL es 0. DOV 0 !";
+        }
+        // COL O. Calcula el CIF que solo depende de los datos ya calculados previamente (COL L, N y M)
+        myEstV2=_estService.CalcCif(myEstV2);
+        // COL R (COL O y COL Q no estan en uso)
+        myEstV2=_estService.CalcAjusteIncDec(myEstV2);
+        // COL S, COL U, COLY, COL AA 
+        // Evito consultar la base de NCM una vez por cada factor necesario. Se que son 4 los factores.
+        // Los traigo en una sola consulta (una consulta x item)
+        myEstV2=await _estService.search_NCM_DATA(myEstV2);
+        if(myEstV2==null)
+        {   
+            haltError=_estService.getLastError();
+            return null;
+        }
+        //myEstV2=await _estService.searchNcmDie(myEstV2);
+        // COL T
+        myEstV2=_estService.CalcDerechos(myEstV2);
+        // COL U
+        //myEstV2=await _estService.resolveNcmTe(myEstV2);
+        // COL V
+        myEstV2=_estService.CalcTasaEstad061(myEstV2);
+        // COL X
+        myEstV2=_estService.CalcBaseGcias(myEstV2); 
+        // COL Y
+        //myEstV2=await _estService.searchIva(myEstV2); 
+        // COL Z
+        myEstV2=_estService.CalcIVA415(myEstV2);
+        // COL AA
+        //myEstV2= await _estService.searchIvaAdic(myEstV2);
+        // COL AB
+        myEstV2=_estService.CalcIVA_ad_Gcias(myEstV2);
+        // COL AC
+        myEstV2=_estService.CalcImpGcias424(myEstV2);
+        // COL AD
+        myEstV2=await _estService.CalcIIBB900(myEstV2); 
+        // COL AE
+        myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
+        // COL AF
+        myEstV2=_estService.CalcPagado(myEstV2);
+        // AH
+        myEstV2=_estService.CalcFactorProdTotal(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
+
+        // AI
+        myEstV2=_estService.CalcExtraGastoLocProyecto(myEstV2);
+        //AJ
+        myEstV2=_estService.CalcExtraGastoProyectoUSS(myEstV2);
+        //AK
+        myEstV2=_estService.CalcExtraGastoProyectoUnitUSS(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
+        //AL
+        myEstV2=_estService.CalcOverhead(myEstV2);
+        if(myEstV2==null)
+        {
+            haltError=_estService.getLastError();
+            return null;
+        }
+        //AM
+        myEstV2=_estService.CalcCostoUnitarioUSS(myEstV2);
+        //AN
+        myEstV2=_estService.CalcCostoUnitario(myEstV2);
+        // LISTED 22_6_2023 !!!. Todas las cuentas OK-
+        return myEstV2;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Este metodo es similar al anterior salvo que tiene opcion de no volver a buscar a base los mismo valores una y otra vez.
 // Es consumido por el metodo aCalc, que "despeja" un valor de una columna a la derecha fijado un valor a la izquierda
 // Ejemplo, determina el valor fobunit para alcanzar un valor de aduanaDivisa dado.

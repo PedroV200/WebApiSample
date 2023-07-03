@@ -22,4 +22,6 @@ public class EstimateDetailDB
     public double sparef3 { get; set; }
     public double sparef4 { get; set; }
 
+    
+
 } 
