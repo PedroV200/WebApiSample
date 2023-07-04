@@ -59,6 +59,25 @@ public class TipoDeCambioRepository : ITipoDeCambioRepository
             return result;
         }
     }
+
+    public async Task<double> GetByDateAsync(string date)
+    {
+        var sql = $"SELECT MAX(description) FROM tc_cda WHERE day >= '{date}'::date AND day < ('{date}'::date + '1 day'::interval)";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            try
+            {
+                var result = await connection.QuerySingleOrDefaultAsync<double>(sql);
+                return result;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+    }
+    
     public async Task<int> UpdateAsync(TipoDeCambio entity)
     {
         //entity.ModifiedOn=DateTime.Now;

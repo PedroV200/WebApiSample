@@ -1,7 +1,7 @@
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 
-// LISTED 27_6_2023 16:51
+// LISTED 4_7_2023 10:01AM
 
 public class calc
 {
@@ -49,6 +49,26 @@ public class calc
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
+
+        
+        // Cuando me pasan el presupuesto con dolar billete "-1" es por que debo extraerlo
+        // desde la base TC-CDA. 
+        if(myEstDB.estHeaderDB.DolarBillete<0)
+        {
+            // Leo la fecha y la paso al formato que le gusta a postgre
+            string hoy=DateTime.Now.ToString("yyyy-MM-dd");
+            // Consulto el TC del dia (si existe, ojo)
+            double tipoDeCambio= await _unitOfWork.TiposDeCambio.GetByDateAsync(hoy); 
+            if(tipoDeCambio>0)
+            {   // La consulta tuvo exito ?
+                myEstDB.estHeaderDB.DolarBillete=tipoDeCambio;
+            }
+            else
+            {   // FALLO, no existe el TC de la fecha mencionada*/ !!!!!!!
+                haltError="Se solicito usar TC de la base TC_CDA, pero el dia de la fecha no tiene valor asignado";
+                return null;
+            }
+        }
         
 
         // Expando el EstimateDB a un EstimateV2
