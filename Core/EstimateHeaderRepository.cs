@@ -24,6 +24,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
     public async Task<int> AddAsync(EstimateHeaderDB entity)
     {
         // Convierto la fecha al formato que postgre acepta. Le molesta AAAA/MM//dd. Tiene que ser AAAA-MM-dd
+        //entity.hTimeStamp=DateTime.Now;
         string tmpString=entity.hTimeStamp.ToString("yyyy-MM-dd hh:mm:ss");
         //entity.hTimeStamp=DateOnly.FromDateTime(DateTime.Now);
         var sql = $@"INSERT INTO estimateheader 

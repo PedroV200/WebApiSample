@@ -85,6 +85,7 @@ public class TipoDeCambioController : ControllerBase
     {
         try
         {
+            
             var result = await _unitOfWork.TiposDeCambio.GetByIdAsync(id);
             if (result == null)
             {
@@ -105,8 +106,11 @@ public class TipoDeCambioController : ControllerBase
     public async Task<IEnumerable<TipoDeCambio>> GetAll()
     {
         try
-        {
-        return await _unitOfWork.TiposDeCambio.GetAllAsync();
+        { 
+            //Testeado OK
+            //string hoy=DateTime.Now.ToString("yyyy-MM-dd");
+            //double tipoDeCambio= await _unitOfWork.TiposDeCambio.GetByDateAsync("2023-07-07"); 
+            return await _unitOfWork.TiposDeCambio.GetAllAsync();
         }
         catch (Exception ex)
         {

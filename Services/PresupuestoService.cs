@@ -35,6 +35,8 @@ public class PresupuestoService:IPresupuestoService
         var result=0;
         EstimateV2 ret=new EstimateV2();
 
+          
+
         // Cuando me pasan un presupuesto con VERSION 0, significa que es una simulacion
         // y no se ingresara a la base.
         if(miEst.estHeaderDB.EstNumber==0)
@@ -58,6 +60,10 @@ public class PresupuestoService:IPresupuestoService
         {
             return null;
         }
+
+        // Le pongo la fecha / hora !!!!!!
+        ret.TimeStamp=DateTime.Now;
+
         // lo que me deuvelve la rutina de calculo es un EstimateV2, cuyo Detail es mucho mas extenso
         // En la base no se guardan calculos,  por lo que debi convertir el estimate V2 a estimate DB y guardarlo.
         dbutils myDBhelper=new dbutils(_unitOfWork);
