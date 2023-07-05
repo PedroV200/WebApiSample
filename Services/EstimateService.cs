@@ -130,7 +130,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {                                               
-            ed.Die=(await _estDetServices.lookUpDie(ed))/100.0;
+            ed.ncm_die=(await _estDetServices.lookUpDie(ed))/100.0;
         }
         return est;
     }
@@ -148,7 +148,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.Te=(await _estDetServices.lookUpTe(ed))/100.0;
+            ed.ncm_te=(await _estDetServices.lookUpTe(ed))/100.0;
         }       
         return est;
     }
@@ -175,7 +175,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IVA=(await _estDetServices.lookUpIVA(ed))/100.0;
+            ed.ncm_iva=(await _estDetServices.lookUpIVA(ed))/100.0;
         }       
         return est;
     }
@@ -193,7 +193,7 @@ public class EstimateService: IEstimateService
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IVA_ad=(await _estDetServices.lookUpIVAadic(ed))/100.0;
+            ed.ncm_ivaad=(await _estDetServices.lookUpIVAadic(ed))/100.0;
         }
         return est;
     }
@@ -210,10 +210,10 @@ public class EstimateService: IEstimateService
                 haltError=$"FALLO NCM='{ed.ncm}', DET= '{ed.modelo}";
                 return null;
            }
-           ed.Die=myNCM.die/100.0;
-           ed.Te=myNCM.te/100.0;
-           ed.IVA=myNCM.iva/100.0;
-           ed.IVA_ad=myNCM.iva_ad/100.0; 
+           ed.ncm_die=myNCM.die/100.0;
+           ed.ncm_te=myNCM.te/100.0;
+           ed.ncm_iva=myNCM.iva/100.0;
+           ed.ncm_ivaad=myNCM.iva_ad/100.0; 
         }
         return est;
     }
@@ -236,11 +236,11 @@ public class EstimateService: IEstimateService
         return est;
     }
 
-    public async Task<EstimateV2> CalcIIBB900(EstimateV2 est)
+    public EstimateV2 CalcIIBB900(EstimateV2 est)
     {
         foreach(EstimateDetail ed in est.EstDetails)
         {
-            ed.IIBB=await _estDetServices.CalcIIBB(ed);
+            ed.IIBB=_estDetServices.CalcIIBB(ed, est.IibbTot);
         }
         return est;
     }

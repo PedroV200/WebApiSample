@@ -1,7 +1,7 @@
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 
-// LISTED 4_7_2023 10:01AM
+// LISTED 5_7_2023 16:12AM
 
 public class calc
 {
@@ -81,6 +81,9 @@ public class calc
             haltError="Tabla Constantes no accesible";
             return null;
         }
+
+        // Cargo la sumatoria de los factores de cada provincia segun lo requerido por los calculos 
+        myEstV2.IibbTot=await _unitOfWork.IIBBs.GetSumFactores();
 
         // Hago algunas cuentas.
         // Calculo el peso total por articulo
@@ -171,7 +174,7 @@ public class calc
         // COL AC
         myEstV2=_estService.CalcImpGcias424(myEstV2);
         // COL AD
-        myEstV2=await _estService.CalcIIBB900(myEstV2); 
+        myEstV2=_estService.CalcIIBB900(myEstV2); 
         // COL AE
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
         if(myEstV2==null)
@@ -290,12 +293,12 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         // COL S, COL U, COLY, COL AA 
         // Evito consultar la base de NCM una vez por cada factor necesario. Se que son 4 los factores.
         // Los traigo en una sola consulta (una consulta x item)
-        myEstV2=await _estService.search_NCM_DATA(myEstV2);
+        /*myEstV2=await _estService.search_NCM_DATA(myEstV2);
         if(myEstV2==null)
         {   
             haltError=_estService.getLastError();
             return null;
-        }
+        }*/
         //myEstV2=await _estService.searchNcmDie(myEstV2);
         // COL T
         myEstV2=_estService.CalcDerechos(myEstV2);
@@ -316,7 +319,7 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         // COL AC
         myEstV2=_estService.CalcImpGcias424(myEstV2);
         // COL AD
-        myEstV2=await _estService.CalcIIBB900(myEstV2); 
+        myEstV2=_estService.CalcIIBB900(myEstV2); 
         // COL AE
         myEstV2=_estService.CalcPrecioUnitUSS(myEstV2);
         if(myEstV2==null)
@@ -442,10 +445,10 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         // COL R
         myEstV2.EstDetails[0].valAduanaDivisa=_estService._estDetServices.CalcValorEnAduanaDivisa(myEstV2.EstDetails[0]);
         // COL S, U, Y, AA
-        myEstV2.EstDetails[0].Die=myNCM.die/100.0;
-        myEstV2.EstDetails[0].Te=myNCM.te/100.0;
-        myEstV2.EstDetails[0].IVA=myNCM.iva/100.0;
-        myEstV2.EstDetails[0].IVA_ad=myNCM.iva_ad/100.0; 
+        myEstV2.EstDetails[0].ncm_die=myNCM.die/100.0;
+        myEstV2.EstDetails[0].ncm_te=myNCM.te/100.0;
+        myEstV2.EstDetails[0].ncm_iva=myNCM.iva/100.0;
+        myEstV2.EstDetails[0].ncm_ivaad=myNCM.iva_ad/100.0; 
         // COL T
         myEstV2.EstDetails[0].Derechos=_estService._estDetServices.CalcDerechos(myEstV2.EstDetails[0]);
         // COL V
@@ -610,8 +613,7 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         NCM myNCM=new NCM();
         myNCM=await _estService._estDetServices.lookUp_NCM_Data(myEstV2.EstDetails[0]); 
 
-        double sumaIIBB;
-        sumaIIBB=await _estService._estDetServices.CalcIIBB(myEstV2.EstDetails[0]);
+        double sumaIIBB=await _unitOfWork.IIBBs.GetSumFactores();
 
 
         // Hago los calculos forzando (por unica vez) que todos lo datos que vienen de otras tablas sean consultados.

@@ -28,14 +28,14 @@ public class EstimateDetail
     public double Cif {get; set;}
     public double valAduanaDivisa {get; set;}
     // Die = Derechos Importaciones
-    public double Die {get; set;}
+    //public double Die {get; set;}
     public double Derechos {get;set;}
-    public double Te {get;set;}
+    //public double Te {get;set;}
     public double TasaEstad061 {get;set;}
     public double BaseIvaGcias {get;set;}
-    public double IVA {get;set;}
+    //public double IVA {get;set;}
     public double IVA415 {get;set;}
-    public double IVA_ad {get;set;}
+    //public double IVA_ad {get;set;}
     public double IVA_ad_gcias {get; set;}    
     public double ImpGcias424 {get;set;}
     public double IIBB {get;set;}
