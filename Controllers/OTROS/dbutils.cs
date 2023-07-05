@@ -277,10 +277,10 @@ public class dbutils
             tmp.FobUnit=edb.fobunit;
             tmp.CantPcs=edb.cantpcs;
             tmp.IdEstHeader=edb.idestheader;
-            edb.ncm_die=tmp.ncm_die;
-            edb.ncm_te=tmp.ncm_te;
-            edb.ncm_iva=tmp.ncm_iva;
-            edb.ncm_ivaad=tmp.ncm_ivaad;
+            tmp.ncm_die=edb.ncm_die;
+            tmp.ncm_te=edb.ncm_te;
+            tmp.ncm_iva=edb.ncm_iva;
+            tmp.ncm_ivaad=edb.ncm_ivaad;
             estimateDB.estDetailsDB.Add(tmp);
         }
         return estimateDB;       

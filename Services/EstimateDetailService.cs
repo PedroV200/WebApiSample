@@ -119,12 +119,12 @@ public class EstimateDetailService: IEstimateDetailService
 
     public double CalcDerechos(EstimateDetail est)
     {
-        return est.valAduanaDivisa*est.Die;
+        return est.valAduanaDivisa*est.ncm_die;
     }
     // Conforme COL V
     public double CalcTasaEstad061(EstimateDetail est)
     {
-        if(est.Te==0)
+        if(est.ncm_te==0)
         {
             return 0;
         }
@@ -133,7 +133,7 @@ public class EstimateDetailService: IEstimateDetailService
             if(est.valAduanaDivisa<misConsts.CNST_ESTAD061_ThrhldMAX)
             //if(est.valAduanaDivisa<10000)
             {
-                if((est.valAduanaDivisa*est.Te)>misConsts.CNST_ESTAD061_ThrhldMIN)
+                if((est.valAduanaDivisa*est.ncm_te)>misConsts.CNST_ESTAD061_ThrhldMIN)
                 //if((est.valAduanaDivisa*est.Te)>180)
                 {
                     //return 180;
@@ -141,12 +141,12 @@ public class EstimateDetailService: IEstimateDetailService
                 }
                 else
                 {
-                    return est.valAduanaDivisa*est.Te;
+                    return est.valAduanaDivisa*est.ncm_te;
                 }
             }
             else
             {
-                return est.valAduanaDivisa*est.Te;
+                return est.valAduanaDivisa*est.ncm_te;
             }
         }
     }
@@ -172,7 +172,7 @@ public class EstimateDetailService: IEstimateDetailService
 
     public double CalcIVA415(EstimateDetail estDetail)
     {
-        return estDetail.BaseIvaGcias*estDetail.IVA;
+        return estDetail.BaseIvaGcias*estDetail.ncm_iva;
     }
 
     public async Task<double> lookUpIVAadic(EstimateDetail estDetails)
@@ -196,7 +196,7 @@ public class EstimateDetailService: IEstimateDetailService
         }
         else
         {
-            return estDetails.BaseIvaGcias*estDetails.IVA_ad;
+            return estDetails.BaseIvaGcias*estDetails.ncm_ivaad;
         }
     }
 
@@ -206,10 +206,10 @@ public class EstimateDetailService: IEstimateDetailService
         return estDetails.BaseIvaGcias*misConsts.CNST_GCIAS_424_Mult;
     }
 
-    public async Task<double> CalcIIBB(EstimateDetail estDetails)
+    public double CalcIIBB(EstimateDetail estDetails, double sumaFactoresIIBB)
     {
-        double totalIIBB=await _unitOfWork.IIBBs.GetSumFactores();
-        return (estDetails.BaseIvaGcias*(totalIIBB/100));
+        //double totalIIBB=await _unitOfWork.IIBBs.GetSumFactores();
+        return (estDetails.BaseIvaGcias*(sumaFactoresIIBB/100));
     }
 
     public double CalcPrecioUnitUSS(EstimateDetail estDetails)
