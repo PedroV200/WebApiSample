@@ -75,6 +75,35 @@ public class EstimateHeaderController : ControllerBase
         }
     }
 
+
+    [HttpGet("detalles/{Id}")]
+    public async Task<ActionResult<int>> GetNexVers(int Id)
+    {
+        var result=await _unitOfWork.EstimateHeadersDB.GetNextEstVersByEstNumber(Id);
+        if(result==null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return result;
+        }
+    }
+
+    [HttpGet("detalles")]
+    public async Task<ActionResult<int>>GetNexEstNumber()
+    {
+        var result=await _unitOfWork.EstimateHeadersDB.GetNextEstNumber();
+        if(result==null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return result;
+        }
+    }
+
     [HttpGet(Name = "GetAll Estimate Header")]
     public async Task<IEnumerable<EstimateHeaderDB>> GetAll()
     {

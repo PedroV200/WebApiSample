@@ -207,6 +207,39 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
         }
     }
 
+    // 6/7/2023 Trae el proximo ID LIBRE para estNumber.
+    public async Task<int> GetNextEstNumber()
+    {
+        var sql = $"SELECT MAX(estnumber) from estimateheader";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            return (await connection.QuerySingleOrDefaultAsync<int>(sql)+1);
+        }
+    }
+
+    // 6/7/2023 Trae la proxima version LIBRE de un determinado presupuesto
+    public async Task<int> GetNextEstVersByEstNumber(int estNumber)
+    {
+        var sql = $"select MAX(estVers) from estimateheader where estnumber={estNumber}";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            return (await connection.QuerySingleOrDefaultAsync<int>(sql)+1);
+        }
+    }
+
+    // 6/7/2023. Trae todos las versiones de un presupuesto
+    public async Task<IEnumerable<EstimateHeaderDB>> GetAllVersionsFromEstimate(int estNumber)
+    {
+        var sql = $"SELECT * from estimateheader where estnumber={estNumber}";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            return await connection.QueryAsync<EstimateHeaderDB>(sql);
+        }
+    }
+
     public async Task<EstimateHeaderDB> GetByEstNumberAnyVersAsync(int estnumber, int estVers)
     {
         var sql = $"SELECT * FROM estimateheader WHERE estnumber={estnumber} AND estVers={estVers}";
