@@ -30,28 +30,89 @@ public class PresupuestoService:IPresupuestoService
         return myCalc.haltError;
     }
 
-    public async Task<EstimateV2>submitPresupuesto(EstimateDB miEst)
+    public async Task<EstimateV2>submitPresupuestoNew(EstimateDB miEst)
     {
         var result=0;
         EstimateV2 ret=new EstimateV2();
 
-          
+        // La version no es 0. No es una simulacion. Va en serio. 
+        EstimateHeaderDB readBackHeader=new EstimateHeaderDB();
+        
+        /*readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(miEst.estHeaderDB.EstNumber,miEst.estHeaderDB.EstVers);
+        if(readBackHeader !=null)
+        {   // OJO
+             return null;
+        }*/
+
+
+        // Numeracion / Versionado:
+        // Este es un nuevo presupuesto, con lo cual me limito a preguntar el estNumber mas alto usado
+        // y luego le sumo 1. La version es 1.
+        miEst.estHeaderDB.EstNumber=await _unitOfWork.EstimateHeadersDB.GetNextEstNumber();
+        miEst.estHeaderDB.EstVers=1;
+
+        ret=await myCalc.calcBatch(miEst);
+        // Si los calculos fallan, no hacer nada.
+        if(ret==null)
+        {
+            return null;
+        }
+
+        // Le pongo la fecha / hora !!!!!!
+        ret.TimeStamp=DateTime.Now;
+
+        // lo que me deuvelve la rutina de calculo es un EstimateV2, cuyo Detail es mucho mas extenso
+        // En la base no se guardan calculos,  por lo que debi convertir el estimate V2 a estimate DB y guardarlo.
+        dbutils myDBhelper=new dbutils(_unitOfWork);
+        EstimateDB resultEDB=new EstimateDB();
+        resultEDB=myDBhelper.transferDataToDBType(ret);
+
+        // Guardo el header.
+        result=await _unitOfWork.EstimateHeadersDB.AddAsync(resultEDB.estHeaderDB);
+        // Veo que ID le asigno la base:
+        readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(resultEDB.estHeaderDB.EstNumber,miEst.estHeaderDB.EstVers);
+        // Ahora si, inserto los detail uno a uno ne la base
+        foreach(EstimateDetailDB ed in resultEDB.estDetailsDB)
+        {
+            ed.IdEstHeader=readBackHeader.Id; // El ID que la base le asigno al header que acabo de insertar.
+            result+=await _unitOfWork.EstimateDetailsDB.AddAsync(ed);
+        }
+        
+        return ret;      
+    }
+
+
+
+    public async Task<EstimateV2>submitPresupuestoUpdated(int estNumber,EstimateDB miEst)
+    {
+        var result=0;
+        EstimateV2 ret=new EstimateV2();
 
         // Cuando me pasan un presupuesto con VERSION 0, significa que es una simulacion
         // y no se ingresara a la base.
-        if(miEst.estHeaderDB.EstNumber==0)
+        if(estNumber==0)
         {
             ret=await myCalc.calcBatch(miEst);
             return ret;
-        }
+        } 
+
+
 
         // La version no es 0. No es una simulacion. Va en serio. 
         EstimateHeaderDB readBackHeader=new EstimateHeaderDB();
         
-        readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(miEst.estHeaderDB.EstNumber,miEst.estHeaderDB.EstVers);
+        /*readBackHeader=await _unitOfWork.EstimateHeadersDB.GetByEstNumberAnyVersAsync(miEst.estHeaderDB.EstNumber,miEst.estHeaderDB.EstVers);
         if(readBackHeader !=null)
         {   // OJO
              return null;
+        }*/
+
+        miEst.estHeaderDB.EstNumber=estNumber;
+        miEst.estHeaderDB.EstVers=await _unitOfWork.EstimateHeadersDB.GetNextEstVersByEstNumber(estNumber);
+
+        if(miEst.estHeaderDB.EstVers==0)
+        {
+            return null;
         }
 
         ret=await myCalc.calcBatch(miEst);

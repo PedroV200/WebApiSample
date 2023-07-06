@@ -4,7 +4,7 @@ using WebApiSample.Infrastructure;
 using WebApiSample.Core;
 namespace WebApiSample.Controllers;
 
-
+// LISTED 6/7/2023 11:16 AM
 
 [ApiController]
 [Route("[controller]")]
@@ -26,10 +26,26 @@ public class PresupuestoController : ControllerBase
         _presupService=presupService;
     }
 
-    [HttpPost(Name = "Post Estimate")]
-    public async Task<ActionResult<EstimateV2>>Post(EstimateDB entity)
+// Este endpoint es para un presupuesto nuevo. Notar que no se pasa el id
+    [HttpPost(Name = "Post Presupuesto Nuevo")]
+    public async Task<ActionResult<EstimateV2>>PostNewPresup(EstimateDB entity)
     {
-        var result=await _presupService.submitPresupuesto(entity);
+        var result=await _presupService.submitPresupuestoNew(entity);
+        if(result==null)
+        {
+            return BadRequest(_presupService.getLastErr());
+        }
+        else
+        {
+            return result;
+        }
+    }
+
+// Este endpoint es para un presupuesto nuevo. Notar que no se pasa el id
+    [HttpPost("{id}")]
+    public async Task<ActionResult<EstimateV2>>PostUpdatedPresup(int id,EstimateDB entity)
+    {
+        var result=await _presupService.submitPresupuestoUpdated(id, entity);
         if(result==null)
         {
             return BadRequest(_presupService.getLastErr());
@@ -64,6 +80,14 @@ public class PresupuestoController : ControllerBase
     public async Task<ActionResult<List<EstimateHeaderDB>>>GetHeaders() 
     {
         var result=await _unitOfWork.EstimateHeadersDB.GetAllAsync();
+        return result.ToList();
+        
+    }
+    // 6/7/2023 Se agrega este endpoint para listar todas las versiones de un presupuesto.
+    [HttpGet("{id}")]
+    public async Task<ActionResult<List<EstimateHeaderDB>>>GetVersionesFromEstimate(int id) 
+    {
+        var result=await _unitOfWork.EstimateHeadersDB.GetAllVersionsFromEstimate(id);
         return result.ToList();
         
     }
