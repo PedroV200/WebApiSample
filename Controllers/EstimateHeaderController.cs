@@ -109,4 +109,11 @@ public class EstimateHeaderController : ControllerBase
     {
         return await _unitOfWork.EstimateHeadersDB.GetAllAsync();
     }
+
+
+    [HttpGet("filter/{strsrch}")]
+    public async Task<IEnumerable<EstimateHeaderDB>> GetFiltered(string strsrch)
+    {
+        return await _unitOfWork.EstimateHeadersDB.GetByDescripAsync(strsrch);
+    }
 }

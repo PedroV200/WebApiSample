@@ -108,7 +108,6 @@ public class UnitOfWork : IUnitOfWork
     public ITipoDeCambioRepository TiposDeCambio { get; }
     public ISeguroRepository Seguros { get; }
     public ITarifasTerminalRepository TarifasTerminals { get;}
-
     public ICnstRepository Constantes{get;}
     public IUsuarioRepository Usuarios { get; }
     public IDespachanteRepository Despachantes { get; }

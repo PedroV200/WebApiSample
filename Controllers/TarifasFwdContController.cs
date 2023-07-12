@@ -4,6 +4,9 @@ using WebApiSample.Infrastructure;
 using WebApiSample.Core;
 namespace WebApiSample.Controllers;
 
+
+// LISTED 12/7/2023 11:37AM 
+
 [ApiController]
 [Route("[controller]")]
 public class TarifasFwdContController : ControllerBase
@@ -46,7 +49,7 @@ public class TarifasFwdContController : ControllerBase
             {
                 return BadRequest();
             }*/
-            var result=await _unitOfWork.TarifasFwdContenedores.UpdateByFwdContTypeAsync(entity);
+            var result=await _unitOfWork.TarifasFwdContenedores.UpdateAsync(entity);
             // Si la operacion devolvio 0 filas .... es por que no le pegue al id.
             if(result==0)
             {

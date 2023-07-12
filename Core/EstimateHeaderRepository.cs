@@ -197,6 +197,20 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
             return result;
         }
     }
+ 
+    // 6/7/2023 Busca entrada cuyo campo description contiene el string pasado como param
+    public async Task<IEnumerable<EstimateHeaderDB>> GetByDescripAsync(string descrip)
+    {
+        var sql = $"select * from estimateheader where description LIKE '%{descrip}%'";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+            var result = await connection.QueryAsync<EstimateHeaderDB>(sql);
+            return result;
+        }
+    }
+
+
     public async Task<IEnumerable<EstimateHeaderDB>> GetByEstNumberLastVersAsync(int estnumber)
     {
         var sql = $"SELECT * FROM estimateheader WHERE estnumber={estnumber} ORDER BY estvers DESC";
