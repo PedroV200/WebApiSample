@@ -1,8 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; 
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 using WebApiSample.Core;
-namespace WebApiSample.Controllers;
+namespace WebApiSample.Controllers; 
+
+// LISTED 12/7/2023 15:41PM
 
 [ApiController]
 [Route("[controller]")]
@@ -62,12 +64,12 @@ public class TarifasDepositoController : ControllerBase
     }
 
     //[HttpDelete("{id}")]
-    [HttpDelete("{dep}/{cont}")]
-    public async Task<IActionResult>Delete(string dep, string cont)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult>Delete(int id)
     {
         try
         {
-            var result=await _unitOfWork.TarifasDepositos.DeleteByDepoContTypeAsync(dep,cont);
+            var result=await _unitOfWork.TarifasDepositos.DeleteAsync(id);
             // Ninguna fila afectada .... El id no existe
             if(result==0)
             {
