@@ -4,6 +4,8 @@ using WebApiSample.Infrastructure;
 using WebApiSample.Core;
 namespace WebApiSample.Controllers;
 
+// LISTED 12/7/2023 15:26PM
+
 [ApiController]
 [Route("[controller]")]
 public class TarifasTerminalController : ControllerBase
@@ -62,12 +64,12 @@ public class TarifasTerminalController : ControllerBase
     }
 
     //[HttpDelete("{id}")]
-    [HttpDelete("{contype}")]
-    public async Task<IActionResult> Delete(string contype)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var result = await _unitOfWork.TarifasTerminals.DeleteByContTypeAsync(contype);
+            var result = await _unitOfWork.TarifasTerminals.DeleteAsync(id);
             // Ninguna fila afectada .... El id no existe
             if (result == 0)
             {
