@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 using WebApiSample.Core;
+using Microsoft.AspNetCore.Authorization;
+
 namespace WebApiSample.Controllers;
 
 [ApiController]
@@ -104,6 +106,7 @@ public class TarifasFwdContController : ControllerBase
     }
 
     [HttpGet(Name = "GetAll Fowarder / tarifas")]
+    [Authorize("put:sample-role-admin-messages")]
     public async Task<IEnumerable<TarifasFwdCont>> GetAll()
     {
         try
