@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace WebApiSample.Controllers;
 
 
-// LISTED 12/7/2023 11:37AM 
+// LISTED 19_7_2023 7:48PM 
 
 [ApiController]
 [Route("[controller]")]
@@ -109,7 +109,7 @@ public class TarifasFwdContController : ControllerBase
     }
 
     [HttpGet(Name = "GetAll Fowarder / tarifas")]
-    [Authorize("put:sample-role-admin-messages")]
+    //[Authorize("put:sample-role-admin-messages")]
     public async Task<IEnumerable<TarifasFwdCont>> GetAll()
     {
         try
