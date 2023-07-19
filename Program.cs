@@ -7,6 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
 
+// LISTED 19_7_2023 13_23  
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -26,6 +29,9 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.AddServerHeader = false;
 });
 
+// Add services to the container.
+//builder.Services.AddScoped<IMessageService, MessageService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -36,8 +42,9 @@ builder.Services.AddCors(options =>
                 HeaderNames.ContentType,
                 HeaderNames.Authorization,
             })
-            .WithMethods("GET")
-            .SetPreflightMaxAge(TimeSpan.FromSeconds(86400));
+            //.WithMethods("GET")
+            //.SetPreflightMaxAge(TimeSpan.FromSeconds(86400));
+            .AllowAnyMethod().AllowAnyHeader();
     });
 });
 
@@ -83,6 +90,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("put:sample-role-admin-messages", policy => policy.Requirements.Add(new HasScopeRequirement("put:sample-role-admin-messages", domain)));
 });
 
+
+
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
 var app = builder.Build();
@@ -93,6 +102,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+// Agrega el middleware CORS antes de app.Run()
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 var requiredVars =
     new string[] {
@@ -112,7 +128,7 @@ foreach (var key in requiredVars)
     }
 }
 
-//app.Urls.Add($"http://+:{app.Configuration.GetValue<string>("PORT")}");
+// app.Urls.Add($"http://+:{app.Configuration.GetValue<string>("PORT")}");
 
 
 
@@ -128,5 +144,8 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
+
+
+
 
 app.Run();
