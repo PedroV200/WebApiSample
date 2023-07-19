@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApiSample.Controllers;
 
+// LISTED 19_7_2023 7:48PM
+
 [ApiController]
 [Route("[controller]")]
 public class BancoController : ControllerBase
@@ -99,7 +101,7 @@ public class BancoController : ControllerBase
     }
 
     [HttpGet(Name = "GetAll Banco")]
-    [Authorize("put:sample-role-admin-messages")]
+    //[Authorize("put:sample-role-admin-messages")]
     public async Task<IEnumerable<Banco>> GetAll()
     {
         try
