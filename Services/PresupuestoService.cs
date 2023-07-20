@@ -30,6 +30,12 @@ public class PresupuestoService:IPresupuestoService
         return myCalc.haltError;
     }
 
+
+    public async Task<EstimateV2>acalcPresupuesto(EstimateDB miEst)
+    {
+            return await myCalc.aCalc(miEst,miEst.estHeaderDB.EstNumber,miEst.estHeaderDB.Seguro,miEst.estHeaderDB.p_gloc_banco,miEst.estHeaderDB.Pagado,miEst.estHeaderDB.p_gloc_cust);
+    }
+
     public async Task<EstimateV2>submitPresupuestoNew(EstimateDB miEst)
     {
         var result=0;
