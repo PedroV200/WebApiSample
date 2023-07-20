@@ -56,6 +56,21 @@ public class PresupuestoController : ControllerBase
         }
     }
 
+// Este endpoint es para un presupuesto nuevo. Notar que no se pasa el id
+    [HttpPost("/acalc")]
+    public async Task<ActionResult<EstimateV2>>PostAcalcPresupuesto(EstimateDB entity)
+    {
+        var result=await _presupService.acalcPresupuesto(entity);
+        if(result==null)
+        {
+            return BadRequest(_presupService.getLastErr());
+        }
+        else
+        {
+            return result;
+        }
+    }
+
     
    [HttpGet("{id}/{vers}")]
     public async Task<ActionResult<EstimateV2>>Get(int id, int vers) 

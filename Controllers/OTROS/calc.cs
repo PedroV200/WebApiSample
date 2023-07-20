@@ -1,7 +1,7 @@
 using WebApiSample.Models;
 using WebApiSample.Infrastructure;
 
-// LISTED 5_7_2023 16:12AM
+// LISTED 20_7_2023 17:02
 
 public class calc
 {
@@ -386,7 +386,7 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
 // Este metodo es similar al anterior salvo que tiene opcion de no volver a buscar a base los mismo valores una y otra vez.
 // Es consumido por el metodo aCalc, que "despeja" un valor de una columna a la derecha fijado un valor a la izquierda
 // Ejemplo, determina el valor fobunit para alcanzar un valor de aduanaDivisa dado.
-    public async Task<EstimateV2> calcOnce(EstimateV2 myEstV2, Contenedor myCont,double tarifaFleteCont,NCM myNCM,double sumarIIBB,bool once)
+    public async Task<EstimateV2> calcOnce(EstimateV2 myEstV2, Contenedor myCont,double tarifaFleteCont,NCM myNCM,bool once)
     {
         EstimateDB myEstDB=new EstimateDB(); 
         dbutils dbhelper=new dbutils(_unitOfWork);
@@ -462,7 +462,7 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         // COL AC
         myEstV2.EstDetails[0].ImpGcias424=_estService._estDetServices.CalcImpGcias424(myEstV2.EstDetails[0]);
         // COL AD
-        myEstV2.EstDetails[0].IIBB=sumarIIBB;
+        myEstV2.EstDetails[0].IIBB=_estService._estDetServices.CalcIIBB(myEstV2.EstDetails[0],myEstV2.IibbTot);;
         // COL AE
         myEstV2.EstDetails[0].PrecioUnitUSS=_estService._estDetServices.CalcPrecioUnitUSS(myEstV2.EstDetails[0]);
         if(myEstV2.EstDetails[0].PrecioUnitUSS<0)
@@ -515,7 +515,6 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         
 
         return myEstV2;
-        return myEstV2;
     }
 
 
@@ -529,11 +528,9 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
     // largo de las iteraciones.
     // El ajuste es tipo PD, donde el step es ajustado segun la diferencia entre el traget y el iterado.
     // LISTED 28/6/2023 12:55 
-    public async Task<EstimateV2>aCalc(int estNumber,double adjValueIn, string propertyNameIn, double adjValueOut, string propertyNameOut)
+    public async Task<EstimateV2>aCalc(EstimateDB myEstDB,int estNumber,double adjValueIn, string propertyNameIn, double adjValueOut, string propertyNameOut)
     {
-        EstimateDB myEstDB=new EstimateDB(); 
         dbutils dbhelper=new dbutils(_unitOfWork);
-        myEstDB=await dbhelper.getEstimateLastVers(estNumber);
         double step=10;
         double sentido=1;
         double tmpOut;
@@ -553,27 +550,45 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
 
         // El objeto Estimate que se definio. 
         EstimateV2 myEstV2=new EstimateV2();
-        // Levanto todas las constantes.
+       
+        
+       
+
+        // Expando el EstimateDB a un EstimateV2
+        myEstV2=dbhelper.transferDataFromDBType(myEstDB);
+         // Levanto todas las constantes.
         myEstV2= await _estService.loadConstants(myEstV2);
         if(myEstV2==null)
         {
             haltError="Tabla Constantes no accesible";
             return null;
         }
-        // Expando el EstimateDB a un EstimateV2
-        myEstV2=dbhelper.transferDataFromDBType(myEstDB);
 
-
+        // Veo si es posible obtener las propiedades del objeto que se han pasado como string
+        // El string pasado como parametro pretende accededer a una propiedad del objeto.
+        try
+        {
+            var tmpCheck=myEstV2.EstDetails[0].GetType().GetProperty(propertyNameIn);
+            if(tmpCheck==null)
+            {
+                haltError="Fallo al recuperar parametro Ent";
+                return null;
+            }
+            var tmpCheck2=myEstV2.EstDetails[0].GetType().GetProperty(propertyNameOut);
+            if(tmpCheck2==null)
+            {
+                haltError="Fallo al recuperar parametro Sal";
+                return null;
+            }
+        }
+        catch (Exception)
+        {
+            haltError="Nombre de parametro de Ent o Sal incorrecto. Revise valor en p_gloc_banco / p_glo_cust";
+        }
+        // Si llego hasta aca se que puedo hacer esta operacion sin riesgo:
+        // No se pueden reusar las variables usadas arriba por que solo existen en contexto del try / catch
         var adjPropIn=myEstV2.EstDetails[0].GetType().GetProperty(propertyNameIn);
-        if(adjPropIn==null)
-        {
-            return null;
-        }
         var adjPropOut=myEstV2.EstDetails[0].GetType().GetProperty(propertyNameOut);
-        if(adjPropOut==null)
-        {
-            return null;
-        }
 
         // Cargo el valor "aproximado" de la propiedad a determinar.
         if(adjPropIn!=null)
@@ -613,11 +628,11 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         NCM myNCM=new NCM();
         myNCM=await _estService._estDetServices.lookUp_NCM_Data(myEstV2.EstDetails[0]); 
 
-        double sumaIIBB=await _unitOfWork.IIBBs.GetSumFactores();
+        myEstV2.IibbTot=await _unitOfWork.IIBBs.GetSumFactores();
 
 
         // Hago los calculos forzando (por unica vez) que todos lo datos que vienen de otras tablas sean consultados.
-        myEstV2=await calcOnce(myEstV2,myCont,tarifaFleteCont,myNCM,sumaIIBB,true);
+        myEstV2=await calcOnce(myEstV2,myCont,tarifaFleteCont,myNCM,true);
 
 
     
@@ -627,7 +642,8 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
         pass=0;
 
         // Mientras no haya iterado mas de 200 veces ... do
-        while(pass<300)
+        var passes=300;
+        while(pass<passes)
         {
 
             // Detemrino el step y el sentido
@@ -745,7 +761,7 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
             // Lo cargo en el objeto.
             adjPropIn.SetValue(myEstV2.EstDetails[0],adjValueIn);
             // Corro los calculos de nuevo
-            calcOnce(myEstV2,myCont,tarifaFleteCont,myNCM,sumaIIBB,true);
+            calcOnce(myEstV2,myCont,tarifaFleteCont,myNCM,false);
             // Me fijo el valor saliente (este vlaor lo fijo el usuario como DATO)
             tmpOut=(double)adjPropOut.GetValue(myEstV2.EstDetails[0]);
 
@@ -753,7 +769,7 @@ public async Task<EstimateV2> calcReclaim(EstimateDB miEst)
             // cuento la cantidad de iteraciones.
             pass++;
         }
-
+        myEstV2.ArticleFamily=$"Convergencia: {pass} pasadas (MAX {passes})";
         return myEstV2;
     }
   
