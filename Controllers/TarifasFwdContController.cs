@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace WebApiSample.Controllers;
 
 
-// LISTED 19_7_2023 7:48PM 
+// LISTED 21_7_2023 13:07 
 
 [ApiController]
 [Route("[controller]")]
@@ -100,6 +100,28 @@ public class TarifasFwdContController : ControllerBase
             else
             {
                 return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+    [HttpGet("origin")]
+    public async Task<ActionResult<IEnumerable<string>>> GetOriginCountry()
+    {
+        try
+        {
+            var result=await _unitOfWork.TarifasFwdContenedores.GetOriginCountry();
+            if(result==null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return result.ToList();
             }
         }
         catch (Exception ex)

@@ -100,6 +100,8 @@ public class TarifasFwdContRepository : ITarifasFwdContRepository
         }
     }
 
+    
+
      public async Task<int> UpdateByFwdContTypeAsync(TarifasFwdCont entity)
     {
         //entity.ModifiedOn=DateTime.Now;
@@ -119,6 +121,17 @@ public class TarifasFwdContRepository : ITarifasFwdContRepository
             connection.Open();
             var result = await connection.ExecuteAsync(sql, entity);
             return result;
+        }
+    }
+
+    public async Task<IEnumerable<string>>GetOriginCountry()
+    {
+        var sql = "select distinct fwdfrom from tarifasfwds";
+        using (var connection = new NpgsqlConnection(configuration.GetConnectionString("DefaultConnection")))
+        {
+            connection.Open();
+
+            return await connection.QueryAsync<string>(sql);
         }
     }
 }

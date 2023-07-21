@@ -7,4 +7,5 @@ public interface ITarifasFwdContRepository:IGenericRepository<TarifasFwdCont>
         Task<TarifasFwdCont> GetByFwdContTypeAsync(string fwd,string cont);
         Task<int> DeleteByFwdContTypeAsync(string fwd,string cont);
         Task<int> UpdateByFwdContTypeAsync(TarifasFwdCont entity);
+        public Task<IEnumerable<string>>GetOriginCountry();
 }
