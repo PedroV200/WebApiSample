@@ -86,8 +86,12 @@ var domain =  $"https://{builder.Configuration.GetValue<string>("AUTH0_DOMAIN")}
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("read:sample-role-admin-messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:sample-role-admin-messages", domain)));
-    options.AddPolicy("put:sample-role-admin-messages", policy => policy.Requirements.Add(new HasScopeRequirement("put:sample-role-admin-messages", domain)));
+    //options.AddPolicy("read:sample-role-admin-messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:sample-role-admin-messages", domain)));
+    //options.AddPolicy("put:sample-role-admin-messages", policy => policy.Requirements.Add(new HasScopeRequirement("put:sample-role-admin-messages", domain)));
+    options.AddPolicy("tarifas:read", policy => policy.Requirements.Add(new HasScopeRequirement("tarifas:read", domain)));
+    options.AddPolicy("tarifas:update", policy => policy.Requirements.Add(new HasScopeRequirement("tarifas:update", domain)));
+    options.AddPolicy("tarifas:create", policy => policy.Requirements.Add(new HasScopeRequirement("tarifas:create", domain)));
+    options.AddPolicy("tarifas:delete", policy => policy.Requirements.Add(new HasScopeRequirement("tarifas:delete", domain)));
 });
 
 

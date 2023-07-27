@@ -23,6 +23,7 @@ public class TarifasFwdContController : ControllerBase
     }
 
     [HttpPost(Name = "Post Tarifas Fowarders / contenedor")]
+    [Authorize("tarifas:create")]
     public async Task<IActionResult>Post(TarifasFwdCont entity)
     {
         try
@@ -42,6 +43,7 @@ public class TarifasFwdContController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize("tarifas:update")]
     public async Task<IActionResult>Put(int id,TarifasFwdCont entity)
     {
         try
@@ -68,6 +70,7 @@ public class TarifasFwdContController : ControllerBase
 
     //[HttpDelete("{id}")]
     [HttpDelete("{fwd}/{cont}")]
+    [Authorize("tarifas:delete")]
     public async Task<IActionResult>Delete(string fwd, string cont)
     {
         try
@@ -132,6 +135,7 @@ public class TarifasFwdContController : ControllerBase
 
     [HttpGet(Name = "GetAll Fowarder / tarifas")]
     //[Authorize("put:sample-role-admin-messages")]
+    [Authorize("tarifas:read")]
     public async Task<IEnumerable<TarifasFwdCont>> GetAll()
     {
         try

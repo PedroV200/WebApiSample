@@ -71,6 +71,20 @@ public class PresupuestoController : ControllerBase
         }
     }
 
+    [HttpPost("/sim")]
+    public async Task<ActionResult<EstimateV2>>PostSimulPresupuesto(EstimateDB entity)
+    {
+        var result=await _presupService.simulaPresupuesto(entity);
+        if(result==null)
+        {
+            return BadRequest(_presupService.getLastErr());
+        }
+        else
+        {
+            return result;
+        }
+    }
+
     
    [HttpGet("{id}/{vers}")]
     public async Task<ActionResult<EstimateV2>>Get(int id, int vers) 

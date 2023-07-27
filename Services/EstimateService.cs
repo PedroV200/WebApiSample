@@ -589,9 +589,17 @@ public class EstimateService: IEstimateService
         {
             return null;
         }
-        if(myCont.volume>0)
+        if(myCont.volume>0 && myCont.weight>0)
         {
-            est.CantidadContenedores=est.CbmGrandTot/myCont.volume;
+            //est.CantidadContenedores=est.CbmGrandTot/myCont.volume;
+            if((est.CbmGrandTot/myCont.volume)>(est.pesoTotal/myCont.weight))
+            {// Gana el volumen
+                est.CantidadContenedores=est.CbmGrandTot/myCont.volume;
+            }
+            else
+            {// Gan el peso.
+                est.CantidadContenedores=est.pesoTotal/myCont.weight;
+            }
         }
         else
         {

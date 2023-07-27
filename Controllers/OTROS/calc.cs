@@ -94,6 +94,8 @@ public class calc
             haltError=_estService.getLastError();
             return null;
         }
+        myEstV2.pesoTotal=_estService.sumPesoTotal(myEstV2);
+
         // COL K
         myEstV2=_estService.CalcCbmTotal(myEstV2);
         if(myEstV2==null)
@@ -103,11 +105,13 @@ public class calc
         }
         // CELDA K43
         myEstV2=_estService.CalcCbmGrandTotal(myEstV2);
+
+        // PRECONDICIONES PARA EL LLAMADO: CBMTOTAL Y PESOTOTAL ya calculados.
         // CELDA C10
         myEstV2=await _estService.CalcularCantContenedores(myEstV2);
         if(myEstV2==null)
         {
-            haltError="La tabla de contenedores no es accesible o el volumen del contenedor es 0";
+            haltError="La tabla de contenedores no es accesible,el volumen del contenedor es 0, o el peso del contenedor es cero";
             return null;
         }
         // COL L. Calculo el fob total por articulo
