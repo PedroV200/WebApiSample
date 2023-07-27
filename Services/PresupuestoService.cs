@@ -87,7 +87,12 @@ public class PresupuestoService:IPresupuestoService
         return ret;      
     }
 
-
+    public async Task<EstimateV2>simulaPresupuesto(EstimateDB miEst)
+    {
+        EstimateV2 ret=new EstimateV2();
+        ret=await myCalc.calcBatch(miEst);
+        return ret;
+    }
 
     public async Task<EstimateV2>submitPresupuestoUpdated(int estNumber,EstimateDB miEst)
     {

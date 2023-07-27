@@ -8,6 +8,7 @@ using System.Data;
 using System.Globalization; 
 
 
+// LISTED 26_7_2023 17:03
 // LISTED 29_6_2023 17:56 
 //REFACTOR agrega IDs (FKs a los maestros) para todos los proveedores (servicios u OEM) 
 //REFACTOR para tratar al proveedor de poliza igual que al resto de los proveedores (descrip / ID)
@@ -44,6 +45,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     CbmTot, 
 	                CifTot,
                     IibbTot,
+                    pesoTotal,
                     ExtraGastosLocProyectado, 
                     c_gdespa_cif_min,
                     c_gdespa_cif_mult, 
@@ -109,6 +111,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                                     '{entity.CbmTot.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.CifTot.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.IibbTot.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
+                                    '{entity.pesoTotal.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.ExtraGastosLocProyectado.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.c_gdespa_cif_min.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
                                     '{entity.c_gdespa_cif_mult.ToString(CultureInfo.CreateSpecificCulture("en-US"))}',
@@ -286,6 +289,7 @@ public class EstimateHeaderDBRepository : IEstimateHeaderDBRepository
                     CbmTot = @CbmTot, 
 	                CifTot= @CifTot,
                     IibbTot= @IibbTot,
+                    pesoTotal=@pesoTotal,
                     ExtraGastosLocProyectado= @ExtraGastosLocProyectado, 
                     c_gdespa_cif_min= @c_gdespa_cif_min,
                     c_gdespa_cif_mult=  @c_gdespa_cif_mult, 

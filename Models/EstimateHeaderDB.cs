@@ -1,6 +1,6 @@
 namespace WebApiSample.Models;
 public class EstimateHeaderDB
-{
+{ // LISTED 26_7_2023 17:05
     // Id unico autoincremental de la BD (PK)
     public int Id { get; set; }
     // Spare
@@ -44,6 +44,7 @@ public class EstimateHeaderDB
     public double CbmTot {get;set;}
     public double CifTot {get;set;}
     public double IibbTot {get;set;}
+    public double pesoTotal {get;set;}
     public double ExtraGastosLocProyectado {get;set;}
 
     // CONSTANTES

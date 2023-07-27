@@ -2,7 +2,7 @@ namespace WebApiSample.Models;
 // NOTA: comentarios de celdas segun presup. ARG, libro "N - Duchas Escocesas"
 // ADVERTENCIA: No esta mapeada la tabla "comprobantes de pago / gastos locales"
 public class EstimateV2
-{
+{   // Listed 26_7_2023 17:05  
     // Id unico autoincremental de la BD (PK)
     public int Id { get; set; }
     // Spare
@@ -52,7 +52,7 @@ public class EstimateV2
     public double CifTot {get;set;}
 
     public double IibbTot {get;set;}
- 
+    public double pesoTotal {get;set;}
     public double ExtraGastosLocProyectado {get;set;}
     public CONSTANTES constantes{get;set;} 
     public string PolizaProv {get;set;}

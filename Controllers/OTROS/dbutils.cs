@@ -105,6 +105,7 @@ public class dbutils
         myEstV2.CbmGrandTot=estimateDB.estHeaderDB.CbmTot;
         myEstV2.CifTot=estimateDB.estHeaderDB.CifTot;
         myEstV2.IibbTot=estimateDB.estHeaderDB.IibbTot;
+        myEstV2.pesoTotal=estimateDB.estHeaderDB.pesoTotal;
         myEstV2.PolizaProv=estimateDB.estHeaderDB.PolizaProv;
         myEstV2.ExtraGastosLocProyectado=estimateDB.estHeaderDB.ExtraGastosLocProyectado;  
 
@@ -211,6 +212,7 @@ public class dbutils
         estimateDB.estHeaderDB.CbmTot=myEstV2.CbmGrandTot;
         estimateDB.estHeaderDB.CifTot=myEstV2.CifTot;
         estimateDB.estHeaderDB.IibbTot=myEstV2.IibbTot;
+        estimateDB.estHeaderDB.pesoTotal=myEstV2.pesoTotal;
 
         estimateDB.estHeaderDB.ExtraGastosLocProyectado=myEstV2.ExtraGastosLocProyectado;  
 
